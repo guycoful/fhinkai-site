@@ -93,6 +93,21 @@
 
   /* Error */
   .error-msg { background: var(--red-light); color: var(--red); padding: 10px 14px; border-radius: 10px; font-size: 13px; margin-top: 10px; display: none; }
+
+  /* Self-assessment intro */
+  .assess-card { background: var(--white); border: 2px solid var(--gold); border-radius: var(--radius); padding: 24px 20px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(212,168,83,.12); }
+  .assess-card h2 { font-size: 20px; font-weight: 800; text-align: center; margin-bottom: 6px; }
+  .assess-card .subtitle { text-align: center; font-size: 13px; color: var(--dark-mid); margin-bottom: 20px; }
+  .assess-q { margin-bottom: 18px; }
+  .assess-q label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+  .assess-options { display: flex; flex-direction: column; gap: 6px; }
+  .assess-opt { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1.5px solid var(--cream-dark); border-radius: 10px; cursor: pointer; font-size: 14px; transition: all .2s; }
+  .assess-opt:hover { border-color: var(--gold); }
+  .assess-opt.selected { border-color: var(--gold-dark); background: var(--gold-bg); }
+  .assess-opt input[type=radio] { accent-color: var(--gold-dark); flex-shrink: 0; }
+  .assess-guess { width: 100%; padding: 12px 14px; border: 1.5px solid var(--cream-dark); border-radius: 10px; font-family: Heebo; font-size: 15px; margin-top: 6px; }
+  .assess-guess:focus { outline: none; border-color: var(--gold); }
+  .assess-btn { width: 100%; margin-top: 12px; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--navy); border: none; padding: 14px; border-radius: 50px; font-family: Heebo; font-size: 16px; font-weight: 800; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -104,8 +119,44 @@
 
 <div class="container">
 
+  <!-- ═══ SELF-ASSESSMENT (Dunning-Kruger) ═══ -->
+  <div id="assessScreen">
+    <div class="assess-card">
+      <h2>לפני שמתחילים</h2>
+      <div class="subtitle">3 שאלות קצרות - 15 שניות</div>
+
+      <div class="assess-q">
+        <label>איך היית מגדיר את ההתנהלות הפיננסית שלך ?</label>
+        <div class="assess-options" id="q_self">
+          <div class="assess-opt" onclick="pickOpt(this,'q_self',5)"><input type="radio" name="q_self"> טובה מאוד</div>
+          <div class="assess-opt" onclick="pickOpt(this,'q_self',4)"><input type="radio" name="q_self"> טובה</div>
+          <div class="assess-opt" onclick="pickOpt(this,'q_self',3)"><input type="radio" name="q_self"> סבירה</div>
+          <div class="assess-opt" onclick="pickOpt(this,'q_self',2)"><input type="radio" name="q_self"> לא טובה</div>
+          <div class="assess-opt" onclick="pickOpt(this,'q_self',1)"><input type="radio" name="q_self"> גרועה</div>
+        </div>
+      </div>
+
+      <div class="assess-q">
+        <label>כמה כסף אתה חושב שאתה חוסך בחודש ? (₪)</label>
+        <input type="number" class="assess-guess" id="q_guess_save" placeholder="2,000" inputmode="numeric">
+      </div>
+
+      <div class="assess-q">
+        <label>כמה מההכנסה שלך הולך על דברים שאתה לא באמת צריך ?</label>
+        <div class="assess-options" id="q_waste">
+          <div class="assess-opt" onclick="pickOpt(this,'q_waste',10)"><input type="radio" name="q_waste"> כמעט כלום (עד 10%)</div>
+          <div class="assess-opt" onclick="pickOpt(this,'q_waste',20)"><input type="radio" name="q_waste"> קצת (10-20%)</div>
+          <div class="assess-opt" onclick="pickOpt(this,'q_waste',35)"><input type="radio" name="q_waste"> סביר (20-35%)</div>
+          <div class="assess-opt" onclick="pickOpt(this,'q_waste',50)"><input type="radio" name="q_waste"> הרבה (35%+)</div>
+        </div>
+      </div>
+
+      <button class="assess-btn" onclick="submitAssess()">בוא נבדוק את זה ←</button>
+    </div>
+  </div>
+
   <!-- Progress -->
-  <div class="progress">
+  <div class="progress" style="display:none" id="mainProgress">
     <div class="prog-step"><div class="prog-dot active" id="pd-1">1</div><div class="prog-label">פרטים</div></div>
     <div class="prog-line" id="pl-1"></div>
     <div class="prog-step"><div class="prog-dot" id="pd-2">2</div><div class="prog-label">הוצאות</div></div>
@@ -114,7 +165,7 @@
   </div>
 
   <!-- ═══ PAGE 1: פרטים + הכנסות ═══ -->
-  <div class="page active" id="page-1">
+  <div class="page active" id="page-1" style="display:none">
     <div class="card">
       <h2>קצת עליך</h2>
       <div class="subtitle">30 שניות - פרטים בסיסיים והכנסות</div>
@@ -270,6 +321,34 @@
 </div>
 
 <script>
+// ── Dynamic income rows ──
+// ── Self-Assessment (Dunning-Kruger) ──
+window._assess = {};
+
+function pickOpt(el, group, val) {
+  document.querySelectorAll('#'+group+' .assess-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  el.querySelector('input').checked = true;
+  window._assess[group] = val;
+}
+
+function submitAssess() {
+  if (!window._assess.q_self) { alert('תבחר איך ההתנהלות שלך'); return; }
+  // Save assessment to localStorage for Day 2 comparison
+  const data = {
+    selfRating: window._assess.q_self,
+    guessSaving: parseFloat(document.getElementById('q_guess_save').value) || 0,
+    guessWaste: window._assess.q_waste || 20,
+    ts: Date.now()
+  };
+  localStorage.setItem('makpatza_assess', JSON.stringify(data));
+
+  // Hide assessment, show main form
+  document.getElementById('assessScreen').style.display = 'none';
+  document.getElementById('mainProgress').style.display = 'flex';
+  document.querySelectorAll('.page').forEach(p => { if(p.classList.contains('active')) p.style.display = 'block'; });
+}
+
 // ── Dynamic income rows ──
 const INCOME_TYPES = ['פרילנס / עצמאי', 'שכירות / נדל"ן', 'פנסיה / קצבה', 'דיבידנדים / השקעות', 'עסק', 'אחר'];
 let incomeRowCount = 0;

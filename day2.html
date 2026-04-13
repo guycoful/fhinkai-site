@@ -619,6 +619,30 @@ function runAnalysis() {
     <div class="stat"><div class="stat-label">בעשור</div><div class="stat-val" style="color:var(--orange)">${fmt(wantsTotal*120)}</div></div>
     <div class="stat"><div class="stat-label">עד פרישה</div><div class="stat-val" style="color:var(--red-text)">${fmt(wantsTotal*12*yearsToRetire)}</div></div>`;
 
+  // Investment alternative card
+  const monthlyInvest = wantsTotal * 0.5; // half of wants = realistic saving
+  const annualRate = 0.07;
+  // Future value of monthly investment: FV = PMT * ((1+r)^n - 1) / r
+  const monthlyRate = annualRate / 12;
+  const months10 = 10 * 12;
+  const monthsRetire = yearsToRetire * 12;
+  const fv10 = monthlyInvest * ((Math.pow(1 + monthlyRate, months10) - 1) / monthlyRate);
+  const fvRetire = monthlyInvest * ((Math.pow(1 + monthlyRate, monthsRetire) - 1) / monthlyRate);
+
+  const investHTML = `
+    <div class="card" style="border:2px solid var(--green);margin-top:12px">
+      <h3>📈 מה היה קורה אם היית משקיע חצי מהרצונות ?</h3>
+      <p style="font-size:12px;color:var(--dark-mid);margin:-6px 0 14px">השקעה של ${fmt(monthlyInvest)}/חודש בתשואה ממוצעת של 7% שנתי</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="stat" style="border-color:var(--green)"><div class="stat-label">אחרי 10 שנים</div><div class="stat-val" style="color:var(--green)">${fmt(fv10)}</div></div>
+        <div class="stat" style="border-color:var(--green)"><div class="stat-label">עד פרישה (${yearsToRetire} שנים)</div><div class="stat-val" style="color:var(--green)">${fmt(fvRetire)}</div></div>
+      </div>
+      <div style="background:var(--green-light);border-radius:10px;padding:12px;margin-top:10px;font-size:13px;color:var(--green-text);text-align:center">
+        <strong>${fmt(monthlyInvest)}/חודש</strong> היום = <strong>${fmt(fvRetire)}</strong> בפרישה
+      </div>
+    </div>`;
+  document.getElementById('painStats').insertAdjacentHTML('afterend', investHTML);
+
   // Compare vs CBS average
   const cbsWants = 2100; // CBS 2024 average for dining+coffee+shopping+leisure
   const overAvg = Math.max(0, wantsTotal - cbsWants);
@@ -639,6 +663,47 @@ function runAnalysis() {
       : `<div style="background:var(--green-light);border-radius:10px;padding:12px;font-size:13px;color:var(--green-text)">
           ✓ אתה מתחת לממוצע הישראלי. כל הכבוד.
         </div>`}`;
+
+  // Dunning-Kruger reflection
+  const assess = JSON.parse(localStorage.getItem('makpatza_assess') || 'null');
+  if (assess) {
+    const ratingLabels = {5:'טובה מאוד',4:'טובה',3:'סבירה',2:'לא טובה',1:'גרועה'};
+    const actualSave = totalSave;
+    const guessDiff = assess.guessSaving - actualSave;
+    const actualWastePct = income > 0 ? Math.round(wantsTotal / income * 100) : 0;
+    const wasteDiff = actualWastePct - assess.guessWaste;
+
+    let dkHTML = `<div class="card" style="border:2px solid var(--orange);margin-top:12px">
+      <h3>🪞 מה חשבת מול מה שנמצא</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+        <div style="background:var(--blue-light);padding:10px;border-radius:8px;text-align:center">
+          <div style="font-size:10px;color:var(--dark-mid)">דירגת את עצמך</div>
+          <div style="font-size:16px;font-weight:800;color:var(--blue)">${ratingLabels[assess.selfRating]}</div>
+        </div>
+        <div style="background:${pos?'var(--green-light)':'var(--red-light)'};padding:10px;border-radius:8px;text-align:center">
+          <div style="font-size:10px;color:var(--dark-mid)">מצב בפועל</div>
+          <div style="font-size:16px;font-weight:800;color:${pos?'var(--green)':'var(--red)'}">${pos?'עודף '+fmt(balance):'גירעון '+fmt(Math.abs(balance))}</div>
+        </div>
+      </div>`;
+
+    if (guessDiff > 100) {
+      dkHTML += `<div style="background:var(--orange-light);border-radius:8px;padding:10px;font-size:12px;margin-bottom:6px">
+        💡 חשבת שאתה חוסך <strong>${fmt(assess.guessSaving)}</strong>/חודש. בפועל: <strong>${fmt(actualSave)}</strong>. פער של <strong>${fmt(guessDiff)}</strong>.
+      </div>`;
+    }
+    if (wasteDiff > 5) {
+      dkHTML += `<div style="background:var(--orange-light);border-radius:8px;padding:10px;font-size:12px">
+        💡 הערכת ש-${assess.guessWaste}% מההכנסה הולך על מיותרים. בפועל: <strong>${actualWastePct}%</strong>.
+      </div>`;
+    }
+    if (guessDiff <= 100 && wasteDiff <= 5) {
+      dkHTML += `<div style="background:var(--green-light);border-radius:8px;padding:10px;font-size:12px">
+        ✓ ההערכה שלך קרובה למציאות. יש לך מודעות פיננסית גבוהה.
+      </div>`;
+    }
+    dkHTML += '</div>';
+    document.getElementById('painCompare').insertAdjacentHTML('afterend', dkHTML);
+  }
 
   window._analysisData = { totalFixed, totalVar, totalSave, balance, pos, income };
   document.getElementById('painScreen').style.display = 'block';
