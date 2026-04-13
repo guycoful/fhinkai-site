@@ -375,6 +375,22 @@
     </div>
   </div>
 
+  <!-- Pain screen (shown before analysis) -->
+  <div id="painScreen" style="display:none">
+    <div style="text-align:center;padding:32px 16px 24px;background:linear-gradient(180deg,var(--cream) 0%,var(--warm-white) 100%);margin:-20px -16px 20px">
+      <div style="font-size:48px;margin-bottom:12px">💸</div>
+      <div id="painName" style="font-size:22px;font-weight:800;margin-bottom:8px"></div>
+      <div style="font-size:14px;color:var(--dark-mid);max-width:320px;margin:0 auto">הנה כמה כסף כבר יצא מהחשבון שלך</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px" id="painStats"></div>
+    <div class="card" id="painCompare"></div>
+    <div style="text-align:center;padding:16px 0">
+      <button onclick="showFullAnalysis()" style="background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--navy);border:none;padding:14px 36px;border-radius:50px;font-family:Heebo;font-size:16px;font-weight:800;cursor:pointer">
+        רוצה לראות איך לשנות את זה ←
+      </button>
+    </div>
+  </div>
+
   <!-- Results (shown after data loaded) -->
   <div id="results" style="display:none">
     <div class="hero-balance" id="heroBalance"></div>
@@ -590,10 +606,50 @@ function runAnalysis() {
     <h3>🤖 מה גילינו</h3>
     <div class="insight-box"><h4>תובנות עיקריות</h4>${tips.slice(0,3).map(t=>`<p>• ${t}</p>`).join('')}</div>`;
 
-  // Show results, hide demo
-  document.getElementById('results').style.display = 'block';
+  // Show PAIN SCREEN first
+  const wantsTotal = variable.dining + variable.coffee + variable.shopping + variable.leisure;
+  const age = 35; // default - can be personalized later
+  const yearsToRetire = Math.max(1, 67 - age);
+  const name2 = document.getElementById('userName').textContent || 'משתמש';
+
+  document.getElementById('painName').textContent = name2 + ', זה המספר שלא תאמין בו';
+  document.getElementById('painStats').innerHTML = `
+    <div class="stat"><div class="stat-label">רצונות בחודש</div><div class="stat-val" style="color:var(--red)">${fmt(wantsTotal)}</div></div>
+    <div class="stat"><div class="stat-label">בשנה</div><div class="stat-val" style="color:var(--orange)">${fmt(wantsTotal*12)}</div></div>
+    <div class="stat"><div class="stat-label">בעשור</div><div class="stat-val" style="color:var(--orange)">${fmt(wantsTotal*120)}</div></div>
+    <div class="stat"><div class="stat-label">עד פרישה</div><div class="stat-val" style="color:var(--red-text)">${fmt(wantsTotal*12*yearsToRetire)}</div></div>`;
+
+  // Compare vs CBS average
+  const cbsWants = 2100; // CBS 2024 average for dining+coffee+shopping+leisure
+  const overAvg = Math.max(0, wantsTotal - cbsWants);
+  document.getElementById('painCompare').innerHTML = `
+    <h3>📊 ביחס לממוצע הישראלי</h3>
+    <p style="font-size:13px;color:var(--dark-mid);margin-bottom:12px">הוצאות "רצון" (מסעדות + קפה + קניות + בילויים)</p>
+    <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+      <span style="font-size:13px">ממוצע ישראלי</span><strong>${fmt(cbsWants)}/חודש</strong>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+      <span style="font-size:13px">אתה מוציא</span><strong style="color:${wantsTotal > cbsWants ? 'var(--red)' : 'var(--green)'}">${fmt(wantsTotal)}/חודש</strong>
+    </div>
+    ${overAvg > 0
+      ? `<div style="background:var(--red-light);border-radius:10px;padding:12px;font-size:13px;color:var(--red-text)">
+          אתה מוציא <strong>${fmt(overAvg)}/חודש יותר</strong> מהממוצע.<br>
+          זה <strong>${fmt(overAvg*12)}/שנה</strong> שאפשר לחסוך.
+        </div>`
+      : `<div style="background:var(--green-light);border-radius:10px;padding:12px;font-size:13px;color:var(--green-text)">
+          ✓ אתה מתחת לממוצע הישראלי. כל הכבוד.
+        </div>`}`;
+
+  window._analysisData = { totalFixed, totalVar, totalSave, balance, pos, income };
+  document.getElementById('painScreen').style.display = 'block';
   document.getElementById('inputPanel').style.display = 'none';
   document.getElementById('demoBanner').style.display = 'none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function showFullAnalysis() {
+  document.getElementById('painScreen').style.display = 'none';
+  document.getElementById('results').style.display = 'block';
   window.scrollTo({top:0,behavior:'smooth'});
 }
 

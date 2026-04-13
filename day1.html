@@ -48,6 +48,18 @@
   .section-head { font-size: 12px; font-weight: 700; color: var(--gold-dark); text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--cream); }
   .section-head:first-of-type { margin-top: 0; }
 
+  /* Needs / Wants tags */
+  .tag { display: inline-block; font-size: 9px; font-weight: 700; padding: 1px 7px; border-radius: 50px; margin-right: 5px; vertical-align: middle; letter-spacing: .3px; }
+  .tag-need { background: #E8F5EE; color: #1B5E3B; border: 1px solid #2E7D52; }
+  .tag-want { background: #FFF3E0; color: #B8530A; border: 1px solid #C87A1A; }
+
+  /* Dynamic income rows */
+  .income-row { display: flex; gap: 8px; align-items: flex-end; margin-bottom: 8px; }
+  .income-row select { flex: 1; padding: 10px 8px; border: 1.5px solid var(--cream-dark); border-radius: 10px; font-family: Heebo; font-size: 13px; }
+  .income-row input { flex: 1.2; }
+  .income-row .del-btn { background: var(--red-light); color: var(--red); border: 1px solid var(--red); border-radius: 50%; width: 32px; height: 32px; font-size: 16px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-bottom: 2px; }
+  .add-income-btn { background: var(--gold-bg); color: var(--gold-dark); border: 1.5px dashed var(--gold); border-radius: 10px; width: 100%; padding: 10px; font-family: Heebo; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 4px; }
+
   /* Fields */
   .field { margin-bottom: 14px; }
   .field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: var(--dark); }
@@ -128,13 +140,15 @@
 
       <div class="section-head">הכנסות</div>
       <div class="field">
-        <label>הכנסה חודשית נטו (₪)</label>
+        <label>שכר חודשי נטו (₪)</label>
         <input type="number" id="f_income" placeholder="15,000" inputmode="numeric" required>
         <div class="hint">הסכום שנכנס לחשבון אחרי מס</div>
       </div>
       <div class="field">
-        <label>הכנסה נוספת - פרילנס, שכירות, דיבידנדים (₪)</label>
-        <input type="number" id="f_income2" placeholder="0" inputmode="numeric">
+        <label>הכנסות נוספות</label>
+        <div id="extraIncomeList"></div>
+        <button type="button" class="add-income-btn" onclick="addIncomeRow()">+ הוסף הכנסה נוספת (פרילנס, שכ"ד, פנסיה...)</button>
+        <input type="hidden" id="f_income2" value="0">
         <div class="hint">אם אין, תשאיר 0</div>
       </div>
 
@@ -152,20 +166,20 @@
 
       <div class="section-head">הוצאות קבועות</div>
       <div class="row">
-        <div class="field"><label>שכ"ד / משכנתא</label><input type="number" id="f_rent" placeholder="5,500" inputmode="numeric"></div>
-        <div class="field"><label>ארנונה + ועד בית</label><input type="number" id="f_arnona" placeholder="600" inputmode="numeric"></div>
+        <div class="field"><label><span class="tag tag-need">צורך</span>שכ"ד / משכנתא</label><input type="number" id="f_rent" placeholder="5,500" inputmode="numeric"></div>
+        <div class="field"><label><span class="tag tag-need">צורך</span>ארנונה + ועד בית</label><input type="number" id="f_arnona" placeholder="600" inputmode="numeric"></div>
       </div>
       <div class="row">
-        <div class="field"><label>מים + גז + חשמל</label><input type="number" id="f_utilities" placeholder="700" inputmode="numeric"></div>
-        <div class="field"><label>טלפון + נט + סטרימינג</label><input type="number" id="f_telecom" placeholder="400" inputmode="numeric"></div>
+        <div class="field"><label><span class="tag tag-need">צורך</span>מים + גז + חשמל</label><input type="number" id="f_utilities" placeholder="700" inputmode="numeric"></div>
+        <div class="field"><label><span class="tag tag-need">צורך</span>טלפון + נט + סטרימינג</label><input type="number" id="f_telecom" placeholder="400" inputmode="numeric"></div>
       </div>
       <div class="row">
-        <div class="field"><label>ביטוח רכב</label><input type="number" id="f_car_ins" placeholder="500" inputmode="numeric"></div>
-        <div class="field"><label>החזרי הלוואות</label><input type="number" id="f_loans" placeholder="0" inputmode="numeric"></div>
+        <div class="field"><label><span class="tag tag-need">צורך</span>ביטוח רכב</label><input type="number" id="f_car_ins" placeholder="500" inputmode="numeric"></div>
+        <div class="field"><label><span class="tag tag-need">צורך</span>החזרי הלוואות</label><input type="number" id="f_loans" placeholder="0" inputmode="numeric"></div>
       </div>
       <div class="row">
-        <div class="field"><label>חינוך + חוגים</label><input type="number" id="f_education" placeholder="0" inputmode="numeric"></div>
-        <div class="field"><label>רכב / ליסינג</label><input type="number" id="f_leasing" placeholder="2,000" inputmode="numeric"></div>
+        <div class="field"><label><span class="tag tag-need">צורך</span>חינוך + חוגים</label><input type="number" id="f_education" placeholder="0" inputmode="numeric"></div>
+        <div class="field"><label><span class="tag tag-need">צורך</span>רכב / ליסינג</label><input type="number" id="f_leasing" placeholder="2,000" inputmode="numeric"></div>
       </div>
       <div class="field">
         <label>טסט + רישוי שנתי (חלק ל-12)</label>
@@ -174,20 +188,20 @@
 
       <div class="section-head">הוצאות משתנות</div>
       <div class="row">
-        <div class="field"><label>מכולת / סופר</label><input type="number" id="f_groceries" placeholder="2,500" inputmode="numeric"></div>
-        <div class="field"><label>מסעדות + Wolt</label><input type="number" id="f_dining" placeholder="1,200" inputmode="numeric"></div>
+        <div class="field"><label><span class="tag tag-need">צורך</span>מכולת / סופר</label><input type="number" id="f_groceries" placeholder="2,500" inputmode="numeric"></div>
+        <div class="field"><label><span class="tag tag-want">רצון</span>מסעדות + Wolt</label><input type="number" id="f_dining" placeholder="1,200" inputmode="numeric"></div>
       </div>
       <div class="row">
-        <div class="field"><label>קפה + מאפייה</label><input type="number" id="f_coffee" placeholder="500" inputmode="numeric"></div>
-        <div class="field"><label>דלק + חניה + כביש 6</label><input type="number" id="f_transport" placeholder="800" inputmode="numeric"></div>
+        <div class="field"><label><span class="tag tag-want">רצון</span>קפה + מאפייה</label><input type="number" id="f_coffee" placeholder="500" inputmode="numeric"></div>
+        <div class="field"><label><span class="tag tag-need">צורך</span>דלק + חניה + כביש 6</label><input type="number" id="f_transport" placeholder="800" inputmode="numeric"></div>
       </div>
       <div class="row">
-        <div class="field"><label>בריאות + שיניים</label><input type="number" id="f_health" placeholder="300" inputmode="numeric"></div>
-        <div class="field"><label>קניות + ביגוד</label><input type="number" id="f_shopping" placeholder="500" inputmode="numeric"></div>
+        <div class="field"><label><span class="tag tag-need">צורך</span>בריאות + שיניים</label><input type="number" id="f_health" placeholder="300" inputmode="numeric"></div>
+        <div class="field"><label><span class="tag tag-want">רצון</span>קניות + ביגוד</label><input type="number" id="f_shopping" placeholder="500" inputmode="numeric"></div>
       </div>
       <div class="row">
-        <div class="field"><label>בילויים + חופשות</label><input type="number" id="f_leisure" placeholder="800" inputmode="numeric"></div>
-        <div class="field"><label>ילדים / חיות</label><input type="number" id="f_kids" placeholder="0" inputmode="numeric"></div>
+        <div class="field"><label><span class="tag tag-want">רצון</span>בילויים + חופשות</label><input type="number" id="f_leisure" placeholder="800" inputmode="numeric"></div>
+        <div class="field"><label><span class="tag tag-need">צורך</span>ילדים / חיות</label><input type="number" id="f_kids" placeholder="0" inputmode="numeric"></div>
       </div>
 
       <div class="btn-row">
@@ -256,6 +270,38 @@
 </div>
 
 <script>
+// ── Dynamic income rows ──
+const INCOME_TYPES = ['פרילנס / עצמאי', 'שכירות / נדל"ן', 'פנסיה / קצבה', 'דיבידנדים / השקעות', 'עסק', 'אחר'];
+let incomeRowCount = 0;
+
+function addIncomeRow() {
+  incomeRowCount++;
+  const id = 'extra_' + incomeRowCount;
+  const row = document.createElement('div');
+  row.className = 'income-row';
+  row.id = 'row_' + id;
+  row.innerHTML = `
+    <select id="type_${id}">
+      ${INCOME_TYPES.map(t => `<option>${t}</option>`).join('')}
+    </select>
+    <input type="number" id="${id}" placeholder="₪0" inputmode="numeric" oninput="calcExtraIncome()">
+    <button type="button" class="del-btn" onclick="removeIncomeRow('row_${id}')">×</button>`;
+  document.getElementById('extraIncomeList').appendChild(row);
+}
+
+function removeIncomeRow(rowId) {
+  document.getElementById(rowId).remove();
+  calcExtraIncome();
+}
+
+function calcExtraIncome() {
+  let total = 0;
+  document.querySelectorAll('#extraIncomeList input[type=number]').forEach(inp => {
+    total += parseFloat(inp.value) || 0;
+  });
+  document.getElementById('f_income2').value = total;
+}
+
 const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI';
 
