@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>יום 1 - מיפוי פיננסי | המקפצה הפיננסית</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #D4A853; --gold-light: #E8C77A; --gold-dark: #B8892E; --gold-bg: #FBF3E1;
+    --warm-white: #FDF8F0; --cream: #F5EDE0; --cream-dark: #E6D5C3;
+    --white: #fff; --dark: #2C2419; --dark-mid: #5C4E3C;
+    --navy: #1A2744; --green: #2E7D52; --green-light: #E8F5EE;
+    --red: #C0392B; --red-light: #FDEEEC;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Heebo', sans-serif; background: var(--warm-white); color: var(--dark); direction: rtl; min-height: 100vh; }
+
+  /* Header */
+  .header { background: var(--navy); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
+  .header-logo { font-size: 16px; font-weight: 700; color: var(--gold); }
+  .header-badge { background: var(--gold-bg); color: var(--gold-dark); padding: 4px 14px; border-radius: 50px; font-size: 12px; font-weight: 600; }
+
+  /* Container */
+  .container { max-width: 520px; margin: 0 auto; padding: 20px 16px 40px; }
+
+  /* Progress */
+  .progress { display: flex; align-items: center; gap: 0; margin-bottom: 24px; padding: 0 8px; }
+  .prog-step { display: flex; flex-direction: column; align-items: center; flex: 1; }
+  .prog-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; border: 2px solid var(--cream-dark); background: var(--white); color: var(--dark-mid); transition: all .3s; }
+  .prog-dot.active { background: var(--gold); border-color: var(--gold-dark); color: white; box-shadow: 0 0 0 4px rgba(212,168,83,.2); }
+  .prog-dot.done { background: var(--green); border-color: var(--green); color: white; }
+  .prog-label { font-size: 10px; color: var(--dark-mid); margin-top: 4px; font-weight: 500; }
+  .prog-line { height: 2px; flex: 1; background: var(--cream-dark); max-width: 60px; margin-top: -16px; transition: background .3s; }
+  .prog-line.done { background: var(--green); }
+
+  /* Page */
+  .page { display: none; }
+  .page.active { display: block; animation: fadeIn .3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Card */
+  .card { background: var(--white); border: 1px solid var(--cream-dark); border-radius: 16px; padding: 24px 18px; margin-bottom: 16px; box-shadow: 0 2px 12px rgba(44,36,25,.06); }
+  .card h2 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+  .card .subtitle { font-size: 13px; color: var(--dark-mid); margin-bottom: 20px; }
+
+  /* Section header */
+  .section-head { font-size: 12px; font-weight: 700; color: var(--gold-dark); text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--cream); }
+  .section-head:first-of-type { margin-top: 0; }
+
+  /* Fields */
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: var(--dark); }
+  .field input, .field select {
+    width: 100%; padding: 12px 14px; border: 1.5px solid var(--cream-dark); border-radius: 10px;
+    font-family: 'Heebo'; font-size: 15px; color: var(--dark); background: var(--white);
+    transition: border-color .2s; min-height: 46px;
+  }
+  .field input:focus, .field select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,168,83,.1); }
+  .field input::placeholder { color: var(--cream-dark); }
+  .field .hint { font-size: 11px; color: var(--dark-mid); margin-top: 3px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .row-3 { grid-template-columns: 1fr 1fr 1fr; }
+  @media (max-width: 400px) { .row-3 { grid-template-columns: 1fr 1fr; } }
+
+  /* Buttons */
+  .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+  .btn { flex: 1; padding: 14px; border: none; border-radius: 50px; font-family: 'Heebo'; font-size: 15px; font-weight: 700; cursor: pointer; transition: transform .15s; min-height: 48px; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-next { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--navy); box-shadow: 0 4px 16px rgba(212,168,83,.3); }
+  .btn-back { background: var(--cream); color: var(--dark-mid); }
+  .btn-submit { background: linear-gradient(135deg, var(--green), #1B7A42); color: white; box-shadow: 0 4px 16px rgba(46,125,82,.3); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+  /* Thank you */
+  .thankyou { text-align: center; padding: 40px 20px; }
+  .thankyou .icon { font-size: 64px; margin-bottom: 16px; }
+  .thankyou h2 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+  .thankyou p { font-size: 15px; color: var(--dark-mid); line-height: 1.6; }
+  .thankyou .highlight { background: var(--gold-bg); border-radius: 12px; padding: 16px; margin-top: 20px; font-size: 14px; font-weight: 600; color: var(--gold-dark); }
+
+  /* Error */
+  .error-msg { background: var(--red-light); color: var(--red); padding: 10px 14px; border-radius: 10px; font-size: 13px; margin-top: 10px; display: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">המקפצה הפיננסית</div>
+  <div class="header-badge">יום 1 מתוך 4</div>
+</div>
+
+<div class="container">
+
+  <!-- Progress -->
+  <div class="progress">
+    <div class="prog-step"><div class="prog-dot active" id="pd-1">1</div><div class="prog-label">פרטים</div></div>
+    <div class="prog-line" id="pl-1"></div>
+    <div class="prog-step"><div class="prog-dot" id="pd-2">2</div><div class="prog-label">הוצאות</div></div>
+    <div class="prog-line" id="pl-2"></div>
+    <div class="prog-step"><div class="prog-dot" id="pd-3">3</div><div class="prog-label">חסכונות</div></div>
+  </div>
+
+  <!-- ═══ PAGE 1: פרטים + הכנסות ═══ -->
+  <div class="page active" id="page-1">
+    <div class="card">
+      <h2>קצת עליך</h2>
+      <div class="subtitle">30 שניות - פרטים בסיסיים והכנסות</div>
+
+      <div class="field">
+        <label>שם פרטי</label>
+        <input type="text" id="f_name" placeholder="איך קוראים לך ?" required>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>גיל</label>
+          <input type="number" id="f_age" placeholder="32" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label>סוג תעסוקה</label>
+          <select id="f_job">
+            <option value="employee">שכיר</option>
+            <option value="self_employed">עצמאי</option>
+            <option value="hybrid">היברידי</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-head">הכנסות</div>
+      <div class="field">
+        <label>הכנסה חודשית נטו (₪)</label>
+        <input type="number" id="f_income" placeholder="15,000" inputmode="numeric" required>
+        <div class="hint">הסכום שנכנס לחשבון אחרי מס</div>
+      </div>
+      <div class="field">
+        <label>הכנסה נוספת - פרילנס, שכירות, דיבידנדים (₪)</label>
+        <input type="number" id="f_income2" placeholder="0" inputmode="numeric">
+        <div class="hint">אם אין, תשאיר 0</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-next" onclick="goPage(2)">המשך ←</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE 2: הוצאות ═══ -->
+  <div class="page" id="page-2">
+    <div class="card">
+      <h2>ההוצאות שלך</h2>
+      <div class="subtitle">90 שניות - מה שאתה לא רוצה לדעת אז תדע (₪ לחודש)</div>
+
+      <div class="section-head">הוצאות קבועות</div>
+      <div class="row">
+        <div class="field"><label>שכ"ד / משכנתא</label><input type="number" id="f_rent" placeholder="5,500" inputmode="numeric"></div>
+        <div class="field"><label>ארנונה + ועד בית</label><input type="number" id="f_arnona" placeholder="600" inputmode="numeric"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>מים + גז + חשמל</label><input type="number" id="f_utilities" placeholder="700" inputmode="numeric"></div>
+        <div class="field"><label>טלפון + נט + סטרימינג</label><input type="number" id="f_telecom" placeholder="400" inputmode="numeric"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>ביטוח רכב</label><input type="number" id="f_car_ins" placeholder="500" inputmode="numeric"></div>
+        <div class="field"><label>החזרי הלוואות</label><input type="number" id="f_loans" placeholder="0" inputmode="numeric"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>חינוך + חוגים</label><input type="number" id="f_education" placeholder="0" inputmode="numeric"></div>
+        <div class="field"><label>רכב / ליסינג</label><input type="number" id="f_leasing" placeholder="2,000" inputmode="numeric"></div>
+      </div>
+      <div class="field">
+        <label>טסט + רישוי שנתי (חלק ל-12)</label>
+        <input type="number" id="f_test" placeholder="100" inputmode="numeric">
+      </div>
+
+      <div class="section-head">הוצאות משתנות</div>
+      <div class="row">
+        <div class="field"><label>מכולת / סופר</label><input type="number" id="f_groceries" placeholder="2,500" inputmode="numeric"></div>
+        <div class="field"><label>מסעדות + Wolt</label><input type="number" id="f_dining" placeholder="1,200" inputmode="numeric"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>קפה + מאפייה</label><input type="number" id="f_coffee" placeholder="500" inputmode="numeric"></div>
+        <div class="field"><label>דלק + חניה + כביש 6</label><input type="number" id="f_transport" placeholder="800" inputmode="numeric"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>בריאות + שיניים</label><input type="number" id="f_health" placeholder="300" inputmode="numeric"></div>
+        <div class="field"><label>קניות + ביגוד</label><input type="number" id="f_shopping" placeholder="500" inputmode="numeric"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>בילויים + חופשות</label><input type="number" id="f_leisure" placeholder="800" inputmode="numeric"></div>
+        <div class="field"><label>ילדים / חיות</label><input type="number" id="f_kids" placeholder="0" inputmode="numeric"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-back" onclick="goPage(1)">→ חזרה</button>
+        <button class="btn btn-next" onclick="goPage(3)">המשך ←</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE 3: חסכונות + קשר ═══ -->
+  <div class="page" id="page-3">
+    <div class="card">
+      <h2>חסכונות ופרטי קשר</h2>
+      <div class="subtitle">60 שניות - כמעט סיימנו</div>
+
+      <div class="section-head">הפקדות וחסכונות (₪ לחודש)</div>
+      <div class="row">
+        <div class="field"><label>פנסיה מעבר לחובה</label><input type="number" id="f_pension" placeholder="0" inputmode="numeric"></div>
+        <div class="field"><label>קרן השתלמות עצמית</label><input type="number" id="f_keren" placeholder="0" inputmode="numeric"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>גמל להשקעה</label><input type="number" id="f_gemel" placeholder="0" inputmode="numeric"></div>
+        <div class="field"><label>חיסכון לילד</label><input type="number" id="f_child_save" placeholder="0" inputmode="numeric"></div>
+      </div>
+      <div class="field">
+        <label>חיסכון כללי / רשת ביטחון</label>
+        <input type="number" id="f_save_gen" placeholder="0" inputmode="numeric">
+      </div>
+
+      <div class="section-head">הוצאות שנתיות (חודשי)</div>
+      <div class="row-3 row">
+        <div class="field"><label>ביטוחים שנתיים</label><input type="number" id="f_annual_ins" placeholder="400" inputmode="numeric"></div>
+        <div class="field"><label>בלת"מ / חירום</label><input type="number" id="f_emergency" placeholder="300" inputmode="numeric"></div>
+        <div class="field"><label>מנויים שנתיים</label><input type="number" id="f_subs" placeholder="200" inputmode="numeric"></div>
+      </div>
+
+      <div class="section-head">פרטי קשר</div>
+      <div class="field">
+        <label>כתובת מייל</label>
+        <input type="email" id="f_email" placeholder="name@email.com">
+      </div>
+      <div class="field">
+        <label>טלפון (לקבלת הניתוח)</label>
+        <input type="tel" id="f_phone" placeholder="050-1234567" inputmode="tel">
+      </div>
+
+      <div class="error-msg" id="errorMsg"></div>
+
+      <div class="btn-row">
+        <button class="btn btn-back" onclick="goPage(2)">→ חזרה</button>
+        <button class="btn btn-submit" id="submitBtn" onclick="submitForm()">שלח ←</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ THANK YOU ═══ -->
+  <div class="page" id="page-done">
+    <div class="card thankyou">
+      <div class="icon">🎉</div>
+      <h2>הנתונים התקבלו!</h2>
+      <p>מחר בבוקר תקבל את הניתוח האישי שלך עם תובנות, השוואות, וצעד ראשון לשינוי.</p>
+      <div class="highlight">מחר ביום 2 תגלה: איפה הכסף שלך נעלם, כמה זה עולה לך בשנה, ומה הצעד הכי קל לחיסכון מיידי.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI';
+
+let currentPage = 1;
+
+function goPage(n) {
+  // Validate page 1
+  if (n > 1 && currentPage === 1) {
+    if (!document.getElementById('f_name').value.trim()) {
+      document.getElementById('f_name').focus();
+      return;
+    }
+    if (!document.getElementById('f_income').value) {
+      document.getElementById('f_income').focus();
+      return;
+    }
+  }
+
+  document.getElementById('page-' + currentPage).classList.remove('active');
+  document.getElementById('page-' + n).classList.add('active');
+
+  // Update progress dots
+  for (let i = 1; i <= 3; i++) {
+    const dot = document.getElementById('pd-' + i);
+    const line = document.getElementById('pl-' + i);
+    dot.classList.remove('active', 'done');
+    if (line) line.classList.remove('done');
+    if (i < n) { dot.classList.add('done'); dot.textContent = '✓'; if (line) line.classList.add('done'); }
+    else if (i === n) { dot.classList.add('active'); dot.textContent = i; }
+    else { dot.textContent = i; }
+  }
+
+  currentPage = n;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function gv(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+async function submitForm() {
+  const btn = document.getElementById('submitBtn');
+  const err = document.getElementById('errorMsg');
+  btn.disabled = true;
+  btn.textContent = 'שולח...';
+  err.style.display = 'none';
+
+  const row = {
+    name: document.getElementById('f_name').value.trim(),
+    age: gv('f_age'),
+    job_type: document.getElementById('f_job').value,
+    income: gv('f_income'),
+    income_extra: gv('f_income2'),
+    email: document.getElementById('f_email').value.trim(),
+    phone: document.getElementById('f_phone').value.trim(),
+    rent: gv('f_rent'), arnona: gv('f_arnona'), utilities: gv('f_utilities'),
+    telecom: gv('f_telecom'), car_insurance: gv('f_car_ins'), loans: gv('f_loans'),
+    education: gv('f_education'), leasing: gv('f_leasing'), test_annual: gv('f_test'),
+    groceries: gv('f_groceries'), dining: gv('f_dining'), coffee: gv('f_coffee'),
+    transport: gv('f_transport'), health: gv('f_health'), shopping: gv('f_shopping'),
+    leisure: gv('f_leisure'), kids: gv('f_kids'),
+    pension_extra: gv('f_pension'), keren_hishtalmut: gv('f_keren'),
+    gemel_invest: gv('f_gemel'), child_savings: gv('f_child_save'),
+    general_savings: gv('f_save_gen'),
+    annual_insurance: gv('f_annual_ins'), emergency_fund: gv('f_emergency'),
+    annual_subs: gv('f_subs'),
+  };
+
+  try {
+    const res = await fetch(`${SUPA_URL}/rest/v1/challenge_participants`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPA_KEY,
+        'Authorization': `Bearer ${SUPA_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation',
+      },
+      body: JSON.stringify(row),
+    });
+
+    if (!res.ok) throw new Error('שגיאה בשמירה');
+
+    const data = await res.json();
+    const pid = data[0]?.id;
+    if (pid) {
+      localStorage.setItem('challenge_pid', pid);
+    }
+
+    // Show thank you
+    document.getElementById('page-' + currentPage).classList.remove('active');
+    document.getElementById('page-done').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  } catch (e) {
+    err.textContent = 'שגיאה: ' + e.message + '. תנסה שוב.';
+    err.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'שלח ←';
+  }
+}
+</script>
+</body>
+</html>

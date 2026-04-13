@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>אדמין - המקפצה הפיננסית</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #D4A853; --gold-dark: #B8892E; --gold-bg: #FBF3E1;
+    --warm-white: #FDF8F0; --cream: #F5EDE0; --cream-dark: #E6D5C3;
+    --white: #fff; --dark: #2C2419; --dark-mid: #5C4E3C;
+    --navy: #1A2744; --green: #2E7D52; --green-light: #E8F5EE;
+    --red: #C0392B; --red-light: #FDEEEC; --blue: #2E6B9E;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Heebo', sans-serif; background: var(--warm-white); color: var(--dark); direction: rtl; }
+
+  .header { background: var(--navy); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
+  .header h1 { font-size: 16px; font-weight: 700; color: var(--gold); }
+  .header-actions { display: flex; gap: 8px; }
+  .btn { padding: 8px 18px; border: none; border-radius: 50px; font-family: 'Heebo'; font-size: 13px; font-weight: 600; cursor: pointer; transition: transform .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--navy); }
+  .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,.3); color: white; }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 20px 16px; }
+
+  /* Stats bar */
+  .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  @media (max-width: 600px) { .stats-bar { grid-template-columns: 1fr 1fr; } }
+  .stat-box { background: var(--white); border: 1px solid var(--cream-dark); border-radius: 12px; padding: 16px; text-align: center; }
+  .stat-box .num { font-size: 28px; font-weight: 900; }
+  .stat-box .lbl { font-size: 11px; color: var(--dark-mid); margin-top: 2px; }
+
+  /* Table */
+  .table-wrap { background: var(--white); border: 1px solid var(--cream-dark); border-radius: 12px; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 800px; }
+  thead { background: var(--cream); }
+  th { padding: 12px 10px; font-weight: 700; font-size: 11px; color: var(--dark-mid); text-transform: uppercase; letter-spacing: .5px; text-align: right; white-space: nowrap; }
+  td { padding: 10px; border-top: 1px solid var(--cream); vertical-align: middle; }
+  tr:hover td { background: var(--gold-bg); }
+  .balance-pos { color: var(--green); font-weight: 700; }
+  .balance-neg { color: var(--red); font-weight: 700; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 50px; font-size: 11px; font-weight: 600; }
+  .badge-sent { background: var(--green-light); color: var(--green); }
+  .badge-pending { background: var(--gold-bg); color: var(--gold-dark); }
+  .btn-sm { padding: 4px 12px; font-size: 11px; border-radius: 50px; border: 1px solid var(--cream-dark); background: var(--white); cursor: pointer; font-family: 'Heebo'; font-weight: 600; }
+  .btn-sm:hover { background: var(--cream); }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--dark-mid); }
+  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+  .loading { text-align: center; padding: 40px; color: var(--dark-mid); }
+
+  /* Unlock bar */
+  .unlock-bar { background: var(--white); border: 1px solid var(--cream-dark); border-radius: 12px; padding: 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  .unlock-bar .label { font-size: 14px; font-weight: 600; }
+  .unlock-bar .days { display: flex; gap: 6px; }
+  .day-btn { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; border: 2px solid var(--cream-dark); background: var(--white); cursor: pointer; transition: all .2s; font-family: 'Heebo'; }
+  .day-btn.active { background: var(--gold); border-color: var(--gold-dark); color: white; }
+  .day-btn:hover { border-color: var(--gold); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>אדמין - המקפצה הפיננסית</h1>
+  <div class="header-actions">
+    <button class="btn btn-outline" onclick="loadParticipants()">רענן</button>
+    <button class="btn btn-gold" onclick="exportCSV()">ייצוא CSV</button>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Unlock control -->
+  <div class="unlock-bar">
+    <div class="label">שחרור ימים למשתתפים:</div>
+    <div class="days">
+      <button class="day-btn" id="ubtn-1" onclick="setUnlock(1)">1</button>
+      <button class="day-btn" id="ubtn-2" onclick="setUnlock(2)">2</button>
+      <button class="day-btn" id="ubtn-3" onclick="setUnlock(3)">3</button>
+      <button class="day-btn" id="ubtn-4" onclick="setUnlock(4)">4</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-box"><div class="num" id="s-total">-</div><div class="lbl">משתתפים</div></div>
+    <div class="stat-box"><div class="num" id="s-surplus" style="color:var(--green)">-</div><div class="lbl">עודף חודשי</div></div>
+    <div class="stat-box"><div class="num" id="s-deficit" style="color:var(--red)">-</div><div class="lbl">גירעון חודשי</div></div>
+    <div class="stat-box"><div class="num" id="s-nosave" style="color:var(--gold-dark)">-</div><div class="lbl">ללא חיסכון</div></div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <div class="loading" id="loadingMsg">טוען משתתפים...</div>
+    <table id="participantsTable" style="display:none">
+      <thead>
+        <tr>
+          <th>שם</th>
+          <th>גיל</th>
+          <th>הכנסה</th>
+          <th>הוצאות</th>
+          <th>חסכונות</th>
+          <th>יתרה</th>
+          <th>ניתוח</th>
+          <th>תאריך</th>
+          <th>פעולות</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <div class="empty-state" id="emptyState" style="display:none">
+      <div class="icon">📋</div>
+      <div>אין משתתפים עדיין. ברגע שמישהו ימלא את השאלון ב-Fillout, הוא יופיע כאן.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI';
+
+function fmt(n) { return '₪' + Math.round(n || 0).toLocaleString('he-IL'); }
+function fmtDate(d) { if (!d) return '-'; const dt = new Date(d); return dt.toLocaleDateString('he-IL'); }
+
+// Unlock buttons
+const currentUnlock = parseInt(localStorage.getItem('challenge_unlock') || '1');
+function setUnlock(level) {
+  localStorage.setItem('challenge_unlock', String(level));
+  for (let i = 1; i <= 4; i++) {
+    document.getElementById('ubtn-' + i).classList.toggle('active', i <= level);
+  }
+}
+setUnlock(currentUnlock);
+
+async function loadParticipants() {
+  document.getElementById('loadingMsg').style.display = 'block';
+  document.getElementById('participantsTable').style.display = 'none';
+  document.getElementById('emptyState').style.display = 'none';
+
+  const res = await fetch(`${SUPA_URL}/rest/v1/challenge_participants?select=*&order=created_at.desc`, {
+    headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` }
+  });
+  const rows = await res.json();
+
+  document.getElementById('loadingMsg').style.display = 'none';
+
+  if (!rows.length) {
+    document.getElementById('emptyState').style.display = 'block';
+    return;
+  }
+
+  // Stats
+  document.getElementById('s-total').textContent = rows.length;
+  document.getElementById('s-surplus').textContent = rows.filter(r => r.balance >= 0).length;
+  document.getElementById('s-deficit').textContent = rows.filter(r => r.balance < 0).length;
+  document.getElementById('s-nosave').textContent = rows.filter(r => r.total_savings === 0).length;
+
+  // Table
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+
+  rows.forEach(r => {
+    const totalExp = (r.total_fixed || 0) + (r.total_variable || 0) + (r.total_annual || 0);
+    const balClass = r.balance >= 0 ? 'balance-pos' : 'balance-neg';
+    const sentBadge = r.analysis_sent
+      ? '<span class="badge badge-sent">נשלח</span>'
+      : '<span class="badge badge-pending">ממתין</span>';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${r.name || '-'}</strong></td>
+      <td>${r.age || '-'}</td>
+      <td>${fmt(r.income)}</td>
+      <td>${fmt(totalExp)}</td>
+      <td>${fmt(r.total_savings)}</td>
+      <td class="${balClass}">${fmt(r.balance)}</td>
+      <td>${sentBadge}</td>
+      <td>${fmtDate(r.created_at)}</td>
+      <td>
+        <button class="btn-sm" onclick="window.open('challenge_day2.html?pid=${r.id}')">צפה</button>
+        <button class="btn-sm" onclick="copyLink('${r.id}')">העתק לינק</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('participantsTable').style.display = 'table';
+}
+
+function copyLink(pid) {
+  const url = window.location.origin + '/outputs/challenge_day2.html?pid=' + pid;
+  navigator.clipboard.writeText(url).then(() => alert('הלינק הועתק!')).catch(() => {
+    prompt('העתק:', url);
+  });
+}
+
+function exportCSV() {
+  fetch(`${SUPA_URL}/rest/v1/challenge_participants?select=*&order=created_at.desc`, {
+    headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}`, 'Accept': 'text/csv' }
+  }).then(r => r.text()).then(csv => {
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'challenge_participants.csv';
+    a.click();
+  });
+}
+
+loadParticipants();
+</script>
+</body>
+</html>

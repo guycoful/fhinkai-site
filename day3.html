@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>יום 3 - הגדלת ההכנסה | המקפצה הפיננסית</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #D4A853; --gold-light: #E8C77A; --gold-dark: #B8892E; --gold-bg: #FBF3E1;
+    --warm-white: #FDF8F0; --cream: #F5EDE0; --cream-dark: #E6D5C3;
+    --white: #ffffff; --dark: #2C2419; --dark-mid: #5C4E3C;
+    --navy: #1A2744; --green: #2E7D52; --green-light: #E8F5EE; --green-text: #1B5E3B;
+    --red: #C0392B; --red-light: #FDEEEC; --red-text: #922B21;
+    --blue: #2E6B9E; --blue-light: #EBF3FA;
+    --purple: #6B3FA0; --purple-light: #F3ECFF;
+    --orange: #C87A1A; --orange-light: #FFF3E0;
+    --radius: 16px; --shadow: 0 2px 12px rgba(44,36,25,.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Heebo', sans-serif; background: var(--warm-white); color: var(--dark); direction: rtl; min-height: 100vh; line-height: 1.6; }
+
+  .header { background: var(--navy); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+  .header-logo { font-size: 16px; font-weight: 700; color: var(--gold); }
+  .header-badge { background: var(--gold-bg); color: var(--gold-dark); padding: 4px 14px; border-radius: 50px; font-size: 12px; font-weight: 600; }
+
+  .container { max-width: 600px; margin: 0 auto; padding: 20px 16px 40px; }
+
+  .welcome { text-align: center; padding: 28px 16px 24px; background: linear-gradient(180deg, var(--cream) 0%, var(--warm-white) 100%); margin: -20px -16px 20px; }
+  .welcome h1 { font-size: clamp(22px, 5vw, 28px); font-weight: 800; margin-bottom: 6px; }
+  .welcome h1 span { color: var(--gold-dark); }
+  .welcome p { font-size: 14px; color: var(--dark-mid); max-width: 380px; margin: 0 auto; }
+
+  .card { background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius); padding: 20px 16px; margin-bottom: 14px; box-shadow: var(--shadow); }
+  .card h3 { font-size: 15px; font-weight: 700; margin-bottom: 14px; }
+
+  /* Form */
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--dark-mid); }
+  .form-group input, .form-group select {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--cream-dark); border-radius: 10px;
+    font-family: Heebo; font-size: 14px; color: var(--dark); background: var(--white); outline: none;
+    transition: border-color .2s;
+  }
+  .form-group input:focus, .form-group select:focus { border-color: var(--gold); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .submit-btn {
+    width: 100%; margin-top: 8px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: var(--navy); border: none; padding: 14px;
+    border-radius: 50px; font-family: Heebo; font-size: 15px; font-weight: 800; cursor: pointer;
+  }
+
+  /* Hero gap */
+  .hero-gap { background: var(--white); border: 2px solid var(--gold); border-radius: var(--radius); padding: 28px 20px; text-align: center; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(212,168,83,.12); }
+  .hero-label { font-size: 13px; color: var(--dark-mid); margin-bottom: 6px; }
+  .hero-amount { font-size: clamp(36px, 9vw, 52px); font-weight: 900; line-height: 1; margin-bottom: 8px; }
+  .hero-amount.gap { color: var(--orange); }
+  .hero-amount.ok { color: var(--green); }
+  .hero-tag { display: inline-block; font-size: 13px; font-weight: 600; padding: 4px 16px; border-radius: 50px; }
+  .hero-tag.gap { background: var(--orange-light); color: var(--orange); }
+  .hero-tag.ok { background: var(--green-light); color: var(--green-text); }
+
+  /* Stats */
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .stat { background: var(--white); border: 1px solid var(--cream-dark); border-radius: 12px; padding: 14px 12px; text-align: center; box-shadow: var(--shadow); }
+  .stat-label { font-size: 11px; color: var(--dark-mid); margin-bottom: 2px; }
+  .stat-val { font-size: clamp(16px, 4vw, 20px); font-weight: 800; }
+  .stat-sub { font-size: 10px; color: var(--dark-mid); margin-top: 1px; }
+
+  /* Path cards */
+  .path { padding: 16px; margin-bottom: 10px; border-radius: 12px; border: 1px solid var(--cream-dark); cursor: pointer; transition: all .2s; }
+  .path:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+  .path.nego { border-right: 4px solid var(--blue); background: var(--blue-light); }
+  .path.side { border-right: 4px solid var(--purple); background: var(--purple-light); }
+  .path.skill { border-right: 4px solid var(--green); background: var(--green-light); }
+  .path-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .path-title { font-size: 14px; font-weight: 700; }
+  .path-gain { font-size: 13px; font-weight: 800; }
+  .path.nego .path-gain { color: var(--blue); }
+  .path.side .path-gain { color: var(--purple); }
+  .path.skill .path-gain { color: var(--green-text); }
+  .path-desc { font-size: 12px; color: var(--dark-mid); line-height: 1.5; }
+  .path-timeline { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 50px; margin-top: 6px; font-weight: 600; }
+  .path.nego .path-timeline { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue); }
+  .path.side .path-timeline { background: var(--purple-light); color: var(--purple); border: 1px solid var(--purple); }
+  .path.skill .path-timeline { background: var(--green-light); color: var(--green-text); border: 1px solid var(--green); }
+
+  /* Commit */
+  .commit-area { margin-top: 14px; padding: 16px; background: var(--gold-bg); border-radius: 12px; border: 1px solid var(--gold); }
+  .commit-area h4 { font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+  .path-select { display: flex; flex-direction: column; gap: 8px; }
+  .path-option { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--white); border-radius: 10px; border: 2px solid var(--cream-dark); cursor: pointer; font-size: 13px; font-weight: 600; transition: all .2s; }
+  .path-option.selected { border-color: var(--gold-dark); background: var(--gold-bg); }
+  .path-option input[type=radio] { accent-color: var(--gold-dark); }
+  .commit-btn { width: 100%; margin-top: 12px; background: linear-gradient(135deg, var(--navy), #2a3f6f); color: var(--gold); border: none; padding: 14px; border-radius: 50px; font-family: Heebo; font-size: 15px; font-weight: 800; cursor: pointer; }
+  .commit-done { text-align: center; padding: 16px; background: var(--green-light); border-radius: 12px; font-size: 14px; color: var(--green-text); font-weight: 600; margin-top: 12px; display: none; }
+
+  /* CTA */
+  .cta-card { background: linear-gradient(135deg, var(--navy), #2a3f6f); border-radius: var(--radius); padding: 28px 20px; text-align: center; color: var(--white); margin-top: 8px; }
+  .cta-card h3 { font-size: 20px; font-weight: 800; color: var(--gold); margin-bottom: 8px; }
+  .cta-card p { font-size: 14px; opacity: .85; margin-bottom: 20px; }
+  .cta-btn { display: inline-block; background: var(--gold); color: var(--navy); padding: 14px 32px; border-radius: 50px; font-size: 15px; font-weight: 800; text-decoration: none; }
+
+  #results { display: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">💰 המקפצה הפיננסית</div>
+  <div class="header-badge">יום 3 - הגדלת הכנסה</div>
+</div>
+
+<div class="container">
+  <div class="welcome">
+    <h1>ביום 2 ראית לאן <span>הכסף הולך</span></h1>
+    <p>היום נבדוק אם אתה מרוויח מה שמגיע לך, ואיך לשנות את זה</p>
+  </div>
+
+  <!-- Input form -->
+  <div class="card" id="formCard">
+    <h3>📋 קצת עלייך</h3>
+    <div class="form-group">
+      <label>שם (להתאמה אישית)</label>
+      <input type="text" id="f_name" placeholder="גיא" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>תחום עיסוק</label>
+        <select id="f_field">
+          <option value="">בחר...</option>
+          <option value="tech">הייטק / פיתוח</option>
+          <option value="finance">פיננסים / ביטוח</option>
+          <option value="marketing">שיווק / פרסום</option>
+          <option value="sales">מכירות</option>
+          <option value="hr">HR / משאבי אנוש</option>
+          <option value="ops">תפעול / לוגיסטיקה</option>
+          <option value="education">חינוך / הדרכה</option>
+          <option value="health">בריאות / רפואה</option>
+          <option value="retail">קמעונאות / שירות</option>
+          <option value="other">אחר</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>שנות ניסיון</label>
+        <select id="f_exp">
+          <option value="1">0-2 שנים</option>
+          <option value="2">3-5 שנים</option>
+          <option value="3" selected>6-10 שנים</option>
+          <option value="4">10+ שנים</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>שכר ברוטו (₪)</label>
+        <input type="number" id="f_salary" placeholder="12000" />
+      </div>
+      <div class="form-group">
+        <label>יעד שכר חלומי (₪)</label>
+        <input type="number" id="f_target" placeholder="18000" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>האם יש לך הכנסה נוספת ?</label>
+      <select id="f_side">
+        <option value="none">לא</option>
+        <option value="freelance">פרילנס / עצמאי</option>
+        <option value="business">עסק קטן</option>
+        <option value="invest">השקעות / נדל"ן</option>
+      </select>
+    </div>
+    <button class="submit-btn" onclick="runAnalysis()">🚀 נחשב את הפוטנציאל שלי</button>
+  </div>
+
+  <!-- Results -->
+  <div id="results">
+    <div class="hero-gap" id="heroGap"></div>
+    <div class="stats" id="statsGrid"></div>
+
+    <div class="card" id="pathsCard"></div>
+
+    <div class="card" id="commitCard">
+      <h3>🎯 מה אתה בוחר להתמקד בו ?</h3>
+      <div class="path-select" id="pathOptions"></div>
+      <button class="commit-btn" onclick="commitPath()">✅ אני בוחר בנתיב הזה</button>
+      <div class="commit-done" id="commitDone"></div>
+    </div>
+
+    <div class="cta-card">
+      <h3>מוכן ליום 4 ?</h3>
+      <p>נבדוק את הפנסיה שלך - הסכום שאתה לא רואה אבל הכי חשוב לעתיד שלך</p>
+      <a class="cta-btn" href="index.html">חזרה למסלול ←</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function fmt(n) { return '₪' + Math.round(n).toLocaleString('he-IL'); }
+
+// Market benchmarks by field + experience (median gross monthly, Israel 2024-2025)
+const MARKET = {
+  tech:     [10000, 17000, 25000, 35000],
+  finance:  [8000,  13000, 18000, 25000],
+  marketing:[7000,  11000, 15000, 20000],
+  sales:    [8000,  13000, 18000, 24000],
+  hr:       [7000,  11000, 14000, 18000],
+  ops:      [6500,  10000, 13000, 17000],
+  education:[6000,   9000, 12000, 15000],
+  health:   [8000,  13000, 18000, 26000],
+  retail:   [6000,   8500, 11000, 14000],
+  other:    [7000,  11000, 15000, 20000],
+};
+
+const FIELD_LABELS = {
+  tech:'הייטק/פיתוח', finance:'פיננסים/ביטוח', marketing:'שיווק/פרסום',
+  sales:'מכירות', hr:'HR', ops:'תפעול', education:'חינוך', health:'בריאות',
+  retail:'קמעונאות', other:'אחר'
+};
+
+function gv(id) { return document.getElementById(id).value; }
+function gn(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+function runAnalysis() {
+  const name    = gv('f_name') || 'משתתף';
+  const field   = gv('f_field') || 'other';
+  const expIdx  = parseInt(gv('f_exp')) - 1;
+  const salary  = gn('f_salary');
+  const target  = gn('f_target');
+  const side    = gv('f_side');
+
+  if (!salary) { alert('תמלא שכר נוכחי'); return; }
+
+  const marketMedian = MARKET[field][expIdx];
+  const gap = marketMedian - salary;
+  const hasGap = gap > 0;
+  const gapPct = marketMedian > 0 ? Math.round(gap / marketMedian * 100) : 0;
+
+  // Hero
+  document.getElementById('heroGap').innerHTML = hasGap
+    ? `<div class="hero-label">אתה מרוויח <strong>${gapPct}% פחות</strong> מהממוצע בשוק</div>
+       <div class="hero-amount gap">${fmt(gap)}/חודש</div>
+       <div class="hero-tag gap">פוטנציאל נסתר: ${fmt(gap * 12)}/שנה</div>`
+    : `<div class="hero-label">שכרך תואם את השוק ב${FIELD_LABELS[field]}</div>
+       <div class="hero-amount ok">${fmt(salary)}</div>
+       <div class="hero-tag ok">✓ שכר תחרותי - הפוטנציאל בצמיחה</div>`;
+
+  // Stats
+  const netoApprox = salary * 0.72;
+  const targetGap = target > salary ? target - salary : 0;
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat"><div class="stat-label">שכרך הנוכחי</div><div class="stat-val" style="color:var(--blue)">${fmt(salary)}</div><div class="stat-sub">נטו: ~${fmt(netoApprox)}</div></div>
+    <div class="stat"><div class="stat-label">ממוצע שוק (${FIELD_LABELS[field]})</div><div class="stat-val" style="color:var(--orange)">${fmt(marketMedian)}</div><div class="stat-sub">ניסיון ${['0-2','3-5','6-10','10+'][expIdx]} שנים</div></div>
+    ${target > 0 ? `<div class="stat"><div class="stat-label">היעד שלך</div><div class="stat-val" style="color:var(--purple)">${fmt(target)}</div><div class="stat-sub">פער: ${fmt(targetGap)}/חודש</div></div>` : ''}
+    <div class="stat"><div class="stat-label">פוטנציאל שנתי</div><div class="stat-val" style="color:var(--green)">${fmt((hasGap ? gap : targetGap || salary * 0.2) * 12)}</div><div class="stat-sub">אם תנצל את הפוטנציאל</div></div>`;
+
+  // Paths
+  const negoGain = hasGap ? Math.round(gap * 0.6) : Math.round(salary * 0.12);
+  const sideGain = side === 'none' ? 3000 : 6000;
+  const skillGain = hasGap ? Math.round(gap * 0.4) : Math.round(salary * 0.18);
+
+  const negoTips = hasGap
+    ? `פער של ${fmt(gap)}/חודש מול שוק - יש לך כלים לדרוש העלאה. ${gapPct}% מתחת לממוצע זה עניין לדיון.`
+    : 'שכרך תחרותי, אבל שינוי חברה ממוצעת מביא 15-25% העלאה. עדיף מו"מ מתוך בחירה.';
+
+  let paths = `<h3>🗺️ 3 נתיבים להגדלת הכנסה</h3>`;
+  paths += `
+    <div class="path nego">
+      <div class="path-head">
+        <div class="path-title">💼 מו"מ שכר / שינוי חברה</div>
+        <div class="path-gain">+${fmt(negoGain)}/חודש</div>
+      </div>
+      <div class="path-desc">${negoTips}</div>
+      <div class="path-timeline">⏱ 1-3 חודשים</div>
+    </div>
+    <div class="path side">
+      <div class="path-head">
+        <div class="path-title">🚀 הכנסה נוספת / פרילנס</div>
+        <div class="path-gain">+${fmt(sideGain)}/חודש</div>
+      </div>
+      <div class="path-desc">${side === 'none'
+        ? '3,000 ₪/חודש = 15 שעות פרילנס ב-200 ₪/שעה. ממוצע ריאלי להתחלה ב-6-8 חודשים.'
+        : 'כבר יש לך הכנסה נוספת! הכפלה עם כלים נכונים היא המטרה. AI יכול לחסוך לך 10 שעות בשבוע.'}</div>
+      <div class="path-timeline">⏱ 3-6 חודשים</div>
+    </div>
+    <div class="path skill">
+      <div class="path-head">
+        <div class="path-title">📚 שדרוג מקצועי / הסמכה</div>
+        <div class="path-gain">+${fmt(skillGain)}/חודש</div>
+      </div>
+      <div class="path-desc">השקעה בכישורים מובילים להעלאה של 15-25%. קורס AI/Data ב-${FIELD_LABELS[field]} מחזיר השקעה תוך 2-4 חודשים.</div>
+      <div class="path-timeline">⏱ 3-12 חודשים</div>
+    </div>`;
+  document.getElementById('pathsCard').innerHTML = paths;
+
+  // Path selector
+  let opts = '';
+  opts += `<div class="path-option" id="po_nego" onclick="selectPath('nego')"><input type="radio" name="path" value="nego"> 💼 מו"מ שכר / שינוי חברה (+${fmt(negoGain)}/חודש)</div>`;
+  opts += `<div class="path-option" id="po_side" onclick="selectPath('side')"><input type="radio" name="path" value="side"> 🚀 הכנסה נוספת / פרילנס (+${fmt(sideGain)}/חודש)</div>`;
+  opts += `<div class="path-option" id="po_skill" onclick="selectPath('skill')"><input type="radio" name="path" value="skill"> 📚 שדרוג מקצועי (+${fmt(skillGain)}/חודש)</div>`;
+  document.getElementById('pathOptions').innerHTML = opts;
+  window._gains = {nego: negoGain, side: sideGain, skill: skillGain};
+  window._name = name;
+
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('formCard').style.display = 'none';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function selectPath(p) {
+  document.querySelectorAll('.path-option').forEach(el => el.classList.remove('selected'));
+  document.getElementById('po_'+p).classList.add('selected');
+  document.getElementById('po_'+p).querySelector('input').checked = true;
+  window._selectedPath = p;
+}
+
+function commitPath() {
+  const p = window._selectedPath;
+  if (!p) { alert('תבחר נתיב'); return; }
+  const labels = {nego: 'מו"מ שכר', side: 'הכנסה נוספת', skill: 'שדרוג מקצועי'};
+  const gain = window._gains[p];
+  document.getElementById('commitDone').innerHTML = `✅ ${window._name}, בחרת ב${labels[p]}.<br>פוטנציאל: +${Math.round(gain).toLocaleString()} ₪/חודש = +${Math.round(gain*12).toLocaleString()} ₪/שנה.<br>ביום 4 נסגור את הפנסיה - הסכום הכי גדול שמחכה לך.`;
+  document.getElementById('commitDone').style.display = 'block';
+  document.querySelector('.commit-btn').style.display = 'none';
+  localStorage.setItem('makpatza_path', JSON.stringify({path: p, gain, ts: Date.now()}));
+}
+</script>
+</body>
+</html>

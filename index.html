@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>המקפצה הפיננסית - אתגר 4 הימים</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --gold: #D4A853;
+      --gold-light: #E8C77A;
+      --gold-dark: #B8893A;
+      --warm-white: #FDF8F0;
+      --cream: #F5EDE0;
+      --cream-dark: #EAD9C4;
+      --dark: #2C2419;
+      --dark-mid: #4A3C2E;
+      --navy: #1A2744;
+      --navy-light: #2A3D6E;
+      --green: #2E7D52;
+      --green-light: #4CAF80;
+      --gray: #9E8E7C;
+    }
+
+    body {
+      font-family: 'Heebo', sans-serif;
+      background-color: var(--warm-white);
+      color: var(--dark);
+      min-height: 100vh;
+      direction: rtl;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 50%, #1E3260 100%);
+      padding: 28px 20px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(212,168,83,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .header-logo {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      position: relative;
+    }
+
+    .header-logo span {
+      display: inline-block;
+      margin-left: 8px;
+      font-size: 22px;
+    }
+
+    .header-subtitle {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gold-light);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 4px;
+      opacity: 0.9;
+    }
+
+    .header-authors {
+      font-size: 12px;
+      color: rgba(253, 248, 240, 0.6);
+      margin-top: 8px;
+      font-weight: 400;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      background: linear-gradient(180deg, var(--cream) 0%, var(--warm-white) 100%);
+      padding: 32px 20px 24px;
+      text-align: center;
+      border-bottom: 1px solid var(--cream-dark);
+    }
+
+    .welcome-greeting {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 6px;
+    }
+
+    .welcome-greeting .name-highlight {
+      color: var(--gold-dark);
+    }
+
+    .welcome-tagline {
+      font-size: 14px;
+      color: var(--dark-mid);
+      font-weight: 400;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    /* Progress bar */
+    .progress-wrapper {
+      max-width: 340px;
+      margin: 0 auto;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .progress-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--dark-mid);
+    }
+
+    .progress-count {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gold-dark);
+    }
+
+    .progress-bar-bg {
+      background: var(--cream-dark);
+      border-radius: 20px;
+      height: 10px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold-dark), var(--gold-light));
+      border-radius: 20px;
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 0%;
+    }
+
+    /* ─── MAIN CONTENT ─── */
+    main {
+      padding: 28px 16px 32px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gray);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* ─── FLOW TIMELINE ─── */
+    .flow-timeline {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 24px;
+      padding: 0 4px;
+    }
+    .flow-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+      max-width: 80px;
+    }
+    .flow-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      background: var(--cream-dark);
+      color: var(--gray);
+      transition: all .3s;
+    }
+    .flow-dot.done {
+      background: var(--green);
+      color: #fff;
+    }
+    .flow-dot.current {
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: #fff;
+      box-shadow: 0 0 0 4px rgba(212,168,83,.2);
+      animation: flowPulse 2s ease-in-out infinite;
+    }
+    @keyframes flowPulse {
+      0%,100% { box-shadow: 0 0 0 4px rgba(212,168,83,.2); }
+      50% { box-shadow: 0 0 0 8px rgba(212,168,83,.08); }
+    }
+    .flow-label {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--gray);
+      text-align: center;
+      line-height: 1.2;
+    }
+    .flow-dot.done + .flow-label,
+    .flow-dot.current + .flow-label { color: var(--dark-mid); }
+    .flow-line {
+      height: 2px;
+      flex: 1;
+      max-width: 40px;
+      background: var(--cream-dark);
+      margin-top: -16px;
+    }
+    .flow-line.done {
+      background: var(--green);
+    }
+
+    /* ─── DAY CARDS ─── */
+    .cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .day-card {
+      border-radius: 16px;
+      padding: 18px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+      opacity: 0;
+      transform: translateY(20px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .day-card.animate-in {
+      animation: cardFadeIn 0.5s ease forwards;
+    }
+
+    @keyframes cardFadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Locked */
+    .day-card.locked {
+      background: var(--cream);
+      border: 1.5px solid var(--cream-dark);
+      filter: grayscale(0.5);
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .day-card.locked.animate-in {
+      animation: cardFadeInLocked 0.5s ease forwards;
+    }
+
+    @keyframes cardFadeInLocked {
+      to {
+        opacity: 0.55;
+        transform: translateY(0);
+      }
+    }
+
+    /* Active */
+    .day-card.active {
+      background: #fff;
+      border: 2px solid var(--gold);
+      box-shadow: 0 4px 20px rgba(212, 168, 83, 0.2), 0 2px 8px rgba(0,0,0,0.06);
+      cursor: pointer;
+    }
+
+    .day-card.active:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(212, 168, 83, 0.3), 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .day-card.active::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, var(--gold-light), var(--gold-dark));
+      border-radius: 0 16px 16px 0;
+    }
+
+    /* Completed */
+    .day-card.completed {
+      background: #fff;
+      border: 1.5px solid #C8E6D9;
+      box-shadow: 0 2px 10px rgba(46, 125, 82, 0.08);
+      cursor: pointer;
+    }
+
+    .day-card.completed:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(46, 125, 82, 0.12);
+    }
+
+    .day-card.completed::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, var(--green-light), var(--green));
+      border-radius: 0 16px 16px 0;
+    }
+
+    /* Day Number Circle */
+    .day-number {
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 900;
+      position: relative;
+    }
+
+    .locked .day-number {
+      background: var(--cream-dark);
+      color: var(--gray);
+    }
+
+    .active .day-number {
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: #fff;
+      box-shadow: 0 3px 12px rgba(212, 168, 83, 0.4);
+    }
+
+    .completed .day-number {
+      background: linear-gradient(135deg, var(--green-light), var(--green));
+      color: #fff;
+      box-shadow: 0 3px 12px rgba(46, 125, 82, 0.3);
+    }
+
+    /* Card Text */
+    .card-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .locked .card-title {
+      color: var(--gray);
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--dark-mid);
+      margin-top: 3px;
+      line-height: 1.4;
+    }
+
+    .locked .card-subtitle {
+      color: var(--gray);
+    }
+
+    .card-locked-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gray);
+      margin-top: 5px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Status indicator */
+    .card-status {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+    }
+
+    .status-lock {
+      font-size: 18px;
+      opacity: 0.5;
+    }
+
+    .status-check {
+      font-size: 20px;
+    }
+
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--green-light);
+      box-shadow: 0 0 0 3px rgba(76, 175, 128, 0.25);
+      animation: pulseDot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { box-shadow: 0 0 0 3px rgba(76, 175, 128, 0.25); }
+      50% { box-shadow: 0 0 0 6px rgba(76, 175, 128, 0.1); }
+    }
+
+    /* Premium Badge */
+    .badge-premium {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    .locked .badge-premium {
+      background: var(--cream-dark);
+      color: var(--gray);
+    }
+
+    /* Arrow */
+    .card-arrow {
+      flex-shrink: 0;
+      color: var(--gold);
+      font-size: 18px;
+      opacity: 0.7;
+      transition: transform 0.2s ease;
+    }
+
+    .active:hover .card-arrow,
+    .completed:hover .card-arrow {
+      transform: translateX(-4px);
+    }
+
+    .completed .card-arrow {
+      color: var(--green);
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      text-align: center;
+      padding: 28px 20px 40px;
+      border-top: 1px solid var(--cream-dark);
+      background: var(--cream);
+    }
+
+    .footer-wish {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 8px;
+    }
+
+    .footer-wish span {
+      color: var(--gold-dark);
+    }
+
+    .footer-copyright {
+      font-size: 11px;
+      color: var(--gray);
+      margin-top: 4px;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 360px) {
+      .header-logo { font-size: 23px; }
+      .welcome-greeting { font-size: 19px; }
+      .day-number { width: 42px; height: 42px; font-size: 16px; }
+      .card-title { font-size: 15px; }
+    }
+
+    @media (min-width: 480px) {
+      main { padding: 32px 24px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-logo">
+      <span>🚀</span>המקפצה הפיננסית
+    </div>
+    <div class="header-subtitle">אתגר 4 הימים</div>
+    <div class="header-authors">אתגר חינמי - 4 ימים לשינוי פיננסי</div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="welcome-greeting">
+      שלום, <span class="name-highlight" id="participant-name">משתתף</span> 👋
+    </div>
+    <div class="welcome-tagline">
+      מוכן להתחיל את המסע הפיננסי שלך ?<br/>4 ימים שיכולים לשנות הכל.
+    </div>
+    <div class="progress-wrapper">
+      <div class="progress-label">
+        <span class="progress-text">התקדמות</span>
+        <span class="progress-count" id="progress-label-text">יום 0 מתוך 4</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-bar"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN -->
+  <main>
+    <p class="section-title">המסלול שלך</p>
+
+    <!-- Flow Timeline -->
+    <div class="flow-timeline" id="flowTimeline">
+      <div class="flow-step"><div class="flow-dot" id="fd-1">1</div><div class="flow-label">מיפוי</div></div>
+      <div class="flow-line" id="fl-1"></div>
+      <div class="flow-step"><div class="flow-dot" id="fd-2">2</div><div class="flow-label">הקטנת<br>הוצאות</div></div>
+      <div class="flow-line" id="fl-2"></div>
+      <div class="flow-step"><div class="flow-dot" id="fd-3">3</div><div class="flow-label">הגדלת<br>הכנסה</div></div>
+      <div class="flow-line" id="fl-3"></div>
+      <div class="flow-step"><div class="flow-dot" id="fd-4">4</div><div class="flow-label">השקעות<br>ופנסיה</div></div>
+    </div>
+
+    <div class="cards-list" id="cards-list">
+      <!-- Day 1: שאלון Fillout -->
+      <a class="day-card locked" id="card-1" href="day1.html">
+        <div class="day-number">1</div>
+        <div class="card-text">
+          <div class="card-title">מיפוי פיננסי</div>
+          <div class="card-subtitle">ממלאים שאלון קצר על ההכנסות וההוצאות</div>
+          <div class="card-locked-label" id="locked-label-1">🔒 יפתח בקרוב</div>
+        </div>
+        <div class="card-status" id="status-1">
+          <span class="status-lock">🔒</span>
+        </div>
+      </a>
+
+      <!-- Day 2: ניתוח יום 1 + הקטנת הוצאות -->
+      <a class="day-card locked" id="card-2" href="day2.html">
+        <div class="day-number">2</div>
+        <div class="card-text">
+          <div class="card-title">הניתוח שלך + הקטנת הוצאות</div>
+          <div class="card-subtitle">רואים את המספרים וסוגרים דליפה אחת</div>
+          <div class="card-locked-label" id="locked-label-2">🔒 יפתח אחרי יום 1</div>
+        </div>
+        <div class="card-status" id="status-2">
+          <span class="status-lock">🔒</span>
+        </div>
+      </a>
+
+      <!-- Day 3: הגדלת הכנסות -->
+      <a class="day-card locked" id="card-3" href="day3.html">
+        <div class="day-number">3</div>
+        <div class="card-text">
+          <div class="card-title">הגדלת הכנסות</div>
+          <div class="card-subtitle">פותחים את צד ההכנסה ובוחרים כיוון</div>
+          <div class="card-locked-label" id="locked-label-3">🔒 יפתח אחרי יום 2</div>
+        </div>
+        <div class="card-status" id="status-3">
+          <span class="status-lock">🔒</span>
+        </div>
+      </a>
+
+      <!-- Day 4: השקעות ופנסיה -->
+      <a class="day-card locked" id="card-4" href="day4.html">
+        <div class="day-number">4</div>
+        <div class="card-text">
+          <div class="card-title">
+            השקעות ופנסיה
+            <span class="badge-premium" id="premium-badge">⭐ Premium</span>
+          </div>
+          <div class="card-subtitle">מנתחים פנסיה ומחברים לעתיד</div>
+          <div class="card-locked-label" id="locked-label-4">🔒 יפתח אחרי יום 3</div>
+        </div>
+        <div class="card-status" id="status-4">
+          <span class="status-lock">🔒</span>
+        </div>
+      </a>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-wish">בהצלחה באתגר <span>💪</span></div>
+    <div class="footer-copyright">© 2026 המקפצה הפיננסית · כל הזכויות שמורות</div>
+  </footer>
+
+  <script>
+    // ─── UTILITIES ───
+    function getParam(name) {
+      const url = new URLSearchParams(window.location.search);
+      return url.get(name);
+    }
+
+    // ─── NAME ───
+    const rawName = getParam('name');
+    if (rawName) {
+      document.getElementById('participant-name').textContent = decodeURIComponent(rawName);
+    }
+
+    // ─── UNLOCK LEVEL ───
+    const isAdmin = getParam('admin') === 'true';
+    const urlUnlock = parseInt(getParam('unlock') || '0', 10);
+    const storedUnlock = parseInt(localStorage.getItem('challenge_unlock') || '0', 10);
+
+    let unlockLevel = Math.max(urlUnlock, storedUnlock, 1); // default: day 1 always open
+
+    // Admin saves to localStorage so all users see it
+    if (isAdmin && urlUnlock > 0) {
+      localStorage.setItem('challenge_unlock', String(urlUnlock));
+      unlockLevel = urlUnlock;
+    }
+
+    // ─── APPLY CARD STATES ───
+    function applyCardState(dayNum, state) {
+      const card = document.getElementById('card-' + dayNum);
+      const statusEl = document.getElementById('status-' + dayNum);
+      const lockedLabel = document.getElementById('locked-label-' + dayNum);
+
+      // Remove all state classes
+      card.classList.remove('locked', 'active', 'completed');
+
+      if (state === 'locked') {
+        card.classList.add('locked');
+        card.removeAttribute('href');
+        statusEl.innerHTML = '<span class="status-lock">🔒</span>';
+        lockedLabel.style.display = 'block';
+
+      } else if (state === 'active') {
+        card.classList.add('active');
+        statusEl.innerHTML = '<div class="status-dot"></div>';
+        lockedLabel.style.display = 'none';
+        // Arrow
+        const arrow = document.createElement('div');
+        arrow.className = 'card-arrow';
+        arrow.textContent = '←';
+        if (!card.querySelector('.card-arrow')) card.appendChild(arrow);
+
+      } else if (state === 'completed') {
+        card.classList.add('completed');
+        statusEl.innerHTML = '<span class="status-check">✅</span>';
+        lockedLabel.style.display = 'none';
+        // Arrow
+        const arrow = document.createElement('div');
+        arrow.className = 'card-arrow';
+        arrow.textContent = '←';
+        if (!card.querySelector('.card-arrow')) card.appendChild(arrow);
+      }
+    }
+
+    // State map per unlock level
+    const stateMap = {
+      0: ['locked',    'locked',    'locked',    'locked'],
+      1: ['active',    'locked',    'locked',    'locked'],
+      2: ['completed', 'active',    'locked',    'locked'],
+      3: ['completed', 'completed', 'active',    'locked'],
+      4: ['completed', 'completed', 'completed', 'active'],
+    };
+
+    const level = Math.min(Math.max(unlockLevel, 0), 4);
+    const states = stateMap[level];
+
+    states.forEach((state, i) => applyCardState(i + 1, state));
+
+    // ─── ATTACH PID TO DAY 2 LINK ───
+    const pid = getParam('pid');
+    if (pid) {
+      const card2 = document.getElementById('card-2');
+      const base = card2.getAttribute('href') || 'challenge_day2.html';
+      card2.setAttribute('href', base + '?pid=' + pid);
+    }
+
+    // ─── FLOW TIMELINE ───
+    for (let d = 1; d <= 4; d++) {
+      const dot = document.getElementById('fd-' + d);
+      const line = document.getElementById('fl-' + d);
+      if (states[d-1] === 'completed') {
+        dot.classList.add('done');
+        dot.textContent = '✓';
+        if (line) line.classList.add('done');
+      } else if (states[d-1] === 'active') {
+        dot.classList.add('current');
+      }
+    }
+
+    // ─── PROGRESS BAR ───
+    const activeDays = level; // number of days unlocked (completed + active)
+    const progressPercent = (level / 4) * 100;
+    const labelText = level === 0
+      ? 'יום 0 מתוך 4'
+      : level === 4
+        ? 'הושלם ! 🎉'
+        : 'יום ' + level + ' מתוך 4';
+
+    document.getElementById('progress-label-text').textContent = labelText;
+
+    // Animate bar on load
+    setTimeout(() => {
+      document.getElementById('progress-bar').style.width = progressPercent + '%';
+    }, 400);
+
+    // ─── STAGGER CARD ANIMATIONS ───
+    const cards = document.querySelectorAll('.day-card');
+    cards.forEach((card, i) => {
+      setTimeout(() => {
+        card.classList.add('animate-in');
+      }, 150 + i * 150);
+    });
+  </script>
+</body>
+</html>
