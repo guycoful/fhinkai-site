@@ -608,7 +608,8 @@ function runAnalysis() {
 
   // Show PAIN SCREEN first
   const wantsTotal = variable.dining + variable.coffee + variable.shopping + variable.leisure;
-  const age = 35; // default - can be personalized later
+  const ageRaw = document.getElementById('d_age') ? document.getElementById('d_age').value : localStorage.getItem('makpatza_age');
+  const age = parseInt(ageRaw) || 35;
   const yearsToRetire = Math.max(1, 67 - age);
   const name2 = document.getElementById('userName').textContent || 'משתמש';
 
@@ -775,6 +776,7 @@ async function loadFromSupabase(pid) {
 function fillFromDB(row) {
   document.getElementById('d_name').value = row.name || '';
   document.getElementById('d_income').value = row.income || 0;
+  if (row.age) localStorage.setItem('makpatza_age', row.age);
   Object.entries(DB_FIXED).forEach(([db, field]) => {
     const el = document.getElementById('d_' + field);
     if (el) el.value = row[db] || 0;

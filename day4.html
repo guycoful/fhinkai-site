@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>יום 4 - בדיקת פנסיה | המקפצה הפיננסית</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #D4A853; --gold-light: #E8C77A; --gold-dark: #B8892E; --gold-bg: #FBF3E1;
+    --warm-white: #FDF8F0; --cream: #F5EDE0; --cream-dark: #E6D5C3;
+    --white: #ffffff; --dark: #2C2419; --dark-mid: #5C4E3C;
+    --navy: #1A2744; --green: #2E7D52; --green-light: #E8F5EE; --green-text: #1B5E3B;
+    --red: #C0392B; --red-light: #FDEEEC; --red-text: #922B21;
+    --blue: #2E6B9E; --blue-light: #EBF3FA;
+    --purple: #6B3FA0; --purple-light: #F3ECFF;
+    --orange: #C87A1A; --orange-light: #FFF3E0;
+    --radius: 16px; --shadow: 0 2px 12px rgba(44,36,25,.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Heebo', sans-serif; background: var(--warm-white); color: var(--dark); direction: rtl; min-height: 100vh; line-height: 1.6; }
+
+  .header { background: var(--navy); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+  .header-logo { font-size: 16px; font-weight: 700; color: var(--gold); }
+  .header-badge { background: var(--gold-bg); color: var(--gold-dark); padding: 4px 14px; border-radius: 50px; font-size: 12px; font-weight: 600; }
+
+  .container { max-width: 600px; margin: 0 auto; padding: 20px 16px 40px; }
+
+  .welcome { text-align: center; padding: 32px 16px 28px; background: linear-gradient(180deg, var(--cream) 0%, var(--warm-white) 100%); margin: -20px -16px 20px; }
+  .welcome h1 { font-size: clamp(22px, 5vw, 28px); font-weight: 800; margin-bottom: 8px; }
+  .welcome h1 span { color: var(--gold-dark); }
+  .welcome p { font-size: 14px; color: var(--dark-mid); max-width: 400px; margin: 0 auto; }
+
+  .card { background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius); padding: 20px 16px; margin-bottom: 14px; box-shadow: var(--shadow); }
+  .card h3 { font-size: 15px; font-weight: 700; margin-bottom: 14px; }
+
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--dark-mid); }
+  .form-group input, .form-group select {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--cream-dark); border-radius: 10px;
+    font-family: Heebo; font-size: 14px; color: var(--dark); background: var(--white);
+  }
+  .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--gold); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .submit-btn {
+    width: 100%; margin-top: 8px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: var(--navy); border: none; padding: 14px;
+    border-radius: 50px; font-family: Heebo; font-size: 15px; font-weight: 800; cursor: pointer;
+  }
+
+  /* Results */
+  .hero-pension { background: var(--white); border: 2px solid var(--gold); border-radius: var(--radius); padding: 28px 20px; text-align: center; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(212,168,83,.12); }
+  .hero-label { font-size: 13px; color: var(--dark-mid); margin-bottom: 6px; }
+  .hero-amount { font-size: clamp(32px, 8vw, 48px); font-weight: 900; line-height: 1; margin-bottom: 8px; }
+  .hero-tag { display: inline-block; font-size: 13px; font-weight: 600; padding: 4px 16px; border-radius: 50px; }
+
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .stat { background: var(--white); border: 1px solid var(--cream-dark); border-radius: 12px; padding: 14px 12px; text-align: center; box-shadow: var(--shadow); }
+  .stat-label { font-size: 11px; color: var(--dark-mid); margin-bottom: 2px; }
+  .stat-val { font-size: clamp(16px, 4vw, 20px); font-weight: 800; }
+  .stat-sub { font-size: 10px; color: var(--dark-mid); margin-top: 1px; }
+
+  .gap-bar { position: relative; height: 14px; border-radius: 50px; margin: 16px 0 8px; overflow: visible; }
+  .gap-bar-bg { width: 100%; height: 100%; border-radius: 50px; background: linear-gradient(to left, var(--green), var(--gold), var(--red)); }
+  .gap-bar-pin { position: absolute; top: -4px; width: 22px; height: 22px; background: var(--white); border: 3px solid var(--navy); border-radius: 50%; transform: translateX(50%); box-shadow: 0 2px 8px rgba(0,0,0,.15); transition: right .8s; }
+
+  .tip-card { padding: 14px; margin-bottom: 8px; border-radius: 12px; border-right: 4px solid; }
+  .tip-card.good { border-color: var(--green); background: var(--green-light); }
+  .tip-card.warn { border-color: var(--orange); background: var(--orange-light); }
+  .tip-card.bad { border-color: var(--red); background: var(--red-light); }
+  .tip-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .tip-desc { font-size: 12px; color: var(--dark-mid); line-height: 1.5; }
+
+  .cta-card { background: linear-gradient(135deg, var(--navy), #2a3f6f); border-radius: var(--radius); padding: 28px 20px; text-align: center; color: var(--white); margin-top: 8px; }
+  .cta-card h3 { font-size: 20px; font-weight: 800; color: var(--gold); margin-bottom: 8px; }
+  .cta-card p { font-size: 14px; opacity: .85; margin-bottom: 20px; }
+  .cta-btn { display: inline-block; background: var(--gold); color: var(--navy); padding: 14px 32px; border-radius: 50px; font-size: 15px; font-weight: 800; text-decoration: none; }
+
+  .summary-section { margin-top: 16px; }
+  .summary-row { display: flex; justify-content: space-between; padding: 10px 12px; margin-bottom: 6px; background: var(--cream); border-radius: 10px; font-size: 13px; }
+  .summary-label { font-weight: 600; }
+  .summary-val { font-weight: 800; }
+
+  #results { display: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">💰 המקפצה הפיננסית</div>
+  <div class="header-badge">יום 4 - סוף האתגר</div>
+</div>
+
+<div class="container">
+  <div class="welcome">
+    <h1>הפנסיה שלך = <span>הכסף הכי גדול</span></h1>
+    <p>רוב האנשים לא מסתכלים על הפנסיה. היום נגלה כמה כסף אתה משאיר על השולחן.</p>
+  </div>
+
+  <!-- Input -->
+  <div class="card" id="formCard">
+    <h3>📋 נתוני פנסיה בסיסיים</h3>
+    <div class="form-group">
+      <label>שם (להתאמה אישית)</label>
+      <input type="text" id="f_name" placeholder="גיא">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>גיל</label>
+        <input type="number" id="f_age" placeholder="32" inputmode="numeric">
+      </div>
+      <div class="form-group">
+        <label>שכר ברוטו (₪)</label>
+        <input type="number" id="f_gross" placeholder="15000" inputmode="numeric">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>אחוז הפרשה לפנסיה (%)</label>
+        <select id="f_contrib">
+          <option value="6">6% (מינימום חוק)</option>
+          <option value="7" selected>7% (ממוצע)</option>
+          <option value="8.33">8.33% (מקסימום הטבת מס)</option>
+          <option value="10">10%+ (הפרשה עודפת)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>הפרשת מעסיק (%)</label>
+        <select id="f_employer">
+          <option value="6.5" selected>6.5% (מינימום חוק)</option>
+          <option value="7.5">7.5% (ממוצע)</option>
+          <option value="8.33">8.33% (מקסימום)</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>סוג קרן</label>
+        <select id="f_fund_type">
+          <option value="pension">פנסיה מקיפה</option>
+          <option value="gemel">גמל / ביטוח מנהלים</option>
+          <option value="unknown">לא יודע</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>דמי ניהול (%, מהצבירה)</label>
+        <input type="number" id="f_mgmt_fee" placeholder="0.5" step="0.01" inputmode="decimal">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>צבירה נוכחית בפנסיה (₪, לפי דוח שנתי)</label>
+      <input type="number" id="f_balance" placeholder="200000" inputmode="numeric">
+    </div>
+    <button class="submit-btn" onclick="runPension()">🔍 נתח את הפנסיה שלי</button>
+  </div>
+
+  <!-- Results -->
+  <div id="results">
+    <div class="hero-pension" id="heroCard"></div>
+    <div class="stats" id="statsGrid"></div>
+    <div class="card" id="feeCard"></div>
+    <div class="card" id="tipsCard"></div>
+
+    <!-- Summary of 4 days -->
+    <div class="card summary-section" id="summaryCard">
+      <h3>📊 סיכום 4 ימים - מה גילינו</h3>
+      <div id="summaryContent"></div>
+    </div>
+
+    <div class="cta-card">
+      <h3>רוצה לקחת את זה צעד קדימה ?</h3>
+      <p>ב-4 ימים גילית כמה כסף אתה יכול לחסוך, להרוויח ולהגדיל. תוכנית הליווי שלנו תעזור לך ליישם את הכל.</p>
+      <a class="cta-btn" href="#contact">אני רוצה לשמוע עוד ←</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function fmt(n) { return '₪' + Math.round(n).toLocaleString('he-IL'); }
+function pct(n) { return n.toFixed(1) + '%'; }
+
+// Pension projection with management fees
+function projectPension(balance, monthlyContrib, years, annualReturn, mgmtFee) {
+  const monthlyReturn = (annualReturn - mgmtFee / 100) / 12;
+  let total = balance;
+  for (let m = 0; m < years * 12; m++) {
+    total = total * (1 + monthlyReturn / 100) + monthlyContrib;
+  }
+  return total;
+}
+
+function runPension() {
+  const name = document.getElementById('f_name').value || 'משתתף';
+  const age = parseInt(document.getElementById('f_age').value) || 35;
+  const gross = parseFloat(document.getElementById('f_gross').value) || 0;
+  const contribPct = parseFloat(document.getElementById('f_contrib').value) || 7;
+  const employerPct = parseFloat(document.getElementById('f_employer').value) || 6.5;
+  const fundType = document.getElementById('f_fund_type').value;
+  const mgmtFee = parseFloat(document.getElementById('f_mgmt_fee').value) || 0.5;
+  const balance = parseFloat(document.getElementById('f_balance').value) || 0;
+
+  if (!gross) { alert('תמלא שכר ברוטו'); return; }
+
+  const yearsToRetire = Math.max(1, 67 - age);
+  const totalContribPct = contribPct + employerPct;
+  const monthlyContrib = gross * totalContribPct / 100;
+
+  // Project with current settings
+  const avgReturn = 5.5; // average annual return for Israeli pension funds
+  const projected = projectPension(balance, monthlyContrib, yearsToRetire, avgReturn, mgmtFee);
+
+  // Project with optimized (lower fee)
+  const optimalFee = 0.15;
+  const projectedOptimal = projectPension(balance, monthlyContrib, yearsToRetire, avgReturn, optimalFee);
+  const feeLoss = projectedOptimal - projected;
+
+  // Monthly pension estimate (4% rule adapted)
+  const monthlyPension = projected * 0.004; // ~4.8% annual withdrawal / 12
+  const monthlyPensionOptimal = projectedOptimal * 0.004;
+
+  // Target: 70% of current gross as pension income
+  const target = gross * 0.7;
+  const gapPct = target > 0 ? Math.round(monthlyPension / target * 100) : 0;
+  const hasGap = gapPct < 100;
+
+  // Hero
+  document.getElementById('heroCard').innerHTML = `
+    <div class="hero-label">הפנסיה הצפויה שלך בגיל 67</div>
+    <div class="hero-amount" style="color:${hasGap ? 'var(--orange)' : 'var(--green)'}">${fmt(projected)}</div>
+    <div class="hero-tag" style="background:${hasGap ? 'var(--orange-light)' : 'var(--green-light)'};color:${hasGap ? 'var(--orange)' : 'var(--green-text)'}">
+      ${hasGap ? `מכסה ${gapPct}% מהיעד (${fmt(target)}/חודש)` : '✓ מכסה את היעד שלך'}
+    </div>`;
+
+  // Stats
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat"><div class="stat-label">הפרשה חודשית</div><div class="stat-val" style="color:var(--blue)">${fmt(monthlyContrib)}</div><div class="stat-sub">${pct(totalContribPct)} מהברוטו</div></div>
+    <div class="stat"><div class="stat-label">צבירה נוכחית</div><div class="stat-val" style="color:var(--purple)">${fmt(balance)}</div></div>
+    <div class="stat"><div class="stat-label">פנסיה חודשית צפויה</div><div class="stat-val" style="color:${hasGap?'var(--orange)':'var(--green)'}">${fmt(monthlyPension)}</div><div class="stat-sub">${gapPct}% מהיעד</div></div>
+    <div class="stat"><div class="stat-label">שנים עד פרישה</div><div class="stat-val" style="color:var(--navy)">${yearsToRetire}</div></div>`;
+
+  // Fee impact
+  const feeColor = mgmtFee > 0.5 ? 'bad' : mgmtFee > 0.25 ? 'warn' : 'good';
+  document.getElementById('feeCard').innerHTML = `
+    <h3>💰 כמה דמי הניהול עולים לך ?</h3>
+    <div class="tip-card ${feeColor}">
+      <div class="tip-title">דמי ניהול: ${pct(mgmtFee)} מהצבירה</div>
+      <div class="tip-desc">${mgmtFee > 0.25
+        ? `אם תוריד ל-0.15% (אפשרי בהתמקחות) תחסוך <strong>${fmt(feeLoss)}</strong> עד פרישה. זה ${fmt(feeLoss/yearsToRetire/12)} יותר בפנסיה כל חודש.`
+        : 'דמי הניהול שלך נמוכים. כל הכבוד.'}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+      <div class="stat" style="border-color:var(--red)"><div class="stat-label">עם ${pct(mgmtFee)} דמ"נ</div><div class="stat-val" style="color:var(--red)">${fmt(projected)}</div></div>
+      <div class="stat" style="border-color:var(--green)"><div class="stat-label">עם 0.15% דמ"נ</div><div class="stat-val" style="color:var(--green)">${fmt(projectedOptimal)}</div></div>
+    </div>
+    <div style="text-align:center;margin-top:8px;font-size:12px;color:var(--dark-mid)">הפרש: <strong style="color:var(--red)">${fmt(feeLoss)}</strong> שנשרפים על דמי ניהול</div>`;
+
+  // Tips
+  let tips = '';
+
+  if (contribPct < 7) {
+    tips += `<div class="tip-card warn"><div class="tip-title">⚠️ הפרשה נמוכה</div><div class="tip-desc">מפריש ${pct(contribPct)} מתוך 8.33% מקסימום. העלאה ל-8.33% תוסיף ${fmt((8.33-contribPct)/100*gross)} לחודש לפנסיה.</div></div>`;
+  }
+
+  if (fundType === 'unknown') {
+    tips += `<div class="tip-card warn"><div class="tip-title">⚠️ לא יודע באיזו קרן</div><div class="tip-desc">זה הנתון הכי חשוב. תבקש מהמעסיק או תכנס לאתר הר הביטוח (har-habituach.gov.il) ותגלה.</div></div>`;
+  }
+
+  if (mgmtFee > 0.5) {
+    tips += `<div class="tip-card bad"><div class="tip-title">🔴 דמי ניהול גבוהים</div><div class="tip-desc">תתקשר לקרן ותבקש הורדה ל-0.15-0.25%. אם מסרבים, תעבור קרן. זה חוקי ולוקח 5 דקות.</div></div>`;
+  }
+
+  if (!balance) {
+    tips += `<div class="tip-card warn"><div class="tip-title">📋 חסר נתון צבירה</div><div class="tip-desc">הזן את סכום הצבירה מהדוח השנתי. בלי זה החישוב מתחיל מ-0 ולא מדויק.</div></div>`;
+  }
+
+  if (hasGap && gapPct < 70) {
+    tips += `<div class="tip-card bad"><div class="tip-title">🔴 פער גדול מהיעד</div><div class="tip-desc">הפנסיה הצפויה מכסה רק ${gapPct}% ממה שתצטרך. כדאי לפתוח גמל להשקעה או להגדיל הפרשות.</div></div>`;
+  }
+
+  if (tips === '') {
+    tips = `<div class="tip-card good"><div class="tip-title">✅ המצב נראה טוב</div><div class="tip-desc">ההפרשות תקינות ודמי הניהול סבירים. תבדוק פעם בשנה שהכל עדיין תקין.</div></div>`;
+  }
+
+  document.getElementById('tipsCard').innerHTML = `<h3>💡 המלצות</h3>${tips}`;
+
+  // 4-day summary
+  const commit = JSON.parse(localStorage.getItem('makpatza_commit') || 'null');
+  const pathData = JSON.parse(localStorage.getItem('makpatza_path') || 'null');
+  const pathLabels = {nego: 'מו"מ שכר', side: 'הכנסה נוספת', skill: 'שדרוג מקצועי'};
+
+  let summary = '';
+  summary += `<div class="summary-row"><div class="summary-label">🏠 יום 1 - מיפוי פיננסי</div><div class="summary-val">✅ הושלם</div></div>`;
+
+  if (commit) {
+    summary += `<div class="summary-row"><div class="summary-label">✂️ יום 2 - הקטנת הוצאות</div><div class="summary-val" style="color:var(--green)">חיסכון: ${fmt(commit.saving)}/חודש</div></div>`;
+  } else {
+    summary += `<div class="summary-row"><div class="summary-label">✂️ יום 2 - הקטנת הוצאות</div><div class="summary-val">✅ הושלם</div></div>`;
+  }
+
+  if (pathData) {
+    summary += `<div class="summary-row"><div class="summary-label">📈 יום 3 - הגדלת הכנסה</div><div class="summary-val" style="color:var(--green)">נתיב: ${pathLabels[pathData.path] || pathData.path}</div></div>`;
+  } else {
+    summary += `<div class="summary-row"><div class="summary-label">📈 יום 3 - הגדלת הכנסה</div><div class="summary-val">✅ הושלם</div></div>`;
+  }
+
+  summary += `<div class="summary-row"><div class="summary-label">🏦 יום 4 - בדיקת פנסיה</div><div class="summary-val" style="color:var(--green)">צפי: ${fmt(projected)}</div></div>`;
+
+  // Total potential
+  const monthlySaving = commit ? commit.saving : 0;
+  const monthlyGain = pathData ? pathData.gain : 0;
+  const monthlyFee = feeLoss / yearsToRetire / 12;
+  const totalMonthly = monthlySaving + monthlyGain + Math.round(monthlyFee);
+
+  if (totalMonthly > 0) {
+    summary += `<div style="background:var(--gold-bg);border:2px solid var(--gold);border-radius:12px;padding:16px;margin-top:12px;text-align:center">
+      <div style="font-size:13px;color:var(--dark-mid)">פוטנציאל חודשי שגילית ב-4 ימים</div>
+      <div style="font-size:36px;font-weight:900;color:var(--gold-dark)">${fmt(totalMonthly)}</div>
+      <div style="font-size:12px;color:var(--dark-mid)">${fmt(totalMonthly*12)}/שנה | ${fmt(totalMonthly*120)}/עשור</div>
+    </div>`;
+  }
+
+  document.getElementById('summaryContent').innerHTML = summary;
+
+  // Save age for other pages
+  localStorage.setItem('makpatza_age', age);
+
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('formCard').style.display = 'none';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// Pre-fill from localStorage
+const savedAge = localStorage.getItem('makpatza_age');
+if (savedAge) document.getElementById('f_age').value = savedAge;
+</script>
+</body>
+</html>
