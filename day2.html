@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>יום 2 - הניתוח שלך + הקטנת הוצאות | המקפצה הפיננסית</title>
+<title>יום 2 - כסף שעובד | המקפצה הפיננסית</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -30,6 +30,7 @@
     --blue: #2E6B9E;
     --blue-light: #EBF3FA;
     --orange: #C87A1A;
+    --orange-light: #FFF3E0;
     --radius: 16px;
     --shadow: 0 2px 12px rgba(44,36,25,.06);
     --shadow-hover: 0 6px 24px rgba(44,36,25,.1);
@@ -49,7 +50,7 @@
   /* ── Header ── */
   .header {
     background: var(--navy);
-    padding: 16px 20px;
+    padding: 14px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -64,231 +65,240 @@
     font-weight: 600;
   }
 
+  /* ── Progress dots ── */
+  .progress { display: flex; align-items: center; gap: 0; margin-bottom: 24px; padding: 0 4px; }
+  .prog-step { display: flex; flex-direction: column; align-items: center; flex: 1; }
+  .prog-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800;
+    border: 2px solid var(--cream-dark);
+    background: var(--white); color: var(--dark-mid);
+    transition: all .3s;
+  }
+  .prog-dot.active { background: var(--gold); border-color: var(--gold-dark); color: white; box-shadow: 0 0 0 4px rgba(212,168,83,.2); }
+  .prog-dot.done { background: var(--green); border-color: var(--green); color: white; }
+  .prog-label { font-size: 9px; color: var(--dark-mid); margin-top: 4px; font-weight: 500; white-space: nowrap; }
+  .prog-line { height: 2px; flex: 1; background: var(--cream-dark); max-width: 40px; margin-top: -16px; transition: background .3s; }
+  .prog-line.done { background: var(--green); }
+
   /* ── Container ── */
   .container { max-width: 600px; margin: 0 auto; padding: 20px 16px 40px; }
 
-  /* ── Welcome ── */
-  .welcome {
-    text-align: center;
-    padding: 28px 16px 24px;
-    background: linear-gradient(180deg, var(--cream) 0%, var(--warm-white) 100%);
-    margin: -20px -16px 20px;
-    padding-bottom: 28px;
-  }
-  .welcome-name { font-size: clamp(22px, 5vw, 28px); font-weight: 800; }
-  .welcome-name span { color: var(--gold-dark); }
-  .welcome-sub { font-size: 14px; color: var(--dark-mid); margin-top: 4px; }
-
-  /* ── Hero Balance ── */
-  .hero-balance {
-    background: var(--white);
-    border: 2px solid var(--gold);
-    border-radius: var(--radius);
-    padding: 28px 20px;
-    text-align: center;
-    margin-bottom: 16px;
-    box-shadow: 0 4px 20px rgba(212,168,83,.12);
-  }
-  .hero-label { font-size: 13px; color: var(--dark-mid); margin-bottom: 6px; }
-  .hero-amount {
-    font-size: clamp(36px, 9vw, 52px);
-    font-weight: 900;
-    line-height: 1;
-    margin-bottom: 8px;
-  }
-  .hero-amount.positive { color: var(--green); }
-  .hero-amount.negative { color: var(--red); }
-  .hero-tag {
-    display: inline-block;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 4px 16px;
-    border-radius: 50px;
-  }
-  .hero-tag.positive { background: var(--green-light); color: var(--green-text); }
-  .hero-tag.negative { background: var(--red-light); color: var(--red-text); }
-
-  /* ── Stats Grid ── */
-  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-  .stat {
-    background: var(--white);
-    border: 1px solid var(--cream-dark);
-    border-radius: 12px;
-    padding: 14px 12px;
-    text-align: center;
-    box-shadow: var(--shadow);
-  }
-  .stat-label { font-size: 11px; color: var(--dark-mid); margin-bottom: 2px; }
-  .stat-val { font-size: clamp(18px, 4vw, 22px); font-weight: 800; }
-  .stat-sub { font-size: 10px; color: var(--dark-mid); margin-top: 1px; }
+  /* ── Pages ── */
+  .page { display: none; }
+  .page.active { display: block; animation: fadeIn .4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
   /* ── Card ── */
   .card {
     background: var(--white);
     border: 1px solid var(--cream-dark);
     border-radius: var(--radius);
-    padding: 20px 16px;
-    margin-bottom: 14px;
+    padding: 24px 18px;
+    margin-bottom: 16px;
     box-shadow: var(--shadow);
   }
+  .card h2 { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
   .card h3 { font-size: 15px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .card .subtitle { font-size: 13px; color: var(--dark-mid); margin-bottom: 18px; line-height: 1.7; }
 
-  /* ── Leaks ── */
-  .leak {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
-    margin-bottom: 8px;
-    background: var(--red-light);
-    border-radius: 10px;
-    border-right: 4px solid var(--red);
+  /* ── Hero message ── */
+  .hero-msg {
+    text-align: center;
+    padding: 28px 16px 24px;
+    background: linear-gradient(180deg, var(--cream) 0%, var(--warm-white) 100%);
+    margin: -20px -16px 20px;
   }
-  .leak-name { font-size: 14px; font-weight: 600; }
-  .leak-hint { font-size: 11px; color: var(--dark-mid); margin-top: 2px; }
-  .leak-nums { text-align: left; white-space: nowrap; }
-  .leak-month { font-size: 16px; font-weight: 800; color: var(--red); }
-  .leak-year { font-size: 10px; color: var(--dark-mid); }
+  .hero-msg h1 { font-size: clamp(20px, 5vw, 26px); font-weight: 800; margin-bottom: 8px; }
+  .hero-msg h1 span { color: var(--gold-dark); }
+  .hero-msg p { font-size: 14px; color: var(--dark-mid); max-width: 420px; margin: 0 auto; line-height: 1.7; }
 
-  /* ── Reduce ── */
-  .reduce-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px; margin-bottom: 8px; border-radius: 10px;
-    border: 2px solid var(--cream-dark); cursor: pointer;
+  /* ── Expense group cards ── */
+  .group-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px; border-radius: 12px;
+    margin-bottom: 10px; font-weight: 700; font-size: 15px;
+  }
+  .group-header.rigid { background: var(--blue-light); color: var(--blue); }
+  .group-header.flexible { background: var(--orange-light); color: var(--orange); }
+  .group-header .group-total { font-size: 18px; font-weight: 900; direction: ltr; }
+
+  .expense-card {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 14px; margin-bottom: 6px;
+    border-radius: 10px; border: 1px solid var(--cream-dark);
+    background: var(--white); font-size: 14px;
+  }
+  .expense-card .exp-name { font-weight: 600; }
+  .expense-card .exp-amount { font-weight: 800; direction: ltr; white-space: nowrap; }
+  .expense-card.rigid { border-right: 3px solid var(--blue); }
+  .expense-card.flexible { border-right: 3px solid var(--orange); }
+
+  /* ── Rating items (page 1) ── */
+  .rate-item {
+    background: var(--white);
+    border: 1.5px solid var(--cream-dark);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
     transition: all .2s;
   }
-  .reduce-item:hover { border-color: var(--gold); }
-  .reduce-item.selected { border-color: var(--green); background: var(--green-light); }
-  .reduce-check {
-    width: 28px; height: 28px; border-radius: 50%;
-    border: 2px solid var(--cream-dark); display: flex;
-    align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 800; flex-shrink: 0;
-    transition: all .2s;
+  .rate-item.rated { opacity: 1; }
+  .rate-item .rate-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .rate-item .rate-name { font-size: 15px; font-weight: 700; }
+  .rate-item .rate-amount { font-size: 16px; font-weight: 800; direction: ltr; color: var(--dark); }
+  .rate-item .rate-btns { display: flex; gap: 8px; }
+  .rate-btn {
+    flex: 1; padding: 10px 12px; border-radius: 10px;
+    font-family: 'Heebo'; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all .2s; border: 2px solid var(--cream-dark);
+    background: var(--white); color: var(--dark-mid);
   }
-  .reduce-item.selected .reduce-check { background: var(--green); border-color: var(--green); color: var(--white); }
-  .reduce-info { flex: 1; }
-  .reduce-name { font-size: 14px; font-weight: 700; }
-  .reduce-now { font-size: 11px; color: var(--dark-mid); margin-top: 2px; }
-  .reduce-target { font-size: 13px; font-weight: 600; color: var(--green-text); white-space: nowrap; }
-  .reduce-calc {
-    margin-top: 16px; padding: 16px;
-    background: var(--green-light); border-radius: 12px;
-    border: 1px solid var(--green);
-  }
-  .reduce-calc input[type=range] { width: 100%; accent-color: var(--green); margin: 10px 0; }
-  .reduce-saving-big { font-size: 32px; font-weight: 900; color: var(--green-text); text-align: center; }
-  .reduce-saving-sub { font-size: 12px; color: var(--dark-mid); text-align: center; margin-top: 2px; }
-  .commit-btn {
-    width: 100%; margin-top: 14px;
-    background: linear-gradient(135deg, var(--green), #1B5E3B);
-    color: var(--white); border: none; padding: 14px;
-    border-radius: 50px; font-family: Heebo; font-size: 15px;
-    font-weight: 700; cursor: pointer;
-  }
-  .commit-done {
-    text-align: center; padding: 14px;
-    background: var(--green-light); border-radius: 12px;
-    font-size: 14px; color: var(--green-text); font-weight: 600;
-  }
+  .rate-btn:hover { transform: translateY(-1px); }
+  .rate-btn.keep { }
+  .rate-btn.can-drop { }
+  .rate-btn.keep.selected { background: var(--green-light); border-color: var(--green); color: var(--green-text); }
+  .rate-btn.can-drop.selected { background: var(--orange-light); border-color: var(--orange); color: var(--orange); }
+  .rate-item.rated-keep { border-color: var(--green); background: var(--green-light); }
+  .rate-item.rated-drop { border-color: var(--orange); background: var(--orange-light); }
 
-  /* ── CBS ── */
-  .cbs-bar-wrap {
+  .rate-counter {
+    background: var(--orange-light);
+    border: 2px solid var(--orange);
+    border-radius: 12px;
+    padding: 14px 18px;
+    text-align: center;
+    margin-top: 16px;
+    position: sticky;
+    bottom: 16px;
+    z-index: 10;
+  }
+  .rate-counter .counter-label { font-size: 13px; color: var(--orange); font-weight: 600; }
+  .rate-counter .counter-amount { font-size: 28px; font-weight: 900; color: var(--orange); direction: ltr; }
+  .rate-counter .counter-sub { font-size: 11px; color: var(--dark-mid); margin-top: 2px; }
+
+  /* ── 3% Law (page 2) ── */
+  .target-bar-wrap {
     background: var(--cream);
     border-radius: 50px;
-    height: 12px;
+    height: 16px;
     position: relative;
     margin: 16px 0 8px;
-    overflow: visible;
+    overflow: hidden;
   }
-  .cbs-bar-inner {
+  .target-bar-fill {
     height: 100%;
     border-radius: 50px;
-    background: linear-gradient(to left, var(--green), var(--gold), var(--red));
+    background: linear-gradient(to left, var(--green), var(--gold));
+    transition: width .5s ease;
+    min-width: 4px;
   }
-  .cbs-pin {
-    position: absolute;
-    top: -5px;
-    width: 22px;
-    height: 22px;
-    background: var(--white);
-    border: 3px solid var(--gold-dark);
-    border-radius: 50%;
-    transform: translateX(50%);
-    box-shadow: 0 2px 8px rgba(0,0,0,.15);
-    transition: right .8s ease;
-  }
-  .cbs-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--dark-mid); }
-  .cbs-result { text-align: center; margin-top: 10px; font-size: 13px; font-weight: 600; }
-  .cbs-result strong { color: var(--gold-dark); }
+  .target-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--dark-mid); margin-bottom: 16px; }
 
-  /* ── Ratio ── */
-  .ratio-wrap { display: flex; align-items: center; gap: 16px; }
-  .ratio-ring {
-    width: 80px; height: 80px;
-    border-radius: 50%;
+  .drop-select-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px; margin-bottom: 8px;
+    border-radius: 12px;
+    border: 2px solid var(--cream-dark);
+    cursor: pointer; transition: all .2s;
+    background: var(--white);
+  }
+  .drop-select-item:hover { border-color: var(--gold); }
+  .drop-select-item.selected { border-color: var(--green); background: var(--green-light); }
+  .drop-check {
+    width: 28px; height: 28px; border-radius: 8px;
+    border: 2px solid var(--cream-dark);
     display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    position: relative;
+    font-size: 14px; font-weight: 800; flex-shrink: 0;
+    transition: all .2s; background: var(--white);
   }
-  .ratio-ring::before {
-    content: '';
-    position: absolute;
-    inset: 4px;
-    border-radius: 50%;
-    background: var(--white);
-  }
-  .ratio-ring span { position: relative; z-index: 1; font-size: 20px; font-weight: 900; }
-  .ratio-text { font-size: 13px; line-height: 1.6; }
-  .ratio-text strong { color: var(--gold-dark); }
+  .drop-select-item.selected .drop-check { background: var(--green); border-color: var(--green); color: var(--white); }
+  .drop-info { flex: 1; }
+  .drop-name { font-size: 14px; font-weight: 700; }
+  .drop-amount { font-size: 16px; font-weight: 800; color: var(--orange); direction: ltr; }
 
-  /* ── Savings ── */
-  .saving-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 12px;
-    margin-bottom: 6px;
-    background: var(--green-light);
-    border-radius: 10px;
-    border-right: 4px solid var(--green);
-  }
-  .saving-name { font-size: 13px; font-weight: 600; }
-  .saving-val { font-size: 15px; font-weight: 700; color: var(--green-text); }
-  .saving-empty {
+  .commit-section {
     text-align: center;
     padding: 20px;
-    color: var(--dark-mid);
-    font-size: 14px;
-  }
-  .saving-total {
-    margin-top: 8px;
-    padding: 10px;
     background: var(--green-light);
-    border-radius: 10px;
-    font-size: 13px;
-    color: var(--green-text);
-    text-align: center;
-    font-weight: 600;
-  }
-
-  /* ── Bars ── */
-  .bar-row { margin-bottom: 12px; }
-  .bar-head { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 3px; }
-  .bar-head .bl { font-weight: 600; }
-  .bar-bg { background: var(--cream); border-radius: 50px; height: 8px; overflow: hidden; }
-  .bar-fg { height: 100%; border-radius: 50px; transition: width .8s ease; }
-
-  /* ── AI Insight ── */
-  .insight-box {
-    background: var(--gold-bg);
-    border-right: 4px solid var(--gold);
     border-radius: 12px;
-    padding: 16px;
-    margin-top: 14px;
+    border: 2px solid var(--green);
+    margin-top: 16px;
+    display: none;
   }
-  .insight-box h4 { font-size: 13px; color: var(--gold-dark); margin-bottom: 8px; font-weight: 700; }
-  .insight-box p { font-size: 13px; line-height: 1.7; margin-bottom: 4px; }
+  .commit-section h3 { font-size: 16px; font-weight: 800; color: var(--green-text); margin-bottom: 10px; justify-content: center; }
+  .commit-section p { font-size: 14px; color: var(--green-text); margin-bottom: 14px; line-height: 1.6; }
+  .commit-btn {
+    background: linear-gradient(135deg, var(--green), #1B5E3B);
+    color: var(--white); border: none; padding: 14px 32px;
+    border-radius: 50px; font-family: Heebo; font-size: 15px;
+    font-weight: 700; cursor: pointer; transition: transform .2s;
+  }
+  .commit-btn:hover { transform: translateY(-2px); }
+
+  .commit-done-anim {
+    display: none;
+    text-align: center;
+    padding: 28px 16px;
+  }
+  .commit-done-anim .checkmark {
+    width: 80px; height: 80px; margin: 0 auto 16px;
+    border-radius: 50%;
+    background: var(--green);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; color: var(--white);
+    animation: popIn .5s ease;
+  }
+  @keyframes popIn { 0% { transform: scale(0); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+  .commit-done-anim h3 { font-size: 18px; font-weight: 800; color: var(--green-text); margin-bottom: 8px; }
+  .commit-done-anim p { font-size: 14px; color: var(--dark-mid); line-height: 1.6; }
+
+  /* ── Impact cards (page 3) ── */
+  .impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .impact-card {
+    background: var(--white);
+    border: 1.5px solid var(--cream-dark);
+    border-radius: 14px;
+    padding: 20px 14px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all .5s ease;
+  }
+  .impact-card.visible { opacity: 1; transform: translateY(0); }
+  .impact-card .impact-label { font-size: 12px; color: var(--dark-mid); margin-bottom: 6px; font-weight: 500; }
+  .impact-card .impact-amount { font-size: clamp(20px, 5vw, 26px); font-weight: 900; direction: ltr; line-height: 1.2; }
+  .impact-card .impact-sub { font-size: 10px; color: var(--dark-mid); margin-top: 4px; }
+  .impact-card.green { border-color: var(--green); }
+  .impact-card.green .impact-amount { color: var(--green); }
+  .impact-card.gold { border-color: var(--gold); }
+  .impact-card.gold .impact-amount { color: var(--gold-dark); }
+  .impact-card.big { grid-column: 1 / -1; }
+  .impact-card.big .impact-amount { font-size: clamp(28px, 7vw, 40px); }
+
+  /* ── Readiness meter ── */
+  .readiness-wrap { margin: 28px auto 20px; display: flex; flex-direction: column; align-items: center; }
+  .readiness-ring { position: relative; width: 140px; height: 140px; }
+  .readiness-ring svg { width: 140px; height: 140px; transform: rotate(-90deg); }
+  .readiness-ring .ring-bg { fill: none; stroke: var(--cream-dark); stroke-width: 10; }
+  .readiness-ring .ring-fill { fill: none; stroke: var(--gold); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 408; stroke-dashoffset: 408; transition: stroke-dashoffset 1.5s ease; }
+  .readiness-pct { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 900; color: var(--gold-dark); }
+  .readiness-label { font-size: 14px; font-weight: 600; color: var(--dark-mid); margin-top: 8px; }
+
+  /* ── Buttons ── */
+  .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+  .btn {
+    flex: 1; padding: 14px; border: none; border-radius: 50px;
+    font-family: 'Heebo'; font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: transform .15s; min-height: 48px;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+  .btn-next { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--navy); box-shadow: 0 4px 16px rgba(212,168,83,.3); }
+  .btn-back { background: var(--cream); color: var(--dark-mid); }
+  .btn-submit { background: linear-gradient(135deg, var(--green), #1B7A42); color: white; box-shadow: 0 4px 16px rgba(46,125,82,.3); }
 
   /* ── CTA ── */
   .cta-card {
@@ -298,522 +308,810 @@
     text-align: center;
     margin-top: 20px;
   }
-  .cta-card h3 { color: var(--gold); font-size: 18px; justify-content: center; }
-  .cta-card p { color: rgba(255,255,255,.7); font-size: 13px; margin: 8px 0 16px; }
+  .cta-card h3 { color: var(--gold); font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+  .cta-card p { color: rgba(255,255,255,.7); font-size: 13px; margin-bottom: 16px; line-height: 1.6; }
   .cta-btn {
     display: inline-block;
     background: linear-gradient(135deg, var(--gold), var(--gold-dark));
     color: var(--navy);
-    padding: 12px 32px;
+    padding: 14px 36px;
     border-radius: 50px;
-    font-size: 15px;
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: 800;
     text-decoration: none;
-    font-family: 'Heebo', sans-serif;
+    font-family: 'Heebo';
     border: none;
     cursor: pointer;
     transition: transform .2s;
   }
   .cta-btn:hover { transform: translateY(-2px); }
 
-  /* ── Demo banner ── */
-  .demo-banner {
-    background: var(--yellow-light);
-    border: 1px solid #ECD87A;
-    border-radius: 10px;
-    padding: 14px 16px;
-    margin-bottom: 16px;
-    font-size: 13px;
+  /* ── Loading ── */
+  .loading-screen {
     text-align: center;
-    color: var(--dark-mid);
+    padding: 60px 20px;
   }
-  .demo-banner strong { color: var(--dark); }
+  .loading-screen .spinner {
+    width: 48px; height: 48px;
+    border: 4px solid var(--cream-dark);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-screen p { font-size: 15px; color: var(--dark-mid); font-weight: 600; }
+
+  /* ── Error ── */
+  .error-screen {
+    text-align: center; padding: 40px 20px; display: none;
+  }
+  .error-screen .err-icon { font-size: 48px; margin-bottom: 12px; }
+  .error-screen h2 { font-size: 18px; margin-bottom: 8px; }
+  .error-screen p { font-size: 14px; color: var(--dark-mid); }
+
+  /* ── Misc ── */
+  .summary-msg {
+    font-size: 15px; line-height: 1.7; color: var(--dark-mid);
+    margin: 20px 0; padding: 0 8px; text-align: center;
+  }
+  .divider { height: 1px; background: var(--cream-dark); margin: 18px 0; }
 </style>
 </head>
 <body>
 
 <div class="header">
   <div class="header-logo">המקפצה הפיננסית</div>
-  <div class="header-badge">יום 2 - הניתוח + הקטנת הוצאות</div>
+  <div class="header-badge">יום 2 מתוך 4</div>
 </div>
 
 <div class="container">
 
-  <!-- Welcome -->
-  <div class="welcome">
-    <div class="welcome-name">הנתונים שלך, <span id="userName">משתתף</span></div>
-    <div class="welcome-sub">הנה מה שגילינו מהשאלון שמילאת ביום 1</div>
+  <!-- Progress dots: 4 pages -->
+  <div class="progress" id="progressBar">
+    <div class="prog-step"><div class="prog-dot active" id="pd-0">1</div><div class="prog-label">הפרדה</div></div>
+    <div class="prog-line" id="pl-0"></div>
+    <div class="prog-step"><div class="prog-dot" id="pd-1">2</div><div class="prog-label">דירוג</div></div>
+    <div class="prog-line" id="pl-1"></div>
+    <div class="prog-step"><div class="prog-dot" id="pd-2">3</div><div class="prog-label">חוק 3%</div></div>
+    <div class="prog-line" id="pl-2"></div>
+    <div class="prog-step"><div class="prog-dot" id="pd-3">4</div><div class="prog-label">השפעה</div></div>
   </div>
 
-  <!-- Demo mode: test with sample data -->
-  <div class="demo-banner" id="demoBanner">
-    <strong>מצב דמו</strong> - הזן נתונים למטה לבדיקה. בפרודקשן הנתונים מגיעים מ-Fillout.
-    <br><button onclick="toggleInput()" style="margin-top:8px;background:var(--gold);color:var(--navy);border:none;padding:6px 20px;border-radius:50px;font-family:Heebo;font-size:13px;font-weight:600;cursor:pointer">הזן נתונים</button>
+  <!-- Loading screen -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="spinner"></div>
+    <p>טוען את הנתונים שלך...</p>
   </div>
 
-  <!-- Hidden input panel for demo/admin -->
-  <div id="inputPanel" style="display:none">
-    <div class="card">
-      <h3>הזנת נתונים ידנית</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <div class="field"><label style="font-size:11px;color:var(--dark-mid)">שם</label><input id="d_name" placeholder="ישראל" style="width:100%;padding:8px 10px;border:1px solid var(--cream-dark);border-radius:8px;font-family:Heebo;font-size:14px"></div>
-        <div class="field"><label style="font-size:11px;color:var(--dark-mid)">הכנסה נטו</label><input type="number" id="d_income" placeholder="15000" style="width:100%;padding:8px 10px;border:1px solid var(--cream-dark);border-radius:8px;font-family:Heebo;font-size:14px"></div>
+  <!-- Error screen -->
+  <div class="error-screen" id="errorScreen">
+    <div class="err-icon">⚠️</div>
+    <h2>שגיאה בטעינת הנתונים</h2>
+    <p id="errorMsg">לא נמצאו נתונים. תוודא שהקישור תקין.</p>
+  </div>
+
+  <!-- ═══ PAGE 0: Force Separation ═══ -->
+  <div class="page" id="page-0">
+    <div class="hero-msg">
+      <h1>שלום <span id="userName">משתתף</span></h1>
+      <p>כדי להחזיר את השליטה, אנחנו חייבים להפריד בין מה שקונה לנו שקט לבין מה שקונה לנו הנאה רגעית.</p>
+    </div>
+
+    <!-- Rigid expenses -->
+    <div class="card" id="rigidCard">
+      <div class="group-header rigid">
+        <span>🔒 הוצאות קשיחות</span>
+        <span class="group-total" id="rigidTotal">₪0</span>
       </div>
-      <details style="margin-top:10px">
-        <summary style="cursor:pointer;font-size:13px;font-weight:600;color:var(--gold-dark)">הוצאות קבועות</summary>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px" id="fixedInputs"></div>
-      </details>
-      <details style="margin-top:8px">
-        <summary style="cursor:pointer;font-size:13px;font-weight:600;color:var(--gold-dark)">הוצאות משתנות</summary>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px" id="varInputs"></div>
-      </details>
-      <details style="margin-top:8px">
-        <summary style="cursor:pointer;font-size:13px;font-weight:600;color:var(--gold-dark)">חסכונות</summary>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px" id="saveInputs"></div>
-      </details>
-      <button onclick="runAnalysis()" style="width:100%;margin-top:12px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--navy);border:none;padding:12px;border-radius:50px;font-family:Heebo;font-size:15px;font-weight:700;cursor:pointer">הפק ניתוח</button>
+      <div style="font-size:12px;color:var(--dark-mid);margin-bottom:12px">הוצאות שחייבים לשלם. לא ניתן לוותר עליהן.</div>
+      <div id="rigidList"></div>
+    </div>
+
+    <!-- Flexible expenses -->
+    <div class="card" id="flexCard">
+      <div class="group-header flexible">
+        <span>🎯 הוצאות גמישות</span>
+        <span class="group-total" id="flexTotal">₪0</span>
+      </div>
+      <div style="font-size:12px;color:var(--dark-mid);margin-bottom:12px">הוצאות שאפשר לשלוט בהן. כאן נמצא הכסף.</div>
+      <div id="flexList"></div>
+    </div>
+
+    <!-- Totals summary -->
+    <div style="background:var(--navy);border-radius:12px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div style="color:var(--cream);font-size:14px;font-weight:600">סך הוצאות חודשי</div>
+      <div style="color:var(--gold-light);font-size:22px;font-weight:900;direction:ltr" id="grandTotal">₪0</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-next" onclick="goPage(1)">בוא נדרג &#8592;</button>
     </div>
   </div>
 
-  <!-- Pain screen (shown before analysis) -->
-  <div id="painScreen" style="display:none">
-    <div style="text-align:center;padding:32px 16px 24px;background:linear-gradient(180deg,var(--cream) 0%,var(--warm-white) 100%);margin:-20px -16px 20px">
-      <div style="font-size:48px;margin-bottom:12px">💸</div>
-      <div id="painName" style="font-size:22px;font-weight:800;margin-bottom:8px"></div>
-      <div style="font-size:14px;color:var(--dark-mid);max-width:320px;margin:0 auto">הנה כמה כסף כבר יצא מהחשבון שלך</div>
+  <!-- ═══ PAGE 1: Luxury Rating ═══ -->
+  <div class="page" id="page-1">
+    <div class="card">
+      <h2>מה באמת חייבים ?</h2>
+      <div class="subtitle">עכשיו תדרג כל הוצאה גמישה. האם אתה מוכן לוותר עליה או לא ?</div>
+      <div id="rateList"></div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px" id="painStats"></div>
-    <div class="card" id="painCompare"></div>
-    <div style="text-align:center;padding:16px 0">
-      <button onclick="showFullAnalysis()" style="background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--navy);border:none;padding:14px 36px;border-radius:50px;font-family:Heebo;font-size:16px;font-weight:800;cursor:pointer">
-        רוצה לראות איך לשנות את זה ←
-      </button>
+
+    <!-- Sticky running total -->
+    <div class="rate-counter" id="rateCounter">
+      <div class="counter-label">סך הפריטים שאפשר בלעדיהן</div>
+      <div class="counter-amount" id="dropTotal">₪0</div>
+      <div class="counter-sub" id="dropCount">0 פריטים נבחרו</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goPage(0)">&#8594; חזרה</button>
+      <button class="btn btn-next" id="toPage2Btn" onclick="goPage(2)" disabled>להמשיך לחוק ה-3% &#8592;</button>
     </div>
   </div>
 
-  <!-- Results (shown after data loaded) -->
-  <div id="results" style="display:none">
-    <div class="hero-balance" id="heroBalance"></div>
-    <div class="stats" id="statsGrid"></div>
-    <div class="card" id="leaksCard"></div>
-    <div class="card" id="reduceCard"></div>
-    <div class="card" id="cbsCard"></div>
-    <div class="card" id="ratioCard"></div>
-    <div class="card" id="savingsCard"></div>
-    <div class="card" id="breakdownCard"></div>
-    <div class="card" id="insightCard"></div>
+  <!-- ═══ PAGE 2: The 3% Law ═══ -->
+  <div class="page" id="page-2">
+    <div class="card">
+      <h2>חוק ה-3%</h2>
+      <div class="subtitle">3% מההוצאות שלך זה <strong id="threePercentDisplay">₪0</strong> לחודש.<br>תבחר מהפריטים שסימנת כ"אפשר בלעדיהן" עד שמגיעים ליעד.</div>
+
+      <!-- Progress bar toward 3% -->
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:4px">
+        <span style="font-size:12px;color:var(--dark-mid)">נבחר:</span>
+        <span style="font-size:16px;font-weight:800;color:var(--green)" id="selectedVsTarget">₪0 / ₪0</span>
+      </div>
+      <div class="target-bar-wrap">
+        <div class="target-bar-fill" id="targetBarFill" style="width:0%"></div>
+      </div>
+      <div class="target-labels">
+        <span>₪0</span>
+        <span>יעד 3%</span>
+      </div>
+
+      <div id="dropSelectList"></div>
+
+      <!-- Commitment section (appears when 3% reached) -->
+      <div class="commit-section" id="commitSection">
+        <h3>הגעת ליעד</h3>
+        <p>החלטת לוותר על הוצאות שלא מוסיפות לך ערך אמיתי. ההחלטה הזו תשנה את המציאות הכלכלית שלך.</p>
+        <button class="commit-btn" onclick="commitSavings()">אני מוותר על זה לטובת החופש שלי</button>
+      </div>
+
+      <!-- After commit animation -->
+      <div class="commit-done-anim" id="commitDone">
+        <div class="checkmark">✓</div>
+        <h3>ההתחייבות נרשמה</h3>
+        <p>עכשיו נראה מה ההשפעה של ההחלטה הזו על העתיד שלך.</p>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goPage(1)">&#8594; חזרה</button>
+      <button class="btn btn-next" id="toPage3Btn" onclick="goPage(3)" disabled>ראה את ההשפעה &#8592;</button>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE 3: Impact Summary ═══ -->
+  <div class="page" id="page-3">
+    <div class="card" style="text-align:center">
+      <h2>ההשפעה של ההחלטה שלך</h2>
+      <div class="subtitle">ביטלת הוצאות קטנות. הנה מה שזה שווה לאורך זמן.</div>
+
+      <div class="impact-grid">
+        <div class="impact-card green" id="impactMonthly">
+          <div class="impact-label">חיסכון חודשי</div>
+          <div class="impact-amount">₪0</div>
+        </div>
+        <div class="impact-card green" id="impactAnnual">
+          <div class="impact-label">חיסכון שנתי</div>
+          <div class="impact-amount">₪0</div>
+        </div>
+        <div class="impact-card gold" id="impactCumulative">
+          <div class="impact-label">סך מצטבר עד גיל 67</div>
+          <div class="impact-amount">₪0</div>
+          <div class="impact-sub" id="impactYears"></div>
+        </div>
+        <div class="impact-card gold" id="impactCompound">
+          <div class="impact-label">עם ריבית דריבית 8%</div>
+          <div class="impact-amount">₪0</div>
+          <div class="impact-sub">תשואה ממוצעת בשוק ההון</div>
+        </div>
+      </div>
+
+      <!-- Readiness meter -->
+      <div class="readiness-wrap">
+        <div class="readiness-ring">
+          <svg viewBox="0 0 140 140">
+            <circle class="ring-bg" cx="70" cy="70" r="65"/>
+            <circle class="ring-fill" id="ringFill" cx="70" cy="70" r="65"/>
+          </svg>
+          <div class="readiness-pct" id="readinessPct">60%</div>
+        </div>
+        <div class="readiness-label">מוכנות פיננסית</div>
+      </div>
+
+      <div class="summary-msg">
+        החזרת לעצמך את השליטה על ה-3% הראשונים.<br>
+        מחר נלמד איך להגדיל את הערך שלך כדי להכניס עוד כסף למערכת.
+      </div>
+    </div>
+
     <div class="cta-card">
-      <h3>מוכן להמשיך ?</h3>
-      <p>ביום 3 נבדוק איך להגדיל את ההכנסה שלך</p>
-      <a class="cta-btn" href="index.html">חזרה למסלול ←</a>
+      <h3>השלב הבא</h3>
+      <p>ביום 3 נבדוק את הצד השני של המשוואה: איך להגדיל הכנסות.</p>
+      <button class="cta-btn" onclick="goToDay3()">ליום 3 &#8592;</button>
     </div>
   </div>
+
 </div>
 
 <script>
-// ── Field definitions ──
-const FIXED = [
-  {id:'rent',label:'שכ"ד/משכנתא',ph:'5500'},{id:'arnona',label:'ארנונה+ועד',ph:'600'},
-  {id:'utilities',label:'מים+גז+חשמל',ph:'700'},{id:'telecom',label:'טלפון+נט',ph:'400'},
-  {id:'car_ins',label:'ביטוח רכב',ph:'500'},{id:'loans',label:'הלוואות',ph:'0'},
-  {id:'education',label:'חינוך',ph:'0'},{id:'leasing',label:'רכב/ליסינג',ph:'2000'},
-  {id:'test',label:'טסט שנתי/12',ph:'100'}
-];
-const VARIABLE = [
-  {id:'groceries',label:'מכולת',ph:'2500'},{id:'dining',label:'מסעדות+Wolt',ph:'1200'},
-  {id:'coffee',label:'קפה+מאפה',ph:'500'},{id:'transport',label:'דלק+חניה',ph:'800'},
-  {id:'health',label:'בריאות',ph:'300'},{id:'shopping',label:'קניות+ביגוד',ph:'500'},
-  {id:'leisure',label:'בילויים',ph:'800'},{id:'kids',label:'ילדים/חיות',ph:'0'}
-];
-const SAVINGS = [
-  {id:'pension',label:'פנסיה נוספת',ph:'0'},{id:'keren',label:'קרן השתלמות',ph:'0'},
-  {id:'gemel',label:'גמל להשקעה',ph:'0'},{id:'child_save',label:'חיסכון לילד',ph:'0'},
-  {id:'save_gen',label:'חיסכון כללי',ph:'0'}
-];
-
-// ── Build input fields ──
-function buildInputs(container, fields) {
-  const el = document.getElementById(container);
-  fields.forEach(f => {
-    el.innerHTML += `<div><label style="font-size:10px;color:var(--dark-mid)">${f.label}</label><input type="number" id="d_${f.id}" placeholder="${f.ph}" style="width:100%;padding:6px 8px;border:1px solid var(--cream-dark);border-radius:6px;font-family:Heebo;font-size:13px"></div>`;
-  });
-}
-buildInputs('fixedInputs', FIXED);
-buildInputs('varInputs', VARIABLE);
-buildInputs('saveInputs', SAVINGS);
-
-function toggleInput() {
-  const p = document.getElementById('inputPanel');
-  p.style.display = p.style.display === 'none' ? 'block' : 'none';
-}
-
-function gv(id) { return parseFloat(document.getElementById('d_'+id).value) || 0; }
-function fmt(n) { return '₪' + Math.round(n).toLocaleString('he-IL'); }
-function pct(n, t) { return t > 0 ? Math.round(n/t*100) : 0; }
-
-// CBS quintiles (2024 approximate)
-const CBS = { q:[5800,9200,12800,17500,28000], labels:['חמישון 1','חמישון 2','חמישון 3 (ממוצע)','חמישון 4','חמישון 5'] };
-function getQ(exp) { for(let i=0;i<CBS.q.length;i++) if(exp<=CBS.q[i]) return i; return 4; }
-
-const BENCH = {
-  groceries:{avg:1800,tip:'ממוצע ישראלי ₪1,800. שינוי קטן בהרגלי קנייה = ₪5,000+ בשנה'},
-  dining:{avg:600,tip:'כל ארוחה בחוץ = פי 3 מבישול בבית'},
-  coffee:{avg:300,tip:'קפה בבית חוסך 70% מקפה בחוץ'},
-  transport:{avg:500,tip:'קארפול או תח"צ יום אחד בשבוע = ₪3,000 בשנה'},
-  shopping:{avg:400,tip:'שיטת 48 שעות: תחכה יומיים לפני קנייה מעל ₪200'},
-  leisure:{avg:600,tip:'חצי מהבילויים זמינים בחינם או בהנחה'}
-};
-
-function runAnalysis() {
-  const name = document.getElementById('d_name').value || 'משתתף';
-  const income = gv('income');
-
-  const fixed = {}; FIXED.forEach(f => fixed[f.id] = gv(f.id));
-  const variable = {}; VARIABLE.forEach(f => variable[f.id] = gv(f.id));
-  const savings = {}; SAVINGS.forEach(f => savings[f.id] = gv(f.id));
-
-  const totalFixed = Object.values(fixed).reduce((a,b)=>a+b,0);
-  const totalVar = Object.values(variable).reduce((a,b)=>a+b,0);
-  const totalSave = Object.values(savings).reduce((a,b)=>a+b,0);
-  const totalExp = totalFixed + totalVar;
-  const totalOut = totalExp + totalSave;
-  const balance = income - totalOut;
-  const pos = balance >= 0;
-
-  document.getElementById('userName').textContent = name;
-
-  // Hero
-  document.getElementById('heroBalance').innerHTML = `
-    <div class="hero-label">היתרה החודשית שלך</div>
-    <div class="hero-amount ${pos?'positive':'negative'}">${fmt(balance)}</div>
-    <div class="hero-tag ${pos?'positive':'negative'}">${pos?'עודף חודשי':'גירעון חודשי'}</div>`;
-
-  // Stats
-  document.getElementById('statsGrid').innerHTML = `
-    <div class="stat"><div class="stat-label">הכנסה</div><div class="stat-val" style="color:var(--blue)">${fmt(income)}</div></div>
-    <div class="stat"><div class="stat-label">הוצאות</div><div class="stat-val" style="color:var(--red)">${fmt(totalExp)}</div></div>
-    <div class="stat"><div class="stat-label">חסכונות</div><div class="stat-val" style="color:var(--green)">${fmt(totalSave)}</div><div class="stat-sub">${pct(totalSave,income)}% מההכנסה</div></div>
-    <div class="stat"><div class="stat-label">דליפות/שנה</div><div class="stat-val" style="color:var(--orange)">${fmt(totalVar*12)}</div></div>`;
-
-  // Leaks
-  const leaks = [
-    {name:'מכולת / סופר',amount:variable.groceries,key:'groceries'},
-    {name:'מסעדות + Wolt',amount:variable.dining,key:'dining'},
-    {name:'קפה + מאפייה',amount:variable.coffee,key:'coffee'},
-    {name:'דלק + חניה',amount:variable.transport,key:'transport'},
-    {name:'קניות + ביגוד',amount:variable.shopping,key:'shopping'},
-    {name:'בילויים + חופשות',amount:variable.leisure,key:'leisure'},
-  ].filter(x=>x.amount>0).sort((a,b)=>b.amount-a.amount).slice(0,3);
-
-  let lk = '<h3>🚨 3 הדליפות הגדולות שלך</h3>';
-  leaks.forEach(l => {
-    const b = BENCH[l.key];
-    lk += `<div class="leak"><div><div class="leak-name">${l.name}</div>${b?`<div class="leak-hint">${b.tip}</div>`:''}</div><div class="leak-nums"><div class="leak-month">${fmt(l.amount)}</div><div class="leak-year">${fmt(l.amount*12)}/שנה</div></div></div>`;
-  });
-  document.getElementById('leaksCard').innerHTML = lk;
-
-  // Reduce
-  window._leaks = leaks;
-  window._selectedLeak = null;
-  let rd = '<h3>✂️ בחר דליפה אחת לצמצם</h3>';
-  rd += '<p style="font-size:13px;color:var(--dark-mid);margin:-6px 0 12px">תבחר אחת ותחליט כמה אתה מוריד בחודש</p>';
-  leaks.forEach((l, i) => {
-    const b = BENCH[l.key];
-    const recTarget = b ? Math.round(Math.min(l.amount * 0.7, b.avg)) : Math.round(l.amount * 0.7);
-    rd += `<div class="reduce-item" onclick="selectLeak(${i}, ${l.amount}, ${recTarget})" id="rl_${i}">
-      <div class="reduce-check" id="rck_${i}"></div>
-      <div class="reduce-info">
-        <div class="reduce-name">${l.name}</div>
-        <div class="reduce-now">עכשיו: ${fmt(l.amount)}/חודש</div>
-      </div>
-      <div class="reduce-target">יעד: ${fmt(recTarget)}</div>
-    </div>`;
-  });
-  rd += `<div id="reduceCalc" style="display:none" class="reduce-calc">
-    <div style="font-size:13px;font-weight:600;margin-bottom:4px">כמה להוריד בחודש ?</div>
-    <input type="range" id="reduceSlider" min="0" max="0" value="0" oninput="updateSaving()">
-    <div class="reduce-saving-big" id="sliderVal">₪0</div>
-    <div class="reduce-saving-sub" id="savingYear"></div>
-    <button class="commit-btn" onclick="commitReduction()">🎯 אני מתחייב להוריד !</button>
-    <div id="commitDone" style="display:none"></div>
-  </div>`;
-  document.getElementById('reduceCard').innerHTML = rd;
-
-  // CBS
-  const qi = getQ(totalExp);
-  const cbsPct = Math.min(100, Math.max(5, totalExp/CBS.q[4]*100));
-  document.getElementById('cbsCard').innerHTML = `
-    <h3>📊 איפה אתה עומד ?</h3>
-    <p style="font-size:12px;color:var(--dark-mid);margin-bottom:4px">ההוצאות שלך מול הממוצע הארצי (למ"ס 2024)</p>
-    <div class="cbs-bar-wrap"><div class="cbs-bar-inner"></div><div class="cbs-pin" style="right:${cbsPct}%"></div></div>
-    <div class="cbs-labels"><span>₪5,800</span><span>ממוצע ₪14,200</span><span>₪28,000</span></div>
-    <div class="cbs-result">אתה ב<strong>${CBS.labels[qi]}</strong> עם ${fmt(totalExp)}/חודש</div>`;
-
-  // Ratio
-  const luxTotal = variable.dining + variable.coffee + variable.shopping + variable.leisure;
-  const luxPct = income>0 ? Math.round(luxTotal/income*100) : 0;
-  const healthy = luxPct <= 30;
-  const rCol = healthy ? 'var(--green)' : 'var(--red)';
-  document.getElementById('ratioCard').innerHTML = `
-    <h3>🎯 יחס מותרות</h3>
-    <div class="ratio-wrap">
-      <div class="ratio-ring" style="background:conic-gradient(${rCol} ${luxPct*3.6}deg, var(--cream) 0)"><span style="color:${rCol}">${luxPct}%</span></div>
-      <div class="ratio-text">${healthy
-        ? `היחס בריא. ${luxPct}% מההכנסה הולך למותרות (מומלץ: עד <strong>30%</strong>).`
-        : `${luxPct}% מההכנסה הולך למותרות. המומלץ: עד <strong>30%</strong>. צמצום של ${fmt(luxTotal-income*0.3)}/חודש יחזיר לאיזון.`
-      }<br><span style="font-size:11px;color:var(--dark-mid)">מותרות = מסעדות + קפה + קניות + בילויים</span></div>
-    </div>`;
-
-  // Savings
-  const savItems = [
-    {name:'פנסיה מעבר לחובה',val:savings.pension},{name:'קרן השתלמות',val:savings.keren},
-    {name:'גמל להשקעה',val:savings.gemel},{name:'חיסכון לילד',val:savings.child_save},
-    {name:'חיסכון כללי',val:savings.save_gen}
-  ].filter(s=>s.val>0);
-
-  let sv = '<h3>💰 חסכונות</h3>';
-  if (savItems.length === 0) {
-    sv += `<div class="saving-empty">⚠️ אין הפקדות לחסכונות.<br>אפילו ₪500/חודש במשך 30 שנה ב-6% = <strong>₪502,000</strong></div>`;
-  } else {
-    savItems.forEach(s => { sv += `<div class="saving-row"><div class="saving-name">${s.name}</div><div class="saving-val">${fmt(s.val)}</div></div>`; });
-    sv += `<div class="saving-total">סה"כ ${fmt(totalSave)}/חודש = ${fmt(totalSave*12)}/שנה (${pct(totalSave,income)}% מההכנסה)</div>`;
-  }
-  document.getElementById('savingsCard').innerHTML = sv;
-
-  // Breakdown
-  const cats = [
-    {name:'קבועות',val:totalFixed,col:'var(--blue)'},{name:'משתנות',val:totalVar,col:'var(--red)'},
-    {name:'חסכונות',val:totalSave,col:'var(--green)'}
-  ];
-  let br = '<h3>📈 חלוקת ההוצאות</h3>';
-  cats.forEach(c => {
-    const p = pct(c.val, totalOut);
-    br += `<div class="bar-row"><div class="bar-head"><span class="bl">${c.name}</span><span>${fmt(c.val)} (${p}%)</span></div><div class="bar-bg"><div class="bar-fg" style="width:${p}%;background:${c.col}"></div></div></div>`;
-  });
-  document.getElementById('breakdownCard').innerHTML = br;
-
-  // AI Insights
-  const tips = [];
-  if (!pos) tips.push(`יש גירעון של ${fmt(Math.abs(balance))} בחודש. צריך לצמצם הוצאות או להגדיל הכנסה.`);
-  if (luxPct>30) tips.push(`${luxPct}% מההכנסה הולך למותרות. צמצום ל-30% יחסוך ${fmt(luxTotal-income*0.3)}/חודש.`);
-  if (totalSave===0) tips.push('אין הפקדות לחסכונות. כל שקל שלא עובד נשחק באינפלציה.');
-  if (variable.coffee>400) tips.push(`קפה בחוץ: ${fmt(variable.coffee*12)}/שנה. מכונת קפה ביתית מחזירה השקעה תוך 3 חודשים.`);
-  if (variable.dining>1000) tips.push(`מסעדות: ${fmt(variable.dining)}/חודש. בישול בבית פעמיים בשבוע במקום הזמנה = ${fmt(variable.dining*0.4*12)} חיסכון שנתי.`);
-  if (pos && totalSave===0) tips.push(`יש עודף ${fmt(balance)} שיושב בעו"ש ונשחק. תעביר לגמל להשקעה.`);
-  if (tips.length===0) tips.push('המצב הפיננסי מאוזן. המשך לעקוב חודשי.');
-
-  document.getElementById('insightCard').innerHTML = `
-    <h3>🤖 מה גילינו</h3>
-    <div class="insight-box"><h4>תובנות עיקריות</h4>${tips.slice(0,3).map(t=>`<p>• ${t}</p>`).join('')}</div>`;
-
-  // Show PAIN SCREEN first
-  const wantsTotal = variable.dining + variable.coffee + variable.shopping + variable.leisure;
-  const ageRaw = document.getElementById('d_age') ? document.getElementById('d_age').value : localStorage.getItem('makpatza_age');
-  const age = parseInt(ageRaw) || 35;
-  const yearsToRetire = Math.max(1, 67 - age);
-  const name2 = document.getElementById('userName').textContent || 'משתמש';
-
-  document.getElementById('painName').textContent = name2 + ', זה המספר שלא תאמין בו';
-  document.getElementById('painStats').innerHTML = `
-    <div class="stat"><div class="stat-label">רצונות בחודש</div><div class="stat-val" style="color:var(--red)">${fmt(wantsTotal)}</div></div>
-    <div class="stat"><div class="stat-label">בשנה</div><div class="stat-val" style="color:var(--orange)">${fmt(wantsTotal*12)}</div></div>
-    <div class="stat"><div class="stat-label">בעשור</div><div class="stat-val" style="color:var(--orange)">${fmt(wantsTotal*120)}</div></div>
-    <div class="stat"><div class="stat-label">עד פרישה</div><div class="stat-val" style="color:var(--red-text)">${fmt(wantsTotal*12*yearsToRetire)}</div></div>`;
-
-  // Investment alternative card
-  const monthlyInvest = wantsTotal * 0.5; // half of wants = realistic saving
-  const annualRate = 0.07;
-  // Future value of monthly investment: FV = PMT * ((1+r)^n - 1) / r
-  const monthlyRate = annualRate / 12;
-  const months10 = 10 * 12;
-  const monthsRetire = yearsToRetire * 12;
-  const fv10 = monthlyInvest * ((Math.pow(1 + monthlyRate, months10) - 1) / monthlyRate);
-  const fvRetire = monthlyInvest * ((Math.pow(1 + monthlyRate, monthsRetire) - 1) / monthlyRate);
-
-  const investHTML = `
-    <div class="card" style="border:2px solid var(--green);margin-top:12px">
-      <h3>📈 מה היה קורה אם היית משקיע חצי מהרצונות ?</h3>
-      <p style="font-size:12px;color:var(--dark-mid);margin:-6px 0 14px">השקעה של ${fmt(monthlyInvest)}/חודש בתשואה ממוצעת של 7% שנתי</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div class="stat" style="border-color:var(--green)"><div class="stat-label">אחרי 10 שנים</div><div class="stat-val" style="color:var(--green)">${fmt(fv10)}</div></div>
-        <div class="stat" style="border-color:var(--green)"><div class="stat-label">עד פרישה (${yearsToRetire} שנים)</div><div class="stat-val" style="color:var(--green)">${fmt(fvRetire)}</div></div>
-      </div>
-      <div style="background:var(--green-light);border-radius:10px;padding:12px;margin-top:10px;font-size:13px;color:var(--green-text);text-align:center">
-        <strong>${fmt(monthlyInvest)}/חודש</strong> היום = <strong>${fmt(fvRetire)}</strong> בפרישה
-      </div>
-    </div>`;
-  document.getElementById('painStats').insertAdjacentHTML('afterend', investHTML);
-
-  // Compare vs CBS average
-  const cbsWants = 2100; // CBS 2024 average for dining+coffee+shopping+leisure
-  const overAvg = Math.max(0, wantsTotal - cbsWants);
-  document.getElementById('painCompare').innerHTML = `
-    <h3>📊 ביחס לממוצע הישראלי</h3>
-    <p style="font-size:13px;color:var(--dark-mid);margin-bottom:12px">הוצאות "רצון" (מסעדות + קפה + קניות + בילויים)</p>
-    <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-      <span style="font-size:13px">ממוצע ישראלי</span><strong>${fmt(cbsWants)}/חודש</strong>
-    </div>
-    <div style="display:flex;justify-content:space-between;margin-bottom:12px">
-      <span style="font-size:13px">אתה מוציא</span><strong style="color:${wantsTotal > cbsWants ? 'var(--red)' : 'var(--green)'}">${fmt(wantsTotal)}/חודש</strong>
-    </div>
-    ${overAvg > 0
-      ? `<div style="background:var(--red-light);border-radius:10px;padding:12px;font-size:13px;color:var(--red-text)">
-          אתה מוציא <strong>${fmt(overAvg)}/חודש יותר</strong> מהממוצע.<br>
-          זה <strong>${fmt(overAvg*12)}/שנה</strong> שאפשר לחסוך.
-        </div>`
-      : `<div style="background:var(--green-light);border-radius:10px;padding:12px;font-size:13px;color:var(--green-text)">
-          ✓ אתה מתחת לממוצע הישראלי. כל הכבוד.
-        </div>`}`;
-
-  // Dunning-Kruger reflection
-  const assess = JSON.parse(localStorage.getItem('makpatza_assess') || 'null');
-  if (assess) {
-    const ratingLabels = {5:'טובה מאוד',4:'טובה',3:'סבירה',2:'לא טובה',1:'גרועה'};
-    const actualSave = totalSave;
-    const guessDiff = assess.guessSaving - actualSave;
-    const actualWastePct = income > 0 ? Math.round(wantsTotal / income * 100) : 0;
-    const wasteDiff = actualWastePct - assess.guessWaste;
-
-    let dkHTML = `<div class="card" style="border:2px solid var(--orange);margin-top:12px">
-      <h3>🪞 מה חשבת מול מה שנמצא</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-        <div style="background:var(--blue-light);padding:10px;border-radius:8px;text-align:center">
-          <div style="font-size:10px;color:var(--dark-mid)">דירגת את עצמך</div>
-          <div style="font-size:16px;font-weight:800;color:var(--blue)">${ratingLabels[assess.selfRating]}</div>
-        </div>
-        <div style="background:${pos?'var(--green-light)':'var(--red-light)'};padding:10px;border-radius:8px;text-align:center">
-          <div style="font-size:10px;color:var(--dark-mid)">מצב בפועל</div>
-          <div style="font-size:16px;font-weight:800;color:${pos?'var(--green)':'var(--red)'}">${pos?'עודף '+fmt(balance):'גירעון '+fmt(Math.abs(balance))}</div>
-        </div>
-      </div>`;
-
-    if (guessDiff > 100) {
-      dkHTML += `<div style="background:var(--orange-light);border-radius:8px;padding:10px;font-size:12px;margin-bottom:6px">
-        💡 חשבת שאתה חוסך <strong>${fmt(assess.guessSaving)}</strong>/חודש. בפועל: <strong>${fmt(actualSave)}</strong>. פער של <strong>${fmt(guessDiff)}</strong>.
-      </div>`;
-    }
-    if (wasteDiff > 5) {
-      dkHTML += `<div style="background:var(--orange-light);border-radius:8px;padding:10px;font-size:12px">
-        💡 הערכת ש-${assess.guessWaste}% מההכנסה הולך על מיותרים. בפועל: <strong>${actualWastePct}%</strong>.
-      </div>`;
-    }
-    if (guessDiff <= 100 && wasteDiff <= 5) {
-      dkHTML += `<div style="background:var(--green-light);border-radius:8px;padding:10px;font-size:12px">
-        ✓ ההערכה שלך קרובה למציאות. יש לך מודעות פיננסית גבוהה.
-      </div>`;
-    }
-    dkHTML += '</div>';
-    document.getElementById('painCompare').insertAdjacentHTML('afterend', dkHTML);
-  }
-
-  window._analysisData = { totalFixed, totalVar, totalSave, balance, pos, income };
-  document.getElementById('painScreen').style.display = 'block';
-  document.getElementById('inputPanel').style.display = 'none';
-  document.getElementById('demoBanner').style.display = 'none';
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function showFullAnalysis() {
-  document.getElementById('painScreen').style.display = 'none';
-  document.getElementById('results').style.display = 'block';
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function selectLeak(i, amount, recTarget) {
-  document.querySelectorAll('.reduce-item').forEach(el => el.classList.remove('selected'));
-  document.querySelectorAll('.reduce-check').forEach(el => { el.textContent = ''; });
-  document.getElementById('rl_'+i).classList.add('selected');
-  document.getElementById('rck_'+i).textContent = '✓';
-  window._selectedLeak = i;
-  const slider = document.getElementById('reduceSlider');
-  slider.max = amount;
-  slider.value = amount - recTarget;
-  document.getElementById('reduceCalc').style.display = 'block';
-  document.getElementById('commitDone').style.display = 'none';
-  updateSaving();
-}
-
-function updateSaving() {
-  const v = parseInt(document.getElementById('reduceSlider').value) || 0;
-  const annual = v * 12;
-  const threeYr = annual * 3 * 1.04; // rough with 4% savings
-  document.getElementById('sliderVal').textContent = fmt(v) + '/חודש';
-  document.getElementById('savingYear').textContent = annual > 0
-    ? `${fmt(annual)}/שנה | אחרי 3 שנים עם 4% ריבית: ${fmt(Math.round(threeYr))}`
-    : 'הזז את המחוון לבחור כמה לצמצם';
-}
-
-function commitReduction() {
-  const v = parseInt(document.getElementById('reduceSlider').value) || 0;
-  if (!v) { alert('תבחר כמה להוריד קודם'); return; }
-  const lk = window._leaks[window._selectedLeak];
-  const annual = v * 12;
-  document.getElementById('commitDone').innerHTML = `✅ מעולה ! התחייבת לחסוך ${fmt(v)}/חודש מ${lk.name}.<br>זה ${fmt(annual)} בשנה. ביום 3 נראה איך להגדיל את ההכנסה.`;
-  document.getElementById('commitDone').style.display = 'block';
-  document.querySelector('.commit-btn').style.display = 'none';
-  localStorage.setItem('makpatza_commit', JSON.stringify({leak: lk.name, saving: v, ts: Date.now()}));
-}
-
 // ── Supabase config ──
 const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI';
 
-// DB column → input field mapping
-const DB_FIXED = {rent:'rent',arnona:'arnona',utilities:'utilities',telecom:'telecom',car_insurance:'car_ins',loans:'loans',education:'education',leasing:'leasing',test_annual:'test'};
-const DB_VAR = {groceries:'groceries',dining:'dining',coffee:'coffee',transport:'transport',health:'health',shopping:'shopping',leisure:'leisure',kids:'kids'};
-const DB_SAVE = {pension_extra:'pension',keren_hishtalmut:'keren',gemel_invest:'gemel',child_savings:'child_save',general_savings:'save_gen'};
+// ── Category definitions (mirrors day1.html) ──
+const CATEGORIES = [
+  {
+    id: 'household', name: 'משק בית', type: 'rigid',
+    items: [
+      {id:'rent',label:'שכ"ד / משכנתא'},{id:'arnona',label:'ארנונה'},
+      {id:'electricity',label:'חשמל'},{id:'water',label:'מים'},
+      {id:'gas',label:'גז'},{id:'vaad_bayit',label:'ועד בית'},
+      {id:'household_other',label:'אחר (משק בית)',isOther:true}
+    ]
+  },
+  {
+    id: 'insurance', name: 'ביטוחים', type: 'rigid',
+    items: [
+      {id:'car_insurance',label:'ביטוח רכב'},{id:'home_insurance',label:'ביטוח דירה'},
+      {id:'life_insurance',label:'ביטוח חיים'},{id:'health_insurance',label:'ביטוח בריאות'},
+      {id:'insurance_other',label:'אחר (ביטוח)',isOther:true}
+    ]
+  },
+  {
+    id: 'education', name: 'חינוך', type: 'rigid',
+    items: [
+      {id:'daycare',label:'גן / מעון'},{id:'afternoon',label:'צהרון'},
+      {id:'tuition',label:'שכר לימוד'},{id:'education_other',label:'אחר (חינוך)',isOther:true}
+    ]
+  },
+  {
+    id: 'loans', name: 'הלוואות', type: 'rigid',
+    items: [
+      {id:'bank_loans',label:'הלוואות בנקאיות'},{id:'credit_card',label:'כרטיס אשראי'},
+      {id:'external_loans',label:'הלוואה חוץ-בנקאית'},{id:'loans_other',label:'אחר (הלוואות)',isOther:true}
+    ]
+  },
+  {
+    id: 'health', name: 'בריאות', type: 'flexible',
+    items: [
+      {id:'kupat_holim',label:'קופ"ח'},{id:'medication',label:'תרופות'},
+      {id:'dental',label:'טיפולי שיניים'},{id:'glasses',label:'משקפיים / עדשות'},
+      {id:'health_other',label:'אחר (בריאות)',isOther:true}
+    ]
+  },
+  {
+    id: 'hobbies', name: 'חוגים', type: 'flexible',
+    items: [
+      {id:'kids_hobbies',label:'חוגים לילדים'},{id:'fitness',label:'כושר / ספורט'},
+      {id:'hobbies_other',label:'אחר (חוגים)',isOther:true}
+    ]
+  },
+  {
+    id: 'transport', name: 'תחבורה', type: 'flexible',
+    items: [
+      {id:'fuel',label:'דלק'},{id:'parking',label:'חניה'},
+      {id:'public_transit',label:'תחב"צ'},{id:'leasing',label:'ליסינג / תשלומי רכב'},
+      {id:'transport_other',label:'אחר (תחבורה)',isOther:true}
+    ]
+  },
+  {
+    id: 'telecom', name: 'תקשורת', type: 'flexible',
+    items: [
+      {id:'phone_bill',label:'טלפון'},{id:'internet',label:'אינטרנט'},
+      {id:'tv',label:'טלוויזיה'},{id:'streaming',label:'סטרימינג'},
+      {id:'telecom_other',label:'אחר (תקשורת)',isOther:true}
+    ]
+  },
+  {
+    id: 'food', name: 'אוכל', type: 'flexible',
+    items: [
+      {id:'groceries',label:'סופר'},{id:'dining',label:'אוכל בחוץ'},
+      {id:'delivery',label:'משלוחים'},{id:'coffee',label:'קפה'},
+      {id:'food_other',label:'אחר (אוכל)',isOther:true}
+    ]
+  },
+  {
+    id: 'leisure', name: 'פנאי', type: 'flexible',
+    items: [
+      {id:'entertainment',label:'בילויים'},{id:'vacations',label:'חופשות'},
+      {id:'shopping',label:'קניות'},{id:'personal_hobbies',label:'תחביבים'},
+      {id:'leisure_other',label:'אחר (פנאי)',isOther:true}
+    ]
+  },
+  {
+    id: 'investments', name: 'השקעות', type: 'flexible',
+    items: [
+      {id:'keren_hishtalmut',label:'קרן השתלמות'},{id:'extra_pension',label:'פנסיה נוספת'},
+      {id:'gemel_invest',label:'גמל / השקעות'},{id:'child_savings',label:'חיסכון ילדים'},
+      {id:'general_savings',label:'חיסכון כללי'},{id:'investments_other',label:'אחר (השקעות)',isOther:true}
+    ]
+  }
+];
 
+// Legacy field mapping (flat DB columns → category items)
+const LEGACY_MAP = {
+  rent: 'rent', arnona: 'arnona',
+  utilities: ['electricity','water','gas'], // will split evenly
+  telecom: ['phone_bill','internet'],
+  car_insurance: 'car_insurance',
+  loans: 'bank_loans',
+  education: 'daycare',
+  leasing: 'leasing',
+  test_annual: null,
+  groceries: 'groceries', dining: 'dining', coffee: 'coffee',
+  transport: 'fuel',
+  health: 'kupat_holim',
+  shopping: 'shopping',
+  leisure: 'entertainment',
+  kids: 'kids_hobbies',
+  // Savings mapped to investments
+  pension_extra: 'extra_pension',
+  keren_hishtalmut: 'keren_hishtalmut',
+  gemel_invest: 'gemel_invest',
+  child_savings: 'child_savings',
+  general_savings: 'general_savings'
+};
+
+// ── Helpers ──
+function fmt(n) { return '₪' + Math.round(n).toLocaleString('he-IL'); }
+function pct(n, t) { return t > 0 ? Math.round(n / t * 100) : 0; }
+
+// ── State ──
+let participantData = null;
+let expenseItems = []; // [{id, label, amount, catId, catName, type:'rigid'|'flexible'}]
+let flexibleItems = []; // subset of expenseItems where type=flexible and amount>0
+let ratings = {}; // {itemId: 'keep'|'drop'}
+let dropSelections = {}; // {itemId: true/false} for page 2
+let committed = false;
+let userAge = 35;
+let totalExpenses = 0;
+let pid = null;
+
+// ── Load from Supabase ──
 async function loadFromSupabase(pid) {
   const res = await fetch(`${SUPA_URL}/rest/v1/challenge_participants?id=eq.${pid}&select=*`, {
     headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` }
   });
-  if (!res.ok) throw new Error('Failed to load');
+  if (!res.ok) throw new Error('שגיאה בטעינה מהשרת');
   const rows = await res.json();
-  if (rows.length === 0) throw new Error('Not found');
+  if (rows.length === 0) throw new Error('לא נמצאו נתונים');
   return rows[0];
 }
 
-function fillFromDB(row) {
-  document.getElementById('d_name').value = row.name || '';
-  document.getElementById('d_income').value = row.income || 0;
-  if (row.age) localStorage.setItem('makpatza_age', row.age);
-  Object.entries(DB_FIXED).forEach(([db, field]) => {
-    const el = document.getElementById('d_' + field);
-    if (el) el.value = row[db] || 0;
-  });
-  Object.entries(DB_VAR).forEach(([db, field]) => {
-    const el = document.getElementById('d_' + field);
-    if (el) el.value = row[db] || 0;
-  });
-  Object.entries(DB_SAVE).forEach(([db, field]) => {
-    const el = document.getElementById('d_' + field);
-    if (el) el.value = row[db] || 0;
-  });
+// ── Parse expenses from Supabase row ──
+function parseExpenses(row) {
+  const items = [];
+  let detail = null;
+
+  // Try to parse expenses_detail JSON
+  if (row.expenses_detail) {
+    try {
+      detail = typeof row.expenses_detail === 'string' ? JSON.parse(row.expenses_detail) : row.expenses_detail;
+    } catch(e) { detail = null; }
+  }
+
+  if (detail && Object.keys(detail).length > 0) {
+    // New format: read from expenses_detail JSON
+    CATEGORIES.forEach(cat => {
+      cat.items.forEach(item => {
+        const val = detail[item.id] || 0;
+        if (val > 0) {
+          items.push({
+            id: item.id,
+            label: item.label,
+            amount: val,
+            catId: cat.id,
+            catName: cat.name,
+            type: cat.type
+          });
+        }
+      });
+    });
+  } else {
+    // Legacy format: read from flat columns
+    const legacyFields = {
+      rent: {label:'שכ"ד / משכנתא', cat:'household', type:'rigid'},
+      arnona: {label:'ארנונה', cat:'household', type:'rigid'},
+      utilities: {label:'מים+גז+חשמל', cat:'household', type:'rigid'},
+      telecom: {label:'תקשורת', cat:'telecom', type:'flexible'},
+      car_insurance: {label:'ביטוח רכב', cat:'insurance', type:'rigid'},
+      loans: {label:'הלוואות', cat:'loans', type:'rigid'},
+      education: {label:'חינוך', cat:'education', type:'rigid'},
+      leasing: {label:'ליסינג', cat:'transport', type:'flexible'},
+      groceries: {label:'מכולת', cat:'food', type:'flexible'},
+      dining: {label:'מסעדות', cat:'food', type:'flexible'},
+      coffee: {label:'קפה', cat:'food', type:'flexible'},
+      transport: {label:'תחבורה', cat:'transport', type:'flexible'},
+      health: {label:'בריאות', cat:'health', type:'flexible'},
+      shopping: {label:'קניות', cat:'leisure', type:'flexible'},
+      leisure: {label:'בילויים', cat:'leisure', type:'flexible'},
+      kids: {label:'ילדים/חיות', cat:'hobbies', type:'flexible'},
+      pension_extra: {label:'פנסיה נוספת', cat:'investments', type:'flexible'},
+      keren_hishtalmut: {label:'קרן השתלמות', cat:'investments', type:'flexible'},
+      gemel_invest: {label:'גמל להשקעה', cat:'investments', type:'flexible'},
+      child_savings: {label:'חיסכון ילדים', cat:'investments', type:'flexible'},
+      general_savings: {label:'חיסכון כללי', cat:'investments', type:'flexible'}
+    };
+
+    Object.entries(legacyFields).forEach(([key, info]) => {
+      const val = row[key] || 0;
+      if (val > 0) {
+        const catDef = CATEGORIES.find(c => c.id === info.cat);
+        items.push({
+          id: key,
+          label: info.label,
+          amount: val,
+          catId: info.cat,
+          catName: catDef ? catDef.name : info.cat,
+          type: info.type
+        });
+      }
+    });
+  }
+
+  return items;
 }
 
-// ── Auto-load: ?pid=UUID from Supabase, OR ?income=X from URL params ──
+// ── Build Page 0: Force Separation ──
+function buildPage0() {
+  const rigidItems = expenseItems.filter(e => e.type === 'rigid');
+  const flexItems = expenseItems.filter(e => e.type === 'flexible');
+  const rigidSum = rigidItems.reduce((s, e) => s + e.amount, 0);
+  const flexSum = flexItems.reduce((s, e) => s + e.amount, 0);
+  totalExpenses = rigidSum + flexSum;
+
+  // Build rigid list
+  let rigidHTML = '';
+  rigidItems.forEach(item => {
+    rigidHTML += `<div class="expense-card rigid">
+      <div><span class="exp-name">${item.label}</span><div style="font-size:11px;color:var(--dark-mid)">${item.catName}</div></div>
+      <span class="exp-amount">${fmt(item.amount)}</span>
+    </div>`;
+  });
+  if (rigidItems.length === 0) {
+    rigidHTML = '<div style="text-align:center;padding:16px;color:var(--dark-mid);font-size:13px">לא נמצאו הוצאות קשיחות</div>';
+  }
+  document.getElementById('rigidList').innerHTML = rigidHTML;
+  document.getElementById('rigidTotal').textContent = fmt(rigidSum);
+
+  // Build flexible list
+  let flexHTML = '';
+  flexItems.forEach(item => {
+    flexHTML += `<div class="expense-card flexible">
+      <div><span class="exp-name">${item.label}</span><div style="font-size:11px;color:var(--dark-mid)">${item.catName}</div></div>
+      <span class="exp-amount">${fmt(item.amount)}</span>
+    </div>`;
+  });
+  if (flexItems.length === 0) {
+    flexHTML = '<div style="text-align:center;padding:16px;color:var(--dark-mid);font-size:13px">לא נמצאו הוצאות גמישות</div>';
+  }
+  document.getElementById('flexList').innerHTML = flexHTML;
+  document.getElementById('flexTotal').textContent = fmt(flexSum);
+
+  document.getElementById('grandTotal').textContent = fmt(totalExpenses);
+
+  // Store flexible items for next pages
+  flexibleItems = flexItems.filter(e => e.amount > 0);
+}
+
+// ── Build Page 1: Rating ──
+function buildPage1() {
+  let html = '';
+  flexibleItems.forEach((item, i) => {
+    html += `<div class="rate-item" id="rate-${item.id}">
+      <div class="rate-top">
+        <span class="rate-name">${item.label}</span>
+        <span class="rate-amount">${fmt(item.amount)}</span>
+      </div>
+      <div class="rate-btns">
+        <button class="rate-btn keep" id="keep-${item.id}" onclick="rateItem('${item.id}','keep')">לא מוכן לוותר</button>
+        <button class="rate-btn can-drop" id="drop-${item.id}" onclick="rateItem('${item.id}','drop')">אפשר בלעדיהן</button>
+      </div>
+    </div>`;
+  });
+  document.getElementById('rateList').innerHTML = html;
+  updateRateCounter();
+}
+
+function rateItem(itemId, choice) {
+  ratings[itemId] = choice;
+  const container = document.getElementById('rate-' + itemId);
+  const keepBtn = document.getElementById('keep-' + itemId);
+  const dropBtn = document.getElementById('drop-' + itemId);
+
+  // Reset
+  container.className = 'rate-item rated';
+  keepBtn.classList.remove('selected');
+  dropBtn.classList.remove('selected');
+
+  if (choice === 'keep') {
+    keepBtn.classList.add('selected');
+    container.classList.add('rated-keep');
+  } else {
+    dropBtn.classList.add('selected');
+    container.classList.add('rated-drop');
+  }
+
+  updateRateCounter();
+  checkAllRated();
+}
+
+function updateRateCounter() {
+  let dropSum = 0;
+  let dropCount = 0;
+  flexibleItems.forEach(item => {
+    if (ratings[item.id] === 'drop') {
+      dropSum += item.amount;
+      dropCount++;
+    }
+  });
+  document.getElementById('dropTotal').textContent = fmt(dropSum);
+  document.getElementById('dropCount').textContent = dropCount + ' פריטים נבחרו';
+
+  // Save to localStorage
+  localStorage.setItem('day2_ratings', JSON.stringify(ratings));
+}
+
+function checkAllRated() {
+  const allRated = flexibleItems.every(item => ratings[item.id]);
+  document.getElementById('toPage2Btn').disabled = !allRated;
+}
+
+// ── Build Page 2: 3% Law ──
+function buildPage2() {
+  const threePercent = Math.round(totalExpenses * 0.03);
+  document.getElementById('threePercentDisplay').textContent = fmt(threePercent);
+
+  // Get droppable items (rated as 'drop')
+  const droppable = flexibleItems.filter(item => ratings[item.id] === 'drop');
+
+  let html = '';
+  if (droppable.length === 0) {
+    html = '<div style="text-align:center;padding:20px;color:var(--dark-mid);font-size:14px">לא סימנת אף פריט כ"אפשר בלעדיהן".<br>תחזור לשלב הקודם ותסמן לפחות פריט אחד.</div>';
+  } else {
+    droppable.forEach(item => {
+      html += `<div class="drop-select-item" id="ds-${item.id}" onclick="toggleDropSelect('${item.id}')">
+        <div class="drop-check" id="dsc-${item.id}"></div>
+        <div class="drop-info">
+          <div class="drop-name">${item.label}</div>
+          <div style="font-size:11px;color:var(--dark-mid)">${item.catName}</div>
+        </div>
+        <div class="drop-amount">${fmt(item.amount)}</div>
+      </div>`;
+    });
+  }
+  document.getElementById('dropSelectList').innerHTML = html;
+  dropSelections = {};
+  updateDropSelection();
+}
+
+function toggleDropSelect(itemId) {
+  if (committed) return;
+  dropSelections[itemId] = !dropSelections[itemId];
+  const el = document.getElementById('ds-' + itemId);
+  const check = document.getElementById('dsc-' + itemId);
+  if (dropSelections[itemId]) {
+    el.classList.add('selected');
+    check.textContent = '✓';
+  } else {
+    el.classList.remove('selected');
+    check.textContent = '';
+  }
+  updateDropSelection();
+}
+
+function updateDropSelection() {
+  const threePercent = Math.round(totalExpenses * 0.03);
+  let selectedSum = 0;
+  flexibleItems.forEach(item => {
+    if (dropSelections[item.id]) selectedSum += item.amount;
+  });
+
+  document.getElementById('selectedVsTarget').textContent = fmt(selectedSum) + ' / ' + fmt(threePercent);
+  const progress = threePercent > 0 ? Math.min(100, (selectedSum / threePercent) * 100) : 0;
+  document.getElementById('targetBarFill').style.width = progress + '%';
+
+  // Show commit button when target reached
+  const commitSection = document.getElementById('commitSection');
+  if (selectedSum >= threePercent && threePercent > 0) {
+    commitSection.style.display = 'block';
+  } else {
+    commitSection.style.display = 'none';
+  }
+}
+
+function commitSavings() {
+  committed = true;
+
+  // Hide commit section
+  document.getElementById('commitSection').style.display = 'none';
+
+  // Show done animation
+  const doneEl = document.getElementById('commitDone');
+  doneEl.style.display = 'block';
+
+  // Enable next button
+  document.getElementById('toPage3Btn').disabled = false;
+
+  // Save to localStorage
+  const selectedItems = [];
+  let savingAmount = 0;
+  flexibleItems.forEach(item => {
+    if (dropSelections[item.id]) {
+      selectedItems.push({id: item.id, label: item.label, amount: item.amount});
+      savingAmount += item.amount;
+    }
+  });
+  localStorage.setItem('day2_commitment', JSON.stringify({items: selectedItems, total: savingAmount, ts: Date.now()}));
+
+  // Disable clicking on items
+  document.querySelectorAll('.drop-select-item').forEach(el => {
+    el.style.pointerEvents = 'none';
+    el.style.opacity = el.classList.contains('selected') ? '1' : '0.4';
+  });
+
+  // Save to Supabase
+  saveCommitmentToSupabase(savingAmount);
+}
+
+async function saveCommitmentToSupabase(amount) {
+  if (!pid) return;
+  try {
+    await fetch(`${SUPA_URL}/rest/v1/challenge_participants?id=eq.${pid}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPA_KEY,
+        'Authorization': `Bearer ${SUPA_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ savings_commitment: amount })
+    });
+  } catch(e) {
+    console.error('Failed to save commitment:', e);
+  }
+}
+
+// ── Build Page 3: Impact ──
+function buildPage3() {
+  let monthlySaving = 0;
+  flexibleItems.forEach(item => {
+    if (dropSelections[item.id]) monthlySaving += item.amount;
+  });
+
+  const annualSaving = monthlySaving * 12;
+  const yearsToRetire = Math.max(1, 67 - userAge);
+  const cumulativeSaving = monthlySaving * 12 * yearsToRetire;
+
+  // Compound interest: FV = PMT × ((1+r)^n - 1) / r
+  const r = 0.08 / 12; // monthly rate
+  const n = yearsToRetire * 12; // months
+  const compoundFV = monthlySaving * ((Math.pow(1 + r, n) - 1) / r);
+
+  // Set values
+  document.querySelector('#impactMonthly .impact-amount').textContent = fmt(monthlySaving);
+  document.querySelector('#impactAnnual .impact-amount').textContent = fmt(annualSaving);
+  document.querySelector('#impactCumulative .impact-amount').textContent = fmt(cumulativeSaving);
+  document.getElementById('impactYears').textContent = yearsToRetire + ' שנים עד פרישה';
+  document.querySelector('#impactCompound .impact-amount').textContent = fmt(compoundFV);
+
+  // Animate cards
+  const cards = document.querySelectorAll('.impact-card');
+  cards.forEach((card, i) => {
+    setTimeout(() => card.classList.add('visible'), 200 + i * 300);
+  });
+
+  // Animate readiness ring to 60%
+  // circumference = 2 * PI * 65 ≈ 408.4
+  // 60% fill = 408.4 * 0.4 = 163.4 dashoffset
+  setTimeout(() => {
+    document.getElementById('ringFill').style.strokeDashoffset = '163.4';
+  }, 1200);
+}
+
+// ── Navigation ──
+let currentPage = 0;
+
+function goPage(n) {
+  // Build content when navigating to pages
+  if (n === 1 && currentPage === 0) buildPage1();
+  if (n === 2 && currentPage === 1) buildPage2();
+  if (n === 3 && currentPage === 2) buildPage3();
+
+  document.getElementById('page-' + currentPage).classList.remove('active');
+  document.getElementById('page-' + n).classList.add('active');
+
+  // Update progress dots (0-3)
+  for (let i = 0; i <= 3; i++) {
+    const dot = document.getElementById('pd-' + i);
+    const line = document.getElementById('pl-' + i);
+    dot.classList.remove('active', 'done');
+    if (line) line.classList.remove('done');
+    if (i < n) { dot.classList.add('done'); dot.textContent = '✓'; if (line) line.classList.add('done'); }
+    else if (i === n) { dot.classList.add('active'); dot.textContent = (i + 1); }
+    else { dot.textContent = (i + 1); }
+  }
+
+  currentPage = n;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goToDay3() {
+  const url = 'day3.html' + (pid ? '?pid=' + pid : '');
+  window.location.href = url;
+}
+
+// ── Init ──
 const params = new URLSearchParams(window.location.search);
-const pid = params.get('pid');
+pid = params.get('pid');
 
 if (pid) {
-  // Load from Supabase
-  document.getElementById('demoBanner').innerHTML = '<strong>טוען את הנתונים שלך...</strong>';
   loadFromSupabase(pid).then(row => {
-    fillFromDB(row);
-    document.getElementById('demoBanner').style.display = 'none';
-    runAnalysis();
+    participantData = row;
+    userAge = row.age || 35;
+
+    // Set name
+    document.getElementById('userName').textContent = row.name || 'משתתף';
+
+    // Parse expenses
+    expenseItems = parseExpenses(row);
+
+    // Hide loading, show page 0
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('page-0').classList.add('active');
+
+    // Build page 0
+    buildPage0();
+
+    // Restore ratings from localStorage
+    const savedRatings = localStorage.getItem('day2_ratings');
+    if (savedRatings) {
+      try { ratings = JSON.parse(savedRatings); } catch(e) {}
+    }
   }).catch(err => {
-    document.getElementById('demoBanner').innerHTML = `<strong>שגיאה בטעינה</strong><br>${err.message}`;
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('errorScreen').style.display = 'block';
+    document.getElementById('errorMsg').textContent = err.message;
+    document.getElementById('progressBar').style.display = 'none';
   });
-} else if (params.get('income')) {
-  // Fallback: load from URL params
-  document.getElementById('d_name').value = params.get('name') || '';
-  document.getElementById('d_income').value = params.get('income') || '';
-  FIXED.forEach(f => { if(params.get(f.id)) document.getElementById('d_'+f.id).value = params.get(f.id); });
-  VARIABLE.forEach(f => { if(params.get(f.id)) document.getElementById('d_'+f.id).value = params.get(f.id); });
-  SAVINGS.forEach(f => { if(params.get(f.id)) document.getElementById('d_'+f.id).value = params.get(f.id); });
-  document.getElementById('demoBanner').innerHTML = '<strong>טוען נתונים...</strong>';
-  setTimeout(runAnalysis, 500);
+} else {
+  // No pid - try localStorage
+  const storedPid = localStorage.getItem('challenge_pid');
+  if (storedPid) {
+    pid = storedPid;
+    loadFromSupabase(pid).then(row => {
+      participantData = row;
+      userAge = row.age || 35;
+      document.getElementById('userName').textContent = row.name || 'משתתף';
+      expenseItems = parseExpenses(row);
+      document.getElementById('loadingScreen').style.display = 'none';
+      document.getElementById('page-0').classList.add('active');
+      buildPage0();
+    }).catch(err => {
+      document.getElementById('loadingScreen').style.display = 'none';
+      document.getElementById('errorScreen').style.display = 'block';
+      document.getElementById('errorMsg').textContent = 'לא נמצא מזהה משתתף. תחזור ליום 1 ותמלא את השאלון.';
+      document.getElementById('progressBar').style.display = 'none';
+    });
+  } else {
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('errorScreen').style.display = 'block';
+    document.getElementById('errorMsg').textContent = 'לא נמצא מזהה משתתף. תחזור ליום 1 ותמלא את השאלון.';
+    document.getElementById('progressBar').style.display = 'none';
+  }
 }
 </script>
 </body>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>יום 1 - מיפוי פיננסי | המקפצה הפיננסית</title>
+<title>יום 1 - מיפוי פיננסי | כסף שעובד</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -25,13 +25,13 @@
   .container { max-width: 520px; margin: 0 auto; padding: 20px 16px 40px; }
 
   /* Progress */
-  .progress { display: flex; align-items: center; gap: 0; margin-bottom: 24px; padding: 0 8px; }
+  .progress { display: flex; align-items: center; gap: 0; margin-bottom: 24px; padding: 0 4px; }
   .prog-step { display: flex; flex-direction: column; align-items: center; flex: 1; }
-  .prog-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; border: 2px solid var(--cream-dark); background: var(--white); color: var(--dark-mid); transition: all .3s; }
+  .prog-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; border: 2px solid var(--cream-dark); background: var(--white); color: var(--dark-mid); transition: all .3s; }
   .prog-dot.active { background: var(--gold); border-color: var(--gold-dark); color: white; box-shadow: 0 0 0 4px rgba(212,168,83,.2); }
   .prog-dot.done { background: var(--green); border-color: var(--green); color: white; }
-  .prog-label { font-size: 10px; color: var(--dark-mid); margin-top: 4px; font-weight: 500; }
-  .prog-line { height: 2px; flex: 1; background: var(--cream-dark); max-width: 60px; margin-top: -16px; transition: background .3s; }
+  .prog-label { font-size: 9px; color: var(--dark-mid); margin-top: 4px; font-weight: 500; white-space: nowrap; }
+  .prog-line { height: 2px; flex: 1; background: var(--cream-dark); max-width: 40px; margin-top: -16px; transition: background .3s; }
   .prog-line.done { background: var(--green); }
 
   /* Page */
@@ -47,11 +47,6 @@
   /* Section header */
   .section-head { font-size: 12px; font-weight: 700; color: var(--gold-dark); text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--cream); }
   .section-head:first-of-type { margin-top: 0; }
-
-  /* Needs / Wants tags */
-  .tag { display: inline-block; font-size: 9px; font-weight: 700; padding: 1px 7px; border-radius: 50px; margin-right: 5px; vertical-align: middle; letter-spacing: .3px; }
-  .tag-need { background: #E8F5EE; color: #1B5E3B; border: 1px solid #2E7D52; }
-  .tag-want { background: #FFF3E0; color: #B8530A; border: 1px solid #C87A1A; }
 
   /* Dynamic income rows */
   .income-row { display: flex; gap: 8px; align-items: flex-end; margin-bottom: 8px; }
@@ -84,30 +79,81 @@
   .btn-submit { background: linear-gradient(135deg, var(--green), #1B7A42); color: white; box-shadow: 0 4px 16px rgba(46,125,82,.3); }
   .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 
-  /* Thank you */
-  .thankyou { text-align: center; padding: 40px 20px; }
-  .thankyou .icon { font-size: 64px; margin-bottom: 16px; }
-  .thankyou h2 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
-  .thankyou p { font-size: 15px; color: var(--dark-mid); line-height: 1.6; }
-  .thankyou .highlight { background: var(--gold-bg); border-radius: 12px; padding: 16px; margin-top: 20px; font-size: 14px; font-weight: 600; color: var(--gold-dark); }
-
   /* Error */
   .error-msg { background: var(--red-light); color: var(--red); padding: 10px 14px; border-radius: 10px; font-size: 13px; margin-top: 10px; display: none; }
 
-  /* Self-assessment intro */
-  .assess-card { background: var(--white); border: 2px solid var(--gold); border-radius: var(--radius); padding: 24px 20px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(212,168,83,.12); }
-  .assess-card h2 { font-size: 20px; font-weight: 800; text-align: center; margin-bottom: 6px; }
-  .assess-card .subtitle { text-align: center; font-size: 13px; color: var(--dark-mid); margin-bottom: 20px; }
-  .assess-q { margin-bottom: 18px; }
-  .assess-q label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
-  .assess-options { display: flex; flex-direction: column; gap: 6px; }
-  .assess-opt { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1.5px solid var(--cream-dark); border-radius: 10px; cursor: pointer; font-size: 14px; transition: all .2s; }
-  .assess-opt:hover { border-color: var(--gold); }
-  .assess-opt.selected { border-color: var(--gold-dark); background: var(--gold-bg); }
-  .assess-opt input[type=radio] { accent-color: var(--gold-dark); flex-shrink: 0; }
-  .assess-guess { width: 100%; padding: 12px 14px; border: 1.5px solid var(--cream-dark); border-radius: 10px; font-family: Heebo; font-size: 15px; margin-top: 6px; }
-  .assess-guess:focus { outline: none; border-color: var(--gold); }
-  .assess-btn { width: 100%; margin-top: 12px; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--navy); border: none; padding: 14px; border-radius: 50px; font-family: Heebo; font-size: 16px; font-weight: 800; cursor: pointer; }
+  /* ── Page 0: Commitment ── */
+  .commit-card { background: var(--white); border: 2px solid var(--gold); border-radius: 16px; padding: 32px 22px; box-shadow: 0 4px 20px rgba(212,168,83,.12); text-align: center; }
+  .commit-card .commit-quote { font-size: 16px; font-weight: 500; line-height: 1.7; color: var(--dark); margin-bottom: 24px; padding: 0 8px; }
+  .commit-card .commit-question { font-size: 17px; font-weight: 800; margin-bottom: 20px; color: var(--navy); }
+  .commit-btns { display: flex; gap: 12px; margin-bottom: 20px; }
+  .commit-btns .btn { flex: 1; }
+  .btn-yes { background: linear-gradient(135deg, var(--green), #1B7A42); color: white; box-shadow: 0 4px 16px rgba(46,125,82,.3); }
+  .btn-no { background: var(--cream); color: var(--dark-mid); border: 1.5px solid var(--cream-dark); }
+
+  /* Time picker area */
+  .time-pick-area { display: none; background: var(--gold-bg); border-radius: 12px; padding: 20px 16px; margin-top: 16px; text-align: center; }
+  .time-pick-area label { font-size: 14px; font-weight: 700; display: block; margin-bottom: 10px; }
+  .time-pick-area input[type="time"] { padding: 12px 16px; border: 1.5px solid var(--gold); border-radius: 10px; font-family: Heebo; font-size: 18px; text-align: center; background: var(--white); direction: ltr; }
+  .time-pick-area .btn { margin-top: 14px; }
+
+  /* Countdown lock */
+  .lock-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: var(--navy); color: var(--white); flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 32px; }
+  .lock-overlay .lock-icon { font-size: 64px; margin-bottom: 16px; }
+  .lock-overlay h2 { font-size: 22px; font-weight: 800; margin-bottom: 8px; color: var(--gold); }
+  .lock-overlay p { font-size: 15px; color: var(--cream); line-height: 1.6; margin-bottom: 24px; }
+  .lock-overlay .countdown-display { font-size: 48px; font-weight: 900; color: var(--gold-light); direction: ltr; font-variant-numeric: tabular-nums; }
+
+  /* iCal area */
+  .ical-area { display: none; background: var(--green-light); border: 1.5px solid var(--green); border-radius: 12px; padding: 20px 16px; margin-top: 16px; text-align: center; }
+  .ical-area p { font-size: 14px; line-height: 1.6; margin-bottom: 14px; color: var(--dark); }
+  .ical-area .btn { background: linear-gradient(135deg, var(--green), #1B7A42); color: white; }
+
+  /* ── Page 2: Category expenses ── */
+  .cat-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .cat-pill { padding: 8px 14px; border-radius: 50px; border: 1.5px solid var(--cream-dark); background: var(--white); font-family: Heebo; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; white-space: nowrap; position: relative; }
+  .cat-pill:hover { border-color: var(--gold); }
+  .cat-pill.active { background: var(--gold); border-color: var(--gold-dark); color: var(--white); }
+  .cat-pill.has-data::after { content: ''; position: absolute; top: 4px; left: 4px; width: 8px; height: 8px; background: var(--green); border-radius: 50%; border: 1.5px solid var(--white); }
+
+  .cat-panel { display: none; background: var(--cream); border-radius: 12px; padding: 16px 14px; margin-bottom: 16px; animation: fadeIn .2s ease; }
+  .cat-panel.active { display: block; }
+  .cat-panel h3 { font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+  .cat-panel .field { margin-bottom: 10px; }
+  .cat-panel .field label { font-size: 12px; }
+  .cat-panel .field input { font-size: 14px; padding: 10px 12px; min-height: 42px; }
+
+  .expense-total-bar { background: var(--navy); color: var(--gold-light); border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; margin-top: 8px; margin-bottom: 8px; }
+  .expense-total-bar .total-label { font-size: 14px; font-weight: 600; }
+  .expense-total-bar .total-amount { font-size: 20px; font-weight: 900; direction: ltr; }
+
+  /* Other detail field */
+  .other-detail-field { display: none; margin-top: 6px; }
+  .other-detail-field input { border-color: var(--gold) !important; }
+
+  /* ── Page 4: Summary ── */
+  .summary-card { text-align: center; padding: 28px 18px; }
+  .summary-card h2 { font-size: 22px; font-weight: 900; margin-bottom: 16px; }
+  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-radius: 10px; margin-bottom: 8px; font-size: 15px; }
+  .summary-row.income { background: var(--green-light); }
+  .summary-row.expense { background: var(--red-light); }
+  .summary-row.delta { background: var(--gold-bg); font-weight: 800; font-size: 17px; }
+  .summary-row .label { font-weight: 600; }
+  .summary-row .value { font-weight: 800; direction: ltr; }
+  .summary-row .value.positive { color: var(--green); }
+  .summary-row .value.negative { color: var(--red); }
+
+  /* Readiness meter */
+  .readiness-wrap { margin: 28px auto 20px; display: flex; flex-direction: column; align-items: center; }
+  .readiness-ring { position: relative; width: 140px; height: 140px; }
+  .readiness-ring svg { width: 140px; height: 140px; transform: rotate(-90deg); }
+  .readiness-ring .ring-bg { fill: none; stroke: var(--cream-dark); stroke-width: 10; }
+  .readiness-ring .ring-fill { fill: none; stroke: var(--gold); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 408; stroke-dashoffset: 326.4; transition: stroke-dashoffset 1.5s ease; }
+  .readiness-pct { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 900; color: var(--gold-dark); }
+  .readiness-label { font-size: 14px; font-weight: 600; color: var(--dark-mid); margin-top: 8px; }
+
+  .summary-message { font-size: 15px; line-height: 1.7; color: var(--dark-mid); margin: 20px 0; padding: 0 8px; }
+  .summary-highlight { background: var(--gold-bg); border-radius: 12px; padding: 16px; margin-top: 16px; font-size: 14px; font-weight: 600; color: var(--gold-dark); line-height: 1.6; }
 </style>
 </head>
 <body>
@@ -117,55 +163,61 @@
   <div class="header-badge">יום 1 מתוך 4</div>
 </div>
 
+<!-- Lock overlay for countdown -->
+<div class="lock-overlay" id="lockOverlay">
+  <div class="lock-icon">🔒</div>
+  <h2>נתראה בזמן שקבעת</h2>
+  <p>הזמן שלך שמור. תחזור כשתהיה מוכן.</p>
+  <div class="countdown-display" id="countdownDisplay">00:00:00</div>
+</div>
+
 <div class="container">
 
-  <!-- ═══ SELF-ASSESSMENT (Dunning-Kruger) ═══ -->
-  <div id="assessScreen">
-    <div class="assess-card">
-      <h2>לפני שמתחילים</h2>
-      <div class="subtitle">3 שאלות קצרות - 15 שניות</div>
-
-      <div class="assess-q">
-        <label>איך היית מגדיר את ההתנהלות הפיננסית שלך ?</label>
-        <div class="assess-options" id="q_self">
-          <div class="assess-opt" onclick="pickOpt(this,'q_self',5)"><input type="radio" name="q_self"> טובה מאוד</div>
-          <div class="assess-opt" onclick="pickOpt(this,'q_self',4)"><input type="radio" name="q_self"> טובה</div>
-          <div class="assess-opt" onclick="pickOpt(this,'q_self',3)"><input type="radio" name="q_self"> סבירה</div>
-          <div class="assess-opt" onclick="pickOpt(this,'q_self',2)"><input type="radio" name="q_self"> לא טובה</div>
-          <div class="assess-opt" onclick="pickOpt(this,'q_self',1)"><input type="radio" name="q_self"> גרועה</div>
-        </div>
-      </div>
-
-      <div class="assess-q">
-        <label>כמה כסף אתה חושב שאתה חוסך בחודש ? (₪)</label>
-        <input type="number" class="assess-guess" id="q_guess_save" placeholder="2,000" inputmode="numeric">
-      </div>
-
-      <div class="assess-q">
-        <label>כמה מההכנסה שלך הולך על דברים שאתה לא באמת צריך ?</label>
-        <div class="assess-options" id="q_waste">
-          <div class="assess-opt" onclick="pickOpt(this,'q_waste',10)"><input type="radio" name="q_waste"> כמעט כלום (עד 10%)</div>
-          <div class="assess-opt" onclick="pickOpt(this,'q_waste',20)"><input type="radio" name="q_waste"> קצת (10-20%)</div>
-          <div class="assess-opt" onclick="pickOpt(this,'q_waste',35)"><input type="radio" name="q_waste"> סביר (20-35%)</div>
-          <div class="assess-opt" onclick="pickOpt(this,'q_waste',50)"><input type="radio" name="q_waste"> הרבה (35%+)</div>
-        </div>
-      </div>
-
-      <button class="assess-btn" onclick="submitAssess()">בוא נבדוק את זה ←</button>
-    </div>
-  </div>
-
-  <!-- Progress -->
+  <!-- Progress (5 steps) -->
   <div class="progress" style="display:none" id="mainProgress">
-    <div class="prog-step"><div class="prog-dot active" id="pd-1">1</div><div class="prog-label">פרטים</div></div>
+    <div class="prog-step"><div class="prog-dot" id="pd-0">0</div><div class="prog-label">מוכנות</div></div>
+    <div class="prog-line" id="pl-0"></div>
+    <div class="prog-step"><div class="prog-dot" id="pd-1">1</div><div class="prog-label">פרטים</div></div>
     <div class="prog-line" id="pl-1"></div>
     <div class="prog-step"><div class="prog-dot" id="pd-2">2</div><div class="prog-label">הוצאות</div></div>
     <div class="prog-line" id="pl-2"></div>
-    <div class="prog-step"><div class="prog-dot" id="pd-3">3</div><div class="prog-label">חסכונות</div></div>
+    <div class="prog-step"><div class="prog-dot" id="pd-3">3</div><div class="prog-label">קשר</div></div>
+    <div class="prog-line" id="pl-3"></div>
+    <div class="prog-step"><div class="prog-dot" id="pd-4">4</div><div class="prog-label">סיכום</div></div>
   </div>
 
-  <!-- ═══ PAGE 1: פרטים + הכנסות ═══ -->
-  <div class="page active" id="page-1" style="display:none">
+  <!-- ═══ PAGE 0: Commitment ═══ -->
+  <div class="page active" id="page-0">
+    <div class="commit-card">
+      <div class="commit-quote">
+        אומרים שמזל זה כשהזדמנות פוגשת מוכנות.<br>
+        ההזדמנות כבר כאן, עכשיו תורך להראות מוכנות.
+      </div>
+      <div class="commit-question">האם יש לך 30 דקות עכשיו כדי להתחיל את השינוי הכלכלי שלך ?</div>
+      <div class="commit-btns">
+        <button class="btn btn-yes" onclick="commitYes()">כן, אני מוכן</button>
+        <button class="btn btn-no" onclick="commitNo()">לא עכשיו</button>
+      </div>
+
+      <!-- Time picker (shown when NO) -->
+      <div class="time-pick-area" id="timePickArea">
+        <label>מתי היום יהיה לך זמן ?</label>
+        <input type="time" id="pickTime" value="18:00">
+        <div>
+          <button class="btn btn-next" style="margin-top:14px;flex:none;display:inline-block;padding:12px 32px;" onclick="setLockTime()">קבע תזכורת</button>
+        </div>
+      </div>
+
+      <!-- iCal area (shown after YES or after time set) -->
+      <div class="ical-area" id="icalArea">
+        <p>המסע הזה מסתיים בשיא בוובינר ביום רביעי. שלחנו לך זימון ליומן - אשר אותו עכשיו כדי להבטיח את מקומך.</p>
+        <button class="btn" onclick="goPage(1)">אישרתי את הזימון ביומן, אפשר להתחיל</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE 1: Personal Info + Income ═══ -->
+  <div class="page" id="page-1">
     <div class="card">
       <h2>קצת עליך</h2>
       <div class="subtitle">30 שניות - פרטים בסיסיים והכנסות</div>
@@ -182,8 +234,8 @@
         <div class="field">
           <label>סוג תעסוקה</label>
           <select id="f_job">
-            <option value="employee">שכיר</option>
-            <option value="self_employed">עצמאי</option>
+            <option value="employee">שכיר/ה</option>
+            <option value="self_employed">עצמאי/ת</option>
             <option value="hybrid">היברידי</option>
           </select>
         </div>
@@ -204,65 +256,37 @@
       </div>
 
       <div class="btn-row">
-        <button class="btn btn-next" onclick="goPage(2)">המשך ←</button>
+        <button class="btn btn-back" onclick="goPage(0)">&#8594; חזרה</button>
+        <button class="btn btn-next" onclick="goPage(2)">המשך &#8592;</button>
       </div>
     </div>
   </div>
 
-  <!-- ═══ PAGE 2: הוצאות ═══ -->
+  <!-- ═══ PAGE 2: Expenses (Category-based IKEA Effect) ═══ -->
   <div class="page" id="page-2">
     <div class="card">
       <h2>ההוצאות שלך</h2>
-      <div class="subtitle">90 שניות - מה שאתה לא רוצה לדעת אז תדע (₪ לחודש)</div>
+      <div class="subtitle">תלחץ על קטגוריה ותמלא את הסכומים (₪ לחודש)</div>
 
-      <div class="section-head">הוצאות קבועות</div>
-      <div class="row">
-        <div class="field"><label><span class="tag tag-need">צורך</span>שכ"ד / משכנתא</label><input type="number" id="f_rent" placeholder="5,500" inputmode="numeric"></div>
-        <div class="field"><label><span class="tag tag-need">צורך</span>ארנונה + ועד בית</label><input type="number" id="f_arnona" placeholder="600" inputmode="numeric"></div>
-      </div>
-      <div class="row">
-        <div class="field"><label><span class="tag tag-need">צורך</span>מים + גז + חשמל</label><input type="number" id="f_utilities" placeholder="700" inputmode="numeric"></div>
-        <div class="field"><label><span class="tag tag-need">צורך</span>טלפון + נט + סטרימינג</label><input type="number" id="f_telecom" placeholder="400" inputmode="numeric"></div>
-      </div>
-      <div class="row">
-        <div class="field"><label><span class="tag tag-need">צורך</span>ביטוח רכב</label><input type="number" id="f_car_ins" placeholder="500" inputmode="numeric"></div>
-        <div class="field"><label><span class="tag tag-need">צורך</span>החזרי הלוואות</label><input type="number" id="f_loans" placeholder="0" inputmode="numeric"></div>
-      </div>
-      <div class="row">
-        <div class="field"><label><span class="tag tag-need">צורך</span>חינוך + חוגים</label><input type="number" id="f_education" placeholder="0" inputmode="numeric"></div>
-        <div class="field"><label><span class="tag tag-need">צורך</span>רכב / ליסינג</label><input type="number" id="f_leasing" placeholder="2,000" inputmode="numeric"></div>
-      </div>
-      <div class="field">
-        <label>טסט + רישוי שנתי (חלק ל-12)</label>
-        <input type="number" id="f_test" placeholder="100" inputmode="numeric">
-      </div>
+      <div class="cat-pills" id="catPills"></div>
 
-      <div class="section-head">הוצאות משתנות</div>
-      <div class="row">
-        <div class="field"><label><span class="tag tag-need">צורך</span>מכולת / סופר</label><input type="number" id="f_groceries" placeholder="2,500" inputmode="numeric"></div>
-        <div class="field"><label><span class="tag tag-want">רצון</span>מסעדות + Wolt</label><input type="number" id="f_dining" placeholder="1,200" inputmode="numeric"></div>
-      </div>
-      <div class="row">
-        <div class="field"><label><span class="tag tag-want">רצון</span>קפה + מאפייה</label><input type="number" id="f_coffee" placeholder="500" inputmode="numeric"></div>
-        <div class="field"><label><span class="tag tag-need">צורך</span>דלק + חניה + כביש 6</label><input type="number" id="f_transport" placeholder="800" inputmode="numeric"></div>
-      </div>
-      <div class="row">
-        <div class="field"><label><span class="tag tag-need">צורך</span>בריאות + שיניים</label><input type="number" id="f_health" placeholder="300" inputmode="numeric"></div>
-        <div class="field"><label><span class="tag tag-want">רצון</span>קניות + ביגוד</label><input type="number" id="f_shopping" placeholder="500" inputmode="numeric"></div>
-      </div>
-      <div class="row">
-        <div class="field"><label><span class="tag tag-want">רצון</span>בילויים + חופשות</label><input type="number" id="f_leisure" placeholder="800" inputmode="numeric"></div>
-        <div class="field"><label><span class="tag tag-need">צורך</span>ילדים / חיות</label><input type="number" id="f_kids" placeholder="0" inputmode="numeric"></div>
+      <!-- Category panels (generated by JS) -->
+      <div id="catPanels"></div>
+
+      <!-- Running total -->
+      <div class="expense-total-bar">
+        <div class="total-label">סך הוצאות</div>
+        <div class="total-amount" id="expenseTotalDisplay">₪0</div>
       </div>
 
       <div class="btn-row">
-        <button class="btn btn-back" onclick="goPage(1)">→ חזרה</button>
-        <button class="btn btn-next" onclick="goPage(3)">המשך ←</button>
+        <button class="btn btn-back" onclick="goPage(1)">&#8594; חזרה</button>
+        <button class="btn btn-next" onclick="goPage(3)">המשך &#8592;</button>
       </div>
     </div>
   </div>
 
-  <!-- ═══ PAGE 3: חסכונות + קשר ═══ -->
+  <!-- ═══ PAGE 3: Contact + Savings ═══ -->
   <div class="page" id="page-3">
     <div class="card">
       <h2>חסכונות ופרטי קשר</h2>
@@ -282,13 +306,6 @@
         <input type="number" id="f_save_gen" placeholder="0" inputmode="numeric">
       </div>
 
-      <div class="section-head">הוצאות שנתיות (חודשי)</div>
-      <div class="row-3 row">
-        <div class="field"><label>ביטוחים שנתיים</label><input type="number" id="f_annual_ins" placeholder="400" inputmode="numeric"></div>
-        <div class="field"><label>בלת"מ / חירום</label><input type="number" id="f_emergency" placeholder="300" inputmode="numeric"></div>
-        <div class="field"><label>מנויים שנתיים</label><input type="number" id="f_subs" placeholder="200" inputmode="numeric"></div>
-      </div>
-
       <div class="section-head">פרטי קשר</div>
       <div class="field">
         <label>כתובת מייל</label>
@@ -302,51 +319,411 @@
       <div class="error-msg" id="errorMsg"></div>
 
       <div class="btn-row">
-        <button class="btn btn-back" onclick="goPage(2)">→ חזרה</button>
-        <button class="btn btn-submit" id="submitBtn" onclick="submitForm()">שלח ←</button>
+        <button class="btn btn-back" onclick="goPage(2)">&#8594; חזרה</button>
+        <button class="btn btn-submit" id="submitBtn" onclick="submitForm()">שלח וסכם &#8592;</button>
       </div>
     </div>
   </div>
 
-  <!-- ═══ THANK YOU ═══ -->
-  <div class="page" id="page-done">
-    <div class="card thankyou">
-      <div class="icon">🎉</div>
-      <h2>הנתונים התקבלו!</h2>
-      <p>מחר בבוקר תקבל את הניתוח האישי שלך עם תובנות, השוואות, וצעד ראשון לשינוי.</p>
-      <div class="highlight">מחר ביום 2 תגלה: איפה הכסף שלך נעלם, כמה זה עולה לך בשנה, ומה הצעד הכי קל לחיסכון מיידי.</div>
+  <!-- ═══ PAGE 4: Summary + Readiness Meter ═══ -->
+  <div class="page" id="page-4">
+    <div class="card summary-card">
+      <h2>התמונה הפיננסית שלך</h2>
+
+      <div class="summary-row income">
+        <span class="label">סך הכנסות</span>
+        <span class="value positive" id="sumIncome">₪0</span>
+      </div>
+      <div class="summary-row expense">
+        <span class="label">סך הוצאות</span>
+        <span class="value negative" id="sumExpense">₪0</span>
+      </div>
+      <div class="summary-row delta">
+        <span class="label">יתרה חודשית</span>
+        <span class="value" id="sumDelta">₪0</span>
+      </div>
+
+      <div class="readiness-wrap">
+        <div class="readiness-ring">
+          <svg viewBox="0 0 140 140">
+            <circle class="ring-bg" cx="70" cy="70" r="65"/>
+            <circle class="ring-fill" id="ringFill" cx="70" cy="70" r="65"/>
+          </svg>
+          <div class="readiness-pct">20%</div>
+        </div>
+        <div class="readiness-label">מוכנות פיננסית</div>
+      </div>
+
+      <div class="summary-message">
+        הערפל התנקה. מחר נלמד איך להחזיר לעצמך את השליטה על הכסף בלי לוותר על איכות החיים.
+      </div>
+
+      <div class="summary-highlight">
+        מחר ביום 2 תגלה: איפה הכסף שלך נעלם, כמה זה עולה לך בשנה, ומה הצעד הכי קל לחיסכון מיידי.
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-next" onclick="goToDay2()">ליום 2 &#8592;</button>
+      </div>
     </div>
   </div>
 
 </div>
 
 <script>
-// ── Dynamic income rows ──
-// ── Self-Assessment (Dunning-Kruger) ──
-window._assess = {};
+// ── Supabase config ──
+const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI';
 
-function pickOpt(el, group, val) {
-  document.querySelectorAll('#'+group+' .assess-opt').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  el.querySelector('input').checked = true;
-  window._assess[group] = val;
+// ── Category definitions ──
+const CATEGORIES = [
+  {
+    id: 'household', name: 'משק בית',
+    items: [
+      { id: 'rent', label: 'שכ"ד / משכנתא' },
+      { id: 'arnona', label: 'ארנונה' },
+      { id: 'electricity', label: 'חשמל' },
+      { id: 'water', label: 'מים' },
+      { id: 'gas', label: 'גז' },
+      { id: 'vaad_bayit', label: 'ועד בית' },
+      { id: 'household_other', label: 'אחר', isOther: true }
+    ]
+  },
+  {
+    id: 'insurance', name: 'ביטוחים',
+    items: [
+      { id: 'car_insurance', label: 'ביטוח רכב' },
+      { id: 'home_insurance', label: 'ביטוח דירה' },
+      { id: 'life_insurance', label: 'ביטוח חיים' },
+      { id: 'health_insurance', label: 'ביטוח בריאות' },
+      { id: 'insurance_other', label: 'אחר', isOther: true }
+    ]
+  },
+  {
+    id: 'health', name: 'בריאות',
+    items: [
+      { id: 'kupat_holim', label: 'קופ"ח' },
+      { id: 'medication', label: 'תרופות' },
+      { id: 'dental', label: 'טיפולי שיניים' },
+      { id: 'glasses', label: 'משקפיים / עדשות' },
+      { id: 'health_other', label: 'אחר', isOther: true }
+    ]
+  },
+  {
+    id: 'hobbies', name: 'חוגים',
+    items: [
+      { id: 'kids_hobbies', label: 'חוגים לילדים' },
+      { id: 'fitness', label: 'כושר / ספורט' },
+      { id: 'hobbies_other', label: 'אחר', isOther: true }
+    ]
+  },
+  {
+    id: 'education', name: 'חינוך',
+    items: [
+      { id: 'daycare', label: 'גן / מעון' },
+      { id: 'afternoon', label: 'צהרון' },
+      { id: 'tuition', label: 'שכר לימוד' },
+      { id: 'education_other', label: 'אחר', isOther: true }
+    ]
+  },
+  {
+    id: 'transport', name: 'תחבורה',
+    items: [
+      { id: 'fuel', label: 'דלק' },
+      { id: 'parking', label: 'חניה' },
+      { id: 'public_transit', label: 'תחב"צ' },
+      { id: 'leasing', label: 'ליסינג / תשלומי רכב' },
+      { id: 'transport_other', label: 'אחר', isOther: true }
+    ]
+  },
+  {
+    id: 'telecom', name: 'תקשורת',
+    items: [
+      { id: 'phone_bill', label: 'טלפון' },
+      { id: 'internet', label: 'אינטרנט' },
+      { id: 'tv', label: 'טלוויזיה' },
+      { id: 'streaming', label: 'סטרימינג' },
+      { id: 'telecom_other', label: 'אחר', isOther: true }
+    ]
+  },
+  {
+    id: 'food', name: 'אוכל',
+    items: [
+      { id: 'groceries', label: 'סופר' },
+      { id: 'dining', label: 'אוכל בחוץ' },
+      { id: 'delivery', label: 'משלוחים' },
+      { id: 'coffee', label: 'קפה' },
+      { id: 'food_other', label: 'אחר', isOther: true }
+    ]
+  },
+  {
+    id: 'leisure', name: 'פנאי',
+    items: [
+      { id: 'entertainment', label: 'בילויים' },
+      { id: 'vacations', label: 'חופשות' },
+      { id: 'shopping', label: 'קניות' },
+      { id: 'personal_hobbies', label: 'תחביבים' },
+      { id: 'leisure_other', label: 'אחר', isOther: true }
+    ]
+  },
+  {
+    id: 'investments', name: 'השקעות',
+    items: [
+      { id: 'keren_hishtalmut', label: 'קרן השתלמות' },
+      { id: 'extra_pension', label: 'פנסיה נוספת' },
+      { id: 'gemel_invest', label: 'גמל / השקעות' },
+      { id: 'child_savings', label: 'חיסכון ילדים' },
+      { id: 'general_savings', label: 'חיסכון כללי' },
+      { id: 'investments_other', label: 'אחר', isOther: true }
+    ]
+  },
+  {
+    id: 'loans', name: 'הלוואות',
+    items: [
+      { id: 'bank_loans', label: 'הלוואות בנקאיות' },
+      { id: 'credit_card', label: 'כרטיס אשראי' },
+      { id: 'external_loans', label: 'הלוואה חוץ-בנקאית' },
+      { id: 'loans_other', label: 'אחר', isOther: true }
+    ]
+  }
+];
+
+// ── Build category UI ──
+function buildCategories() {
+  const pillsContainer = document.getElementById('catPills');
+  const panelsContainer = document.getElementById('catPanels');
+
+  CATEGORIES.forEach((cat, idx) => {
+    // Pill
+    const pill = document.createElement('button');
+    pill.className = 'cat-pill';
+    pill.id = 'pill-' + cat.id;
+    pill.textContent = cat.name;
+    pill.onclick = () => toggleCategory(cat.id);
+    pillsContainer.appendChild(pill);
+
+    // Panel
+    const panel = document.createElement('div');
+    panel.className = 'cat-panel';
+    panel.id = 'panel-' + cat.id;
+
+    let html = '<h3>' + cat.name + '</h3>';
+    let itemPairs = [];
+    cat.items.forEach(item => {
+      const fieldHtml = `
+        <div class="field">
+          <label>${item.label}</label>
+          <input type="number" id="exp_${item.id}" placeholder="0" inputmode="numeric"
+            oninput="onExpenseInput('${cat.id}', '${item.id}', ${item.isOther ? 'true' : 'false'})">
+          ${item.isOther ? `<div class="other-detail-field" id="detail_${item.id}"><input type="text" id="detail_text_${item.id}" placeholder="פרט במה מדובר" oninput="onExpenseInput('${cat.id}','${item.id}',true)"></div>` : ''}
+        </div>`;
+      itemPairs.push(fieldHtml);
+    });
+
+    // Layout items in rows of 2 (except "other" gets full width)
+    let i = 0;
+    while (i < itemPairs.length) {
+      const isOtherItem = cat.items[i].isOther;
+      if (isOtherItem) {
+        html += itemPairs[i];
+        i++;
+      } else if (i + 1 < itemPairs.length && !cat.items[i + 1].isOther) {
+        html += '<div class="row">' + itemPairs[i] + itemPairs[i + 1] + '</div>';
+        i += 2;
+      } else {
+        html += itemPairs[i];
+        i++;
+      }
+    }
+
+    panel.innerHTML = html;
+    panelsContainer.appendChild(panel);
+  });
 }
 
-function submitAssess() {
-  if (!window._assess.q_self) { alert('תבחר איך ההתנהלות שלך'); return; }
-  // Save assessment to localStorage for Day 2 comparison
-  const data = {
-    selfRating: window._assess.q_self,
-    guessSaving: parseFloat(document.getElementById('q_guess_save').value) || 0,
-    guessWaste: window._assess.q_waste || 20,
-    ts: Date.now()
-  };
-  localStorage.setItem('makpatza_assess', JSON.stringify(data));
+let activeCategory = null;
 
-  // Hide assessment, show main form
-  document.getElementById('assessScreen').style.display = 'none';
-  document.getElementById('mainProgress').style.display = 'flex';
-  document.querySelectorAll('.page').forEach(p => { if(p.classList.contains('active')) p.style.display = 'block'; });
+function toggleCategory(catId) {
+  const panel = document.getElementById('panel-' + catId);
+  const pill = document.getElementById('pill-' + catId);
+
+  if (activeCategory === catId) {
+    panel.classList.remove('active');
+    pill.classList.remove('active');
+    activeCategory = null;
+    return;
+  }
+
+  // Close current
+  if (activeCategory) {
+    document.getElementById('panel-' + activeCategory).classList.remove('active');
+    document.getElementById('pill-' + activeCategory).classList.remove('active');
+  }
+
+  panel.classList.add('active');
+  pill.classList.add('active');
+  activeCategory = catId;
+
+  // Scroll panel into view
+  setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+}
+
+function onExpenseInput(catId, itemId, isOther) {
+  // Show/hide detail field for "other"
+  if (isOther) {
+    const val = parseFloat(document.getElementById('exp_' + itemId).value) || 0;
+    const detailField = document.getElementById('detail_' + itemId);
+    if (detailField) {
+      detailField.style.display = val > 0 ? 'block' : 'none';
+    }
+  }
+
+  // Update category has-data indicator
+  updateCategoryIndicator(catId);
+
+  // Update running total
+  updateExpenseTotal();
+}
+
+function updateCategoryIndicator(catId) {
+  const cat = CATEGORIES.find(c => c.id === catId);
+  const pill = document.getElementById('pill-' + catId);
+  let hasData = false;
+  cat.items.forEach(item => {
+    const val = parseFloat(document.getElementById('exp_' + item.id).value) || 0;
+    if (val > 0) hasData = true;
+  });
+  pill.classList.toggle('has-data', hasData);
+}
+
+function updateExpenseTotal() {
+  let total = 0;
+  CATEGORIES.forEach(cat => {
+    cat.items.forEach(item => {
+      total += parseFloat(document.getElementById('exp_' + item.id).value) || 0;
+    });
+  });
+  document.getElementById('expenseTotalDisplay').textContent = '₪' + total.toLocaleString();
+}
+
+function getExpenseTotal() {
+  let total = 0;
+  CATEGORIES.forEach(cat => {
+    cat.items.forEach(item => {
+      total += parseFloat(document.getElementById('exp_' + item.id).value) || 0;
+    });
+  });
+  return total;
+}
+
+function getAllExpenseData() {
+  const detail = {};
+  CATEGORIES.forEach(cat => {
+    cat.items.forEach(item => {
+      const val = parseFloat(document.getElementById('exp_' + item.id).value) || 0;
+      if (val > 0) {
+        detail[item.id] = val;
+        if (item.isOther) {
+          const textEl = document.getElementById('detail_text_' + item.id);
+          if (textEl && textEl.value.trim()) {
+            detail[item.id + '_desc'] = textEl.value.trim();
+          }
+        }
+      }
+    });
+  });
+  return detail;
+}
+
+// ── Validate "other" fields ──
+function validateOtherFields() {
+  let valid = true;
+  CATEGORIES.forEach(cat => {
+    cat.items.forEach(item => {
+      if (item.isOther) {
+        const val = parseFloat(document.getElementById('exp_' + item.id).value) || 0;
+        if (val > 0) {
+          const textEl = document.getElementById('detail_text_' + item.id);
+          if (textEl && !textEl.value.trim()) {
+            textEl.style.borderColor = 'var(--red)';
+            textEl.focus();
+            valid = false;
+          } else if (textEl) {
+            textEl.style.borderColor = 'var(--gold)';
+          }
+        }
+      }
+    });
+  });
+  return valid;
+}
+
+// ── Page 0: Commitment ──
+function commitYes() {
+  document.getElementById('timePickArea').style.display = 'none';
+  document.getElementById('icalArea').style.display = 'block';
+}
+
+function commitNo() {
+  document.getElementById('icalArea').style.display = 'none';
+  document.getElementById('timePickArea').style.display = 'block';
+}
+
+function setLockTime() {
+  const timeVal = document.getElementById('pickTime').value;
+  if (!timeVal) return;
+
+  const now = new Date();
+  const [hours, minutes] = timeVal.split(':').map(Number);
+  const target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0);
+
+  // If chosen time is in the past (earlier today), treat as "now" and proceed
+  if (target <= now) {
+    document.getElementById('timePickArea').style.display = 'none';
+    document.getElementById('icalArea').style.display = 'block';
+    return;
+  }
+
+  localStorage.setItem('makpatza_unlock_time', target.getTime().toString());
+  showLockScreen(target.getTime());
+}
+
+function showLockScreen(unlockTs) {
+  const overlay = document.getElementById('lockOverlay');
+  overlay.style.display = 'flex';
+
+  function tick() {
+    const now = Date.now();
+    const diff = unlockTs - now;
+    if (diff <= 0) {
+      overlay.style.display = 'none';
+      localStorage.removeItem('makpatza_unlock_time');
+      // Show iCal area after unlock
+      document.getElementById('timePickArea').style.display = 'none';
+      document.getElementById('icalArea').style.display = 'block';
+      return;
+    }
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    document.getElementById('countdownDisplay').textContent =
+      String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    requestAnimationFrame(tick);
+  }
+  tick();
+}
+
+// ── Check lock on page load ──
+function checkLock() {
+  const stored = localStorage.getItem('makpatza_unlock_time');
+  if (stored) {
+    const ts = parseInt(stored);
+    if (ts > Date.now()) {
+      showLockScreen(ts);
+    } else {
+      localStorage.removeItem('makpatza_unlock_time');
+    }
+  }
 }
 
 // ── Dynamic income rows ──
@@ -361,7 +738,7 @@ function addIncomeRow() {
   row.id = 'row_' + id;
   row.innerHTML = `
     <select id="type_${id}">
-      ${INCOME_TYPES.map(t => `<option>${t}</option>`).join('')}
+      ${INCOME_TYPES.map(t => '<option>' + t + '</option>').join('')}
     </select>
     <input type="number" id="${id}" placeholder="₪0" inputmode="numeric" oninput="calcExtraIncome()">
     <button type="button" class="del-btn" onclick="removeIncomeRow('row_${id}')">×</button>`;
@@ -381,13 +758,11 @@ function calcExtraIncome() {
   document.getElementById('f_income2').value = total;
 }
 
-const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI';
-
-let currentPage = 1;
+// ── Navigation ──
+let currentPage = 0;
 
 function goPage(n) {
-  // Validate page 1
+  // Validate page 1 -> 2
   if (n > 1 && currentPage === 1) {
     if (!document.getElementById('f_name').value.trim()) {
       document.getElementById('f_name').focus();
@@ -399,16 +774,26 @@ function goPage(n) {
     }
   }
 
+  // Validate page 2 -> 3 (check "other" detail fields)
+  if (n > 2 && currentPage === 2) {
+    if (!validateOtherFields()) return;
+  }
+
+  // Show progress bar when leaving page 0
+  if (currentPage === 0 && n > 0) {
+    document.getElementById('mainProgress').style.display = 'flex';
+  }
+
   document.getElementById('page-' + currentPage).classList.remove('active');
   document.getElementById('page-' + n).classList.add('active');
 
-  // Update progress dots
-  for (let i = 1; i <= 3; i++) {
+  // Update progress dots (0-4)
+  for (let i = 0; i <= 4; i++) {
     const dot = document.getElementById('pd-' + i);
     const line = document.getElementById('pl-' + i);
     dot.classList.remove('active', 'done');
     if (line) line.classList.remove('done');
-    if (i < n) { dot.classList.add('done'); dot.textContent = '✓'; if (line) line.classList.add('done'); }
+    if (i < n) { dot.classList.add('done'); dot.textContent = '\u2713'; if (line) line.classList.add('done'); }
     else if (i === n) { dot.classList.add('active'); dot.textContent = i; }
     else { dot.textContent = i; }
   }
@@ -419,12 +804,38 @@ function goPage(n) {
 
 function gv(id) { return parseFloat(document.getElementById(id).value) || 0; }
 
+// ── Map old column names for backward compat ──
+function mapExpensesToLegacyColumns() {
+  return {
+    rent: gv('exp_rent'),
+    arnona: gv('exp_arnona'),
+    utilities: (gv('exp_electricity') + gv('exp_water') + gv('exp_gas')),
+    telecom: (gv('exp_phone_bill') + gv('exp_internet') + gv('exp_tv') + gv('exp_streaming')),
+    car_insurance: gv('exp_car_insurance'),
+    loans: (gv('exp_bank_loans') + gv('exp_credit_card') + gv('exp_external_loans')),
+    education: (gv('exp_daycare') + gv('exp_afternoon') + gv('exp_tuition')),
+    leasing: gv('exp_leasing'),
+    groceries: gv('exp_groceries'),
+    dining: gv('exp_dining'),
+    coffee: gv('exp_coffee'),
+    transport: (gv('exp_fuel') + gv('exp_parking') + gv('exp_public_transit')),
+    health: (gv('exp_kupat_holim') + gv('exp_medication') + gv('exp_dental') + gv('exp_glasses')),
+    shopping: gv('exp_shopping'),
+    leisure: (gv('exp_entertainment') + gv('exp_vacations') + gv('exp_personal_hobbies')),
+    kids: (gv('exp_kids_hobbies') + gv('exp_fitness'))
+  };
+}
+
+// ── Submit ──
 async function submitForm() {
   const btn = document.getElementById('submitBtn');
   const err = document.getElementById('errorMsg');
   btn.disabled = true;
   btn.textContent = 'שולח...';
   err.style.display = 'none';
+
+  const legacyCols = mapExpensesToLegacyColumns();
+  const expensesDetail = JSON.stringify(getAllExpenseData());
 
   const row = {
     name: document.getElementById('f_name').value.trim(),
@@ -434,32 +845,54 @@ async function submitForm() {
     income_extra: gv('f_income2'),
     email: document.getElementById('f_email').value.trim(),
     phone: document.getElementById('f_phone').value.trim(),
-    rent: gv('f_rent'), arnona: gv('f_arnona'), utilities: gv('f_utilities'),
-    telecom: gv('f_telecom'), car_insurance: gv('f_car_ins'), loans: gv('f_loans'),
-    education: gv('f_education'), leasing: gv('f_leasing'), test_annual: gv('f_test'),
-    groceries: gv('f_groceries'), dining: gv('f_dining'), coffee: gv('f_coffee'),
-    transport: gv('f_transport'), health: gv('f_health'), shopping: gv('f_shopping'),
-    leisure: gv('f_leisure'), kids: gv('f_kids'),
-    pension_extra: gv('f_pension'), keren_hishtalmut: gv('f_keren'),
-    gemel_invest: gv('f_gemel'), child_savings: gv('f_child_save'),
+    // Legacy expense columns
+    rent: legacyCols.rent,
+    arnona: legacyCols.arnona,
+    utilities: legacyCols.utilities,
+    telecom: legacyCols.telecom,
+    car_insurance: legacyCols.car_insurance,
+    loans: legacyCols.loans,
+    education: legacyCols.education,
+    leasing: legacyCols.leasing,
+    test_annual: 0,
+    groceries: legacyCols.groceries,
+    dining: legacyCols.dining,
+    coffee: legacyCols.coffee,
+    transport: legacyCols.transport,
+    health: legacyCols.health,
+    shopping: legacyCols.shopping,
+    leisure: legacyCols.leisure,
+    kids: legacyCols.kids,
+    // Savings
+    pension_extra: gv('f_pension'),
+    keren_hishtalmut: gv('f_keren'),
+    gemel_invest: gv('f_gemel'),
+    child_savings: gv('f_child_save'),
     general_savings: gv('f_save_gen'),
-    annual_insurance: gv('f_annual_ins'), emergency_fund: gv('f_emergency'),
-    annual_subs: gv('f_subs'),
+    annual_insurance: 0,
+    emergency_fund: 0,
+    annual_subs: 0,
+    // Detailed expense JSON
+    expenses_detail: expensesDetail
   };
 
   try {
-    const res = await fetch(`${SUPA_URL}/rest/v1/challenge_participants`, {
+    const res = await fetch(SUPA_URL + '/rest/v1/challenge_participants', {
       method: 'POST',
       headers: {
         'apikey': SUPA_KEY,
-        'Authorization': `Bearer ${SUPA_KEY}`,
+        'Authorization': 'Bearer ' + SUPA_KEY,
         'Content-Type': 'application/json',
         'Prefer': 'return=representation',
       },
       body: JSON.stringify(row),
     });
 
-    if (!res.ok) throw new Error('שגיאה בשמירה');
+    if (!res.ok) {
+      const errBody = await res.text();
+      console.error('Supabase error:', errBody);
+      throw new Error('שגיאה בשמירה');
+    }
 
     const data = await res.json();
     const pid = data[0]?.id;
@@ -467,18 +900,59 @@ async function submitForm() {
       localStorage.setItem('challenge_pid', pid);
     }
 
-    // Show thank you
-    document.getElementById('page-' + currentPage).classList.remove('active');
-    document.getElementById('page-done').classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Save assessment if exists
+    const assessRaw = localStorage.getItem('makpatza_assess');
+
+    // Show summary page
+    showSummary();
+    goPage(4);
 
   } catch (e) {
     err.textContent = 'שגיאה: ' + e.message + '. תנסה שוב.';
     err.style.display = 'block';
     btn.disabled = false;
-    btn.textContent = 'שלח ←';
+    btn.textContent = 'שלח וסכם \u2190';
   }
 }
+
+// ── Summary ──
+function showSummary() {
+  const totalIncome = gv('f_income') + gv('f_income2');
+  const totalExpense = getExpenseTotal();
+  const delta = totalIncome - totalExpense;
+
+  document.getElementById('sumIncome').textContent = '₪' + totalIncome.toLocaleString();
+  document.getElementById('sumExpense').textContent = '₪' + totalExpense.toLocaleString();
+
+  const deltaEl = document.getElementById('sumDelta');
+  deltaEl.textContent = (delta >= 0 ? '+' : '') + '₪' + delta.toLocaleString();
+  deltaEl.classList.toggle('positive', delta >= 0);
+  deltaEl.classList.toggle('negative', delta < 0);
+
+  // Animate readiness ring (20% = 80% dashoffset of circumference)
+  // circumference = 2 * PI * 65 = ~408.4
+  // 20% fill = 408.4 * 0.8 = 326.7 dashoffset
+  setTimeout(() => {
+    document.getElementById('ringFill').style.strokeDashoffset = '326.7';
+  }, 300);
+}
+
+// ── Navigate to Day 2 ──
+function goToDay2() {
+  const pid = localStorage.getItem('challenge_pid');
+  const url = 'day2.html' + (pid ? '?pid=' + pid : '');
+  window.location.href = url;
+}
+
+// ── Init ──
+document.addEventListener('DOMContentLoaded', function() {
+  buildCategories();
+  checkLock();
+
+  // Show progress bar with page 0 active
+  document.getElementById('mainProgress').style.display = 'flex';
+  document.getElementById('pd-0').classList.add('active');
+});
 </script>
 </body>
 </html>
