@@ -540,11 +540,26 @@
 const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI';
 
-// Pension constants (from israeli-pension-advisor)
-const PENSION_CEILING = 44000;
-const RETIREMENT_AGE = 67;
-const LIFE_EXPECTANCY = 90;
-const ANNUAL_RETURN = 0.06;
+// Pension constants (loaded from /pension-constants.json with hardcoded fallback)
+// Source: israeli-pension-advisor skill. Update yearly via JSON, no HTML changes needed.
+let PENSION_CEILING = 44000;
+let RETIREMENT_AGE = 67;
+let LIFE_EXPECTANCY = 90;
+let ANNUAL_RETURN = 0.06;
+
+async function loadPensionConstants() {
+  try {
+    const res = await fetch('pension-constants.json', { cache: 'no-cache' });
+    if (!res.ok) return;
+    const c = await res.json();
+    if (typeof c.PENSION_CEILING === 'number') PENSION_CEILING = c.PENSION_CEILING;
+    if (typeof c.RETIREMENT_AGE === 'number') RETIREMENT_AGE = c.RETIREMENT_AGE;
+    if (typeof c.LIFE_EXPECTANCY === 'number') LIFE_EXPECTANCY = c.LIFE_EXPECTANCY;
+    if (typeof c.ANNUAL_RETURN === 'number') ANNUAL_RETURN = c.ANNUAL_RETURN;
+  } catch (e) {
+    console.warn('pension-constants.json not loaded, using defaults:', e);
+  }
+}
 
 // Webinar URL placeholder
 const WEBINAR_URL = '#webinar-register';
@@ -1012,6 +1027,9 @@ function goPage(n) {
 // Init - load participant from URL pid or localStorage
 // ═══════════════════════════════════════════════════════════
 async function init() {
+  // Load pension constants from JSON (with hardcoded fallback if fails)
+  await loadPensionConstants();
+
   const params = new URLSearchParams(window.location.search);
   pid = params.get('pid') || localStorage.getItem('challenge_pid');
 
