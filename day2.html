@@ -585,7 +585,7 @@ const CATEGORIES = [
     ]
   },
   {
-    id: 'health', name: 'בריאות', type: 'flexible',
+    id: 'health', name: 'בריאות', type: 'rigid',
     items: [
       {id:'kupat_holim',label:'קופ"ח'},{id:'medication',label:'תרופות'},
       {id:'dental',label:'טיפולי שיניים'},{id:'glasses',label:'משקפיים / עדשות'},
@@ -680,15 +680,14 @@ let userAge = 35;
 let totalExpenses = 0;
 let pid = null;
 
-// ── Load from Supabase ──
+// ── Load from Supabase (via Edge Function due to RLS) ──
 async function loadFromSupabase(pid) {
-  const res = await fetch(`${SUPA_URL}/rest/v1/challenge_participants?id=eq.${pid}&select=*`, {
-    headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` }
+  const res = await fetch(`${SUPA_URL}/functions/v1/get-participant-v10?pid=${encodeURIComponent(pid)}`, {
+    headers: { 'Content-Type': 'application/json' }
   });
+  if (res.status === 404) throw new Error('לא נמצאו נתונים');
   if (!res.ok) throw new Error('שגיאה בטעינה מהשרת');
-  const rows = await res.json();
-  if (rows.length === 0) throw new Error('לא נמצאו נתונים');
-  return rows[0];
+  return await res.json();
 }
 
 // ── Parse expenses from Supabase row ──
@@ -970,15 +969,10 @@ function commitSavings() {
 async function saveCommitmentToSupabase(amount) {
   if (!pid) return;
   try {
-    await fetch(`${SUPA_URL}/rest/v1/challenge_participants?id=eq.${pid}`, {
-      method: 'PATCH',
-      headers: {
-        'apikey': SUPA_KEY,
-        'Authorization': `Bearer ${SUPA_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({ savings_commitment: amount })
+    await fetch(`${SUPA_URL}/functions/v1/update-participant-v10`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify({ pid, savings_commitment: amount })
     });
   } catch(e) {
     console.error('Failed to save commitment:', e);

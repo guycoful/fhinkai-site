@@ -3,336 +3,1056 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>יום 4 - בדיקת פנסיה | המקפצה הפיננסית</title>
+<title>יום 4 - מבחן החמצן | כסף שעובד</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
   :root {
-    --gold: #D4A853; --gold-light: #E8C77A; --gold-dark: #B8892E; --gold-bg: #FBF3E1;
-    --warm-white: #FDF8F0; --cream: #F5EDE0; --cream-dark: #E6D5C3;
-    --white: #ffffff; --dark: #2C2419; --dark-mid: #5C4E3C;
-    --navy: #1A2744; --green: #2E7D52; --green-light: #E8F5EE; --green-text: #1B5E3B;
-    --red: #C0392B; --red-light: #FDEEEC; --red-text: #922B21;
-    --blue: #2E6B9E; --blue-light: #EBF3FA;
-    --purple: #6B3FA0; --purple-light: #F3ECFF;
-    --orange: #C87A1A; --orange-light: #FFF3E0;
-    --radius: 16px; --shadow: 0 2px 12px rgba(44,36,25,.06);
+    --gold: #D4A853;
+    --gold-light: #E8C77A;
+    --gold-dark: #B8892E;
+    --gold-bg: #FBF3E1;
+    --warm-white: #FDF8F0;
+    --cream: #F5EDE0;
+    --cream-dark: #E6D5C3;
+    --white: #FFFFFF;
+    --dark: #2C2419;
+    --dark-mid: #5C4E3C;
+    --navy: #1A2744;
+    --green: #2E7D52;
+    --green-light: #E8F5EE;
+    --green-text: #1B5E3B;
+    --red: #C0392B;
+    --red-light: #FDEEEC;
+    --red-text: #922B21;
+    --yellow: #D4A017;
+    --yellow-light: #FFF8E1;
+    --blue: #2E6B9E;
+    --blue-light: #EBF3FA;
+    --orange: #C87A1A;
+    --orange-light: #FFF3E0;
+    --radius: 16px;
+    --shadow: 0 2px 12px rgba(44,36,25,.06);
   }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Heebo', sans-serif; background: var(--warm-white); color: var(--dark); direction: rtl; min-height: 100vh; line-height: 1.6; }
 
-  .header { background: var(--navy); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+  body {
+    font-family: 'Heebo', sans-serif;
+    background: var(--warm-white);
+    color: var(--dark);
+    direction: rtl;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: var(--navy);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
   .header-logo { font-size: 16px; font-weight: 700; color: var(--gold); }
-  .header-badge { background: var(--gold-bg); color: var(--gold-dark); padding: 4px 14px; border-radius: 50px; font-size: 12px; font-weight: 600; }
+  .header-badge {
+    background: var(--gold-bg);
+    color: var(--gold-dark);
+    padding: 4px 14px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 600;
+  }
 
+  /* ── Progress dots ── */
+  .progress { display: flex; align-items: center; gap: 0; margin-bottom: 24px; padding: 0 4px; }
+  .prog-step { display: flex; flex-direction: column; align-items: center; flex: 1; }
+  .prog-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800;
+    border: 2px solid var(--cream-dark);
+    background: var(--white); color: var(--dark-mid);
+    transition: all .3s;
+  }
+  .prog-dot.active { background: var(--gold); border-color: var(--gold-dark); color: white; box-shadow: 0 0 0 4px rgba(212,168,83,.2); }
+  .prog-dot.done { background: var(--green); border-color: var(--green); color: white; }
+  .prog-label { font-size: 9px; color: var(--dark-mid); margin-top: 4px; font-weight: 500; white-space: nowrap; }
+  .prog-line { height: 2px; flex: 1; background: var(--cream-dark); max-width: 40px; margin-top: -16px; transition: background .3s; }
+  .prog-line.done { background: var(--green); }
+
+  /* ── Container ── */
   .container { max-width: 600px; margin: 0 auto; padding: 20px 16px 40px; }
 
-  .welcome { text-align: center; padding: 32px 16px 28px; background: linear-gradient(180deg, var(--cream) 0%, var(--warm-white) 100%); margin: -20px -16px 20px; }
-  .welcome h1 { font-size: clamp(22px, 5vw, 28px); font-weight: 800; margin-bottom: 8px; }
-  .welcome h1 span { color: var(--gold-dark); }
-  .welcome p { font-size: 14px; color: var(--dark-mid); max-width: 400px; margin: 0 auto; }
+  /* ── Pages ── */
+  .page { display: none; }
+  .page.active { display: block; animation: fadeIn .4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
-  .card { background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius); padding: 20px 16px; margin-bottom: 14px; box-shadow: var(--shadow); }
+  /* ── Card ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--cream-dark);
+    border-radius: var(--radius);
+    padding: 24px 18px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card h2 { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
   .card h3 { font-size: 15px; font-weight: 700; margin-bottom: 14px; }
+  .card .subtitle { font-size: 13px; color: var(--dark-mid); margin-bottom: 18px; line-height: 1.7; }
 
+  /* ── Hero message ── */
+  .hero-msg {
+    text-align: center;
+    padding: 28px 16px 24px;
+    background: linear-gradient(180deg, var(--cream) 0%, var(--warm-white) 100%);
+    margin: -20px -16px 20px;
+  }
+  .hero-msg h1 { font-size: clamp(20px, 5vw, 26px); font-weight: 800; margin-bottom: 8px; }
+  .hero-msg h1 span { color: var(--gold-dark); }
+  .hero-msg p { font-size: 14px; color: var(--dark-mid); max-width: 420px; margin: 0 auto; line-height: 1.7; }
+
+  /* ── Form ── */
   .form-group { margin-bottom: 14px; }
   .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--dark-mid); }
   .form-group input, .form-group select {
-    width: 100%; padding: 10px 12px; border: 1px solid var(--cream-dark); border-radius: 10px;
-    font-family: Heebo; font-size: 14px; color: var(--dark); background: var(--white);
+    width: 100%; padding: 12px 14px; border: 1.5px solid var(--cream-dark); border-radius: 10px;
+    font-family: 'Heebo'; font-size: 15px; color: var(--dark); background: var(--white);
+    transition: border-color .2s; min-height: 46px;
   }
-  .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--gold); }
+  .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,168,83,.1); }
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .submit-btn {
-    width: 100%; margin-top: 8px;
-    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-    color: var(--navy); border: none; padding: 14px;
-    border-radius: 50px; font-family: Heebo; font-size: 15px; font-weight: 800; cursor: pointer;
+  @media (max-width: 400px) { .form-row { grid-template-columns: 1fr; } }
+  .form-hint { font-size: 11px; color: var(--dark-mid); margin-top: 3px; }
+
+  /* ── Buttons ── */
+  .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+  .btn {
+    flex: 1; padding: 14px; border: none; border-radius: 50px;
+    font-family: 'Heebo'; font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: transform .15s; min-height: 48px;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+  .btn-next { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--navy); box-shadow: 0 4px 16px rgba(212,168,83,.3); }
+  .btn-back { background: var(--cream); color: var(--dark-mid); }
+
+  /* ── Stats grid (oxygen lines) ── */
+  .oxy-stats { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 16px; }
+  .oxy-stat {
+    background: var(--white);
+    border: 2px solid var(--cream-dark);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .oxy-stat .oxy-icon { font-size: 22px; flex-shrink: 0; }
+  .oxy-stat .oxy-info { flex: 1; }
+  .oxy-stat .oxy-label { font-size: 12px; color: var(--dark-mid); font-weight: 500; }
+  .oxy-stat .oxy-value { font-size: 15px; font-weight: 800; }
+  .oxy-stat.red { border-color: var(--red); background: var(--red-light); }
+  .oxy-stat.red .oxy-value { color: var(--red-text); }
+  .oxy-stat.yellow { border-color: var(--gold); background: var(--gold-bg); }
+  .oxy-stat.yellow .oxy-value { color: var(--gold-dark); }
+  .oxy-stat.green-locked {
+    border-color: var(--cream-dark);
+    background: var(--cream);
+    position: relative;
+  }
+  .oxy-stat.green-locked .oxy-value { color: var(--dark-mid); }
+  .oxy-stat.green-locked .oxy-info { opacity: .6; }
+  .oxy-stat.green-locked .lock-tag {
+    background: var(--navy);
+    color: var(--gold);
+    padding: 3px 10px;
+    border-radius: 50px;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
   }
 
-  /* Results */
-  .hero-pension { background: var(--white); border: 2px solid var(--gold); border-radius: var(--radius); padding: 28px 20px; text-align: center; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(212,168,83,.12); }
-  .hero-label { font-size: 13px; color: var(--dark-mid); margin-bottom: 6px; }
-  .hero-amount { font-size: clamp(32px, 8vw, 48px); font-weight: 900; line-height: 1; margin-bottom: 8px; }
-  .hero-tag { display: inline-block; font-size: 13px; font-weight: 600; padding: 4px 16px; border-radius: 50px; }
+  /* ── Chart container ── */
+  .chart-card {
+    background: var(--white);
+    border: 1px solid var(--cream-dark);
+    border-radius: var(--radius);
+    padding: 18px 12px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+  .chart-wrapper {
+    position: relative;
+    height: 320px;
+    width: 100%;
+  }
+  @media (max-width: 400px) {
+    .chart-wrapper { height: 280px; }
+  }
+  .chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--cream-dark);
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--dark-mid);
+    font-weight: 600;
+  }
+  .legend-line {
+    width: 24px;
+    height: 3px;
+    border-radius: 2px;
+  }
+  .legend-line.red { background: var(--red); }
+  .legend-line.yellow { background: var(--gold-dark); }
+  .legend-line.green {
+    background: var(--green);
+    background: repeating-linear-gradient(90deg, var(--green) 0 4px, transparent 4px 8px);
+    opacity: .5;
+  }
 
-  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-  .stat { background: var(--white); border: 1px solid var(--cream-dark); border-radius: 12px; padding: 14px 12px; text-align: center; box-shadow: var(--shadow); }
-  .stat-label { font-size: 11px; color: var(--dark-mid); margin-bottom: 2px; }
-  .stat-val { font-size: clamp(16px, 4vw, 20px); font-weight: 800; }
-  .stat-sub { font-size: 10px; color: var(--dark-mid); margin-top: 1px; }
+  .chart-lock-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(26, 39, 68, 0.92);
+    color: var(--gold);
+    padding: 8px 14px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 700;
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0,0,0,.2);
+    z-index: 5;
+  }
 
-  .gap-bar { position: relative; height: 14px; border-radius: 50px; margin: 16px 0 8px; overflow: visible; }
-  .gap-bar-bg { width: 100%; height: 100%; border-radius: 50px; background: linear-gradient(to left, var(--green), var(--gold), var(--red)); }
-  .gap-bar-pin { position: absolute; top: -4px; width: 22px; height: 22px; background: var(--white); border: 3px solid var(--navy); border-radius: 50%; transform: translateX(50%); box-shadow: 0 2px 8px rgba(0,0,0,.15); transition: right .8s; }
+  /* ── Countdown ── */
+  .countdown-card {
+    background: linear-gradient(135deg, var(--navy), #2a3f6f);
+    border-radius: var(--radius);
+    padding: 22px 18px;
+    text-align: center;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+  .countdown-card .cd-title {
+    font-size: 14px;
+    color: var(--cream);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .countdown-card .cd-subtitle {
+    font-size: 12px;
+    color: rgba(255,255,255,.7);
+    margin-bottom: 14px;
+  }
+  .countdown-display {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    direction: ltr;
+  }
+  .cd-unit {
+    background: rgba(255,255,255,.1);
+    border-radius: 10px;
+    padding: 10px 6px;
+    min-width: 60px;
+    border: 1px solid rgba(212,168,83,.3);
+  }
+  .cd-num {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--gold-light);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .cd-label {
+    font-size: 10px;
+    color: rgba(255,255,255,.6);
+    margin-top: 4px;
+    direction: rtl;
+  }
 
-  .tip-card { padding: 14px; margin-bottom: 8px; border-radius: 12px; border-right: 4px solid; }
-  .tip-card.good { border-color: var(--green); background: var(--green-light); }
-  .tip-card.warn { border-color: var(--orange); background: var(--orange-light); }
-  .tip-card.bad { border-color: var(--red); background: var(--red-light); }
-  .tip-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-  .tip-desc { font-size: 12px; color: var(--dark-mid); line-height: 1.5; }
+  /* ── Readiness meter ── */
+  .readiness-wrap { margin: 28px auto 20px; display: flex; flex-direction: column; align-items: center; }
+  .readiness-ring { position: relative; width: 160px; height: 160px; }
+  .readiness-ring svg { width: 160px; height: 160px; transform: rotate(-90deg); }
+  .readiness-ring .ring-bg { fill: none; stroke: var(--cream-dark); stroke-width: 10; }
+  .readiness-ring .ring-fill { fill: none; stroke: var(--gold); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 471; stroke-dashoffset: 471; transition: stroke-dashoffset 1.8s ease; }
+  .readiness-pct { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 38px; font-weight: 900; color: var(--gold-dark); }
+  .readiness-label { font-size: 14px; font-weight: 600; color: var(--dark-mid); margin-top: 8px; }
 
-  .cta-card { background: linear-gradient(135deg, var(--navy), #2a3f6f); border-radius: var(--radius); padding: 28px 20px; text-align: center; color: var(--white); margin-top: 8px; }
-  .cta-card h3 { font-size: 20px; font-weight: 800; color: var(--gold); margin-bottom: 8px; }
-  .cta-card p { font-size: 14px; opacity: .85; margin-bottom: 20px; }
-  .cta-btn { display: inline-block; background: var(--gold); color: var(--navy); padding: 14px 32px; border-radius: 50px; font-size: 15px; font-weight: 800; text-decoration: none; }
+  /* ── Summary ── */
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    background: var(--cream);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  .summary-row .label { font-weight: 600; }
+  .summary-row .value { font-weight: 800; direction: ltr; color: var(--gold-dark); }
 
-  .summary-section { margin-top: 16px; }
-  .summary-row { display: flex; justify-content: space-between; padding: 10px 12px; margin-bottom: 6px; background: var(--cream); border-radius: 10px; font-size: 13px; }
-  .summary-label { font-weight: 600; }
-  .summary-val { font-weight: 800; }
+  .lock-message {
+    background: var(--gold-bg);
+    border: 2px dashed var(--gold);
+    border-radius: 12px;
+    padding: 18px 16px;
+    text-align: center;
+    margin: 16px 0;
+  }
+  .lock-message .lock-icon { font-size: 32px; margin-bottom: 8px; }
+  .lock-message .lock-title { font-size: 15px; font-weight: 800; color: var(--gold-dark); margin-bottom: 6px; }
+  .lock-message .lock-desc { font-size: 13px; color: var(--dark-mid); line-height: 1.6; }
 
-  #results { display: none; }
+  .cta-card {
+    background: var(--navy);
+    border-radius: var(--radius);
+    padding: 28px 20px;
+    text-align: center;
+    margin-top: 16px;
+  }
+  .cta-card h3 { color: var(--gold); font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+  .cta-card p { color: rgba(255,255,255,.75); font-size: 14px; margin-bottom: 18px; line-height: 1.6; }
+  .cta-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: var(--navy);
+    padding: 16px 38px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 800;
+    text-decoration: none;
+    font-family: 'Heebo';
+    border: none;
+    cursor: pointer;
+  }
+
+  /* ── Loading / Error ── */
+  .loading-screen { text-align: center; padding: 60px 20px; }
+  .loading-screen .spinner {
+    width: 48px; height: 48px;
+    border: 4px solid var(--cream-dark);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-screen p { font-size: 15px; color: var(--dark-mid); font-weight: 600; }
+
+  .error-screen { text-align: center; padding: 40px 20px; display: none; }
+  .error-screen .err-icon { font-size: 48px; margin-bottom: 12px; }
+  .error-screen h2 { font-size: 18px; margin-bottom: 8px; }
+  .error-screen p { font-size: 14px; color: var(--dark-mid); }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="header-logo">💰 המקפצה הפיננסית</div>
-  <div class="header-badge">יום 4 - סוף האתגר</div>
+  <div class="header-logo">המקפצה הפיננסית</div>
+  <div class="header-badge">יום 4 מתוך 4</div>
 </div>
 
 <div class="container">
-  <div class="welcome">
-    <h1>הפנסיה שלך = <span>הכסף הכי גדול</span></h1>
-    <p>רוב האנשים לא מסתכלים על הפנסיה. היום נגלה כמה כסף אתה משאיר על השולחן.</p>
+
+  <!-- Progress dots: 3 pages -->
+  <div class="progress" id="progressBar">
+    <div class="prog-step"><div class="prog-dot active" id="pd-0">1</div><div class="prog-label">פנסיה</div></div>
+    <div class="prog-line" id="pl-0"></div>
+    <div class="prog-step"><div class="prog-dot" id="pd-1">2</div><div class="prog-label">החמצן</div></div>
+    <div class="prog-line" id="pl-1"></div>
+    <div class="prog-step"><div class="prog-dot" id="pd-2">3</div><div class="prog-label">סיכום</div></div>
   </div>
 
-  <!-- Input -->
-  <div class="card" id="formCard">
-    <h3>📋 נתוני פנסיה בסיסיים</h3>
-    <div class="form-group">
-      <label>שם (להתאמה אישית)</label>
-      <input type="text" id="f_name" placeholder="גיא">
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>גיל</label>
-        <input type="number" id="f_age" placeholder="32" inputmode="numeric">
-      </div>
-      <div class="form-group">
-        <label>שכר ברוטו (₪)</label>
-        <input type="number" id="f_gross" placeholder="15000" inputmode="numeric">
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>אחוז הפרשה לפנסיה (%)</label>
-        <select id="f_contrib">
-          <option value="6">6% (מינימום חוק)</option>
-          <option value="7" selected>7% (ממוצע)</option>
-          <option value="8.33">8.33% (מקסימום הטבת מס)</option>
-          <option value="10">10%+ (הפרשה עודפת)</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>הפרשת מעסיק (%)</label>
-        <select id="f_employer">
-          <option value="6.5" selected>6.5% (מינימום חוק)</option>
-          <option value="7.5">7.5% (ממוצע)</option>
-          <option value="8.33">8.33% (מקסימום)</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>סוג קרן</label>
-        <select id="f_fund_type">
-          <option value="pension">פנסיה מקיפה</option>
-          <option value="gemel">גמל / ביטוח מנהלים</option>
-          <option value="unknown">לא יודע</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>דמי ניהול (%, מהצבירה)</label>
-        <input type="number" id="f_mgmt_fee" placeholder="0.5" step="0.01" inputmode="decimal">
-      </div>
-    </div>
-    <div class="form-group">
-      <label>צבירה נוכחית בפנסיה (₪, לפי דוח שנתי)</label>
-      <input type="number" id="f_balance" placeholder="200000" inputmode="numeric">
-    </div>
-    <button class="submit-btn" onclick="runPension()">🔍 נתח את הפנסיה שלי</button>
+  <!-- Loading screen -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="spinner"></div>
+    <p>טוען את הנתונים שלך...</p>
   </div>
 
-  <!-- Results -->
-  <div id="results">
-    <div class="hero-pension" id="heroCard"></div>
-    <div class="stats" id="statsGrid"></div>
-    <div class="card" id="feeCard"></div>
-    <div class="card" id="tipsCard"></div>
+  <!-- Error screen -->
+  <div class="error-screen" id="errorScreen">
+    <div class="err-icon">⚠️</div>
+    <h2>שגיאה בטעינת הנתונים</h2>
+    <p id="errorMsg">לא נמצאו נתונים. תוודא שהקישור תקין.</p>
+  </div>
 
-    <!-- Summary of 4 days -->
-    <div class="card summary-section" id="summaryCard">
-      <h3>📊 סיכום 4 ימים - מה גילינו</h3>
-      <div id="summaryContent"></div>
+  <!-- ═══ PAGE 0: Pension Input ═══ -->
+  <div class="page" id="page-0">
+    <div class="hero-msg">
+      <h1>מבחן החמצן <span>שלב אחרון</span></h1>
+      <p>כדי לראות את ציר הזמן הפיננסי שלך, ספר לנו על הפנסיה הקיימת. כל קופות החיסכון לפנסיה ביחד.</p>
+    </div>
+
+    <div class="card">
+      <h3>📋 נתוני פנסיה</h3>
+
+      <div class="form-group">
+        <label>כמה כסף יש לך כיום בפנסיה ? (כל הקופות יחד)</label>
+        <input type="number" id="f_pension_balance" placeholder="100000" inputmode="numeric">
+        <div class="form-hint">הצבירה הנוכחית בכל הקרנות והגמלאות</div>
+      </div>
+
+      <div class="form-group">
+        <label>אחוז ההפקדה החודשית מהשכר</label>
+        <select id="f_contrib_rate">
+          <option value="0.185" selected>18.5% (חובה - שכיר)</option>
+          <option value="0.20">20% (חובה + השלמה)</option>
+          <option value="0.1276">12.76% (עצמאי)</option>
+        </select>
+        <div class="form-hint">סכום ההפרשה הכולל (עובד + מעסיק + פיצויים)</div>
+      </div>
+
+      <div class="form-group">
+        <label>מאיזה גיל אתה מפקיד ?</label>
+        <input type="number" id="f_start_age" placeholder="25" value="25" inputmode="numeric">
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-next" onclick="goPage(1)">הראה לי את ציר החמצן &#8592;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE 1: The Two Lines Chart ═══ -->
+  <div class="page" id="page-1">
+    <div class="card">
+      <h2>ציר החמצן הפיננסי שלך</h2>
+      <div class="subtitle">שני קווים מספרים את כל הסיפור. הקו האדום זה איך שאתה היום. הקו הצהוב זה אחרי הפעולות שהתחייבת בהן באתגר.</div>
+
+      <div class="oxy-stats" id="oxyStats"></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-wrapper">
+        <canvas id="oxygenChart"></canvas>
+        <div class="chart-lock-overlay">🔒 הקו הירוק נפתח בוובינר</div>
+      </div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-line red"></div><span>בקצב הנוכחי</span></div>
+        <div class="legend-item"><div class="legend-line yellow"></div><span>עם פעולות האתגר</span></div>
+        <div class="legend-item"><div class="legend-line green"></div><span>עצמאות מלאה (נעול)</span></div>
+      </div>
+    </div>
+
+    <div class="countdown-card">
+      <div class="cd-title">הוובינר ביום רביעי בשעה 20:00</div>
+      <div class="cd-subtitle">שם נפתח הקו הירוק והכלים לעצמאות פיננסית</div>
+      <div class="countdown-display" id="countdown1">
+        <div class="cd-unit"><div class="cd-num" id="cd1-d">00</div><div class="cd-label">ימים</div></div>
+        <div class="cd-unit"><div class="cd-num" id="cd1-h">00</div><div class="cd-label">שעות</div></div>
+        <div class="cd-unit"><div class="cd-num" id="cd1-m">00</div><div class="cd-label">דקות</div></div>
+        <div class="cd-unit"><div class="cd-num" id="cd1-s">00</div><div class="cd-label">שניות</div></div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goPage(0)">&#8594; חזרה</button>
+      <button class="btn btn-next" onclick="goPage(2)">לסיכום &#8592;</button>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE 2: Final Summary ═══ -->
+  <div class="page" id="page-2">
+    <div class="card" style="text-align:center">
+      <h2>השלמת את המסע</h2>
+      <div class="subtitle">4 ימים, 4 החלטות, מציאות פיננסית חדשה.</div>
+
+      <div class="readiness-wrap">
+        <div class="readiness-ring">
+          <svg viewBox="0 0 160 160">
+            <circle class="ring-bg" cx="80" cy="80" r="75"/>
+            <circle class="ring-fill" id="ringFill" cx="80" cy="80" r="75"/>
+          </svg>
+          <div class="readiness-pct" id="readinessPct">80%</div>
+        </div>
+        <div class="readiness-label">מוכנות פיננסית</div>
+      </div>
+
+      <div style="margin: 16px 0">
+        <div class="summary-row">
+          <span class="label">התחייבת לחסוך חודשי</span>
+          <span class="value" id="sumCommit">₪0</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">חיסכון מצטבר עד הפנסיה</span>
+          <span class="value" id="sumCumulative">₪0</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">תוספת לפנסיה (עם ריבית)</span>
+          <span class="value" id="sumCompound">₪0</span>
+        </div>
+      </div>
+
+      <div class="lock-message">
+        <div class="lock-icon">🔒</div>
+        <div class="lock-title">ה-20% האחרונים נפתחים בוובינר</div>
+        <div class="lock-desc">ביום רביעי בשעה 20:00 נפתח את שלב העצמאות המלאה ונראה איך הקו הירוק הופך למציאות. שמור את הזמן ביומן.</div>
+      </div>
+
+      <div class="countdown-card">
+        <div class="cd-title">עוד מעט נתראה</div>
+        <div class="cd-subtitle">הוובינר מתחיל בעוד</div>
+        <div class="countdown-display" id="countdown2">
+          <div class="cd-unit"><div class="cd-num" id="cd2-d">00</div><div class="cd-label">ימים</div></div>
+          <div class="cd-unit"><div class="cd-num" id="cd2-h">00</div><div class="cd-label">שעות</div></div>
+          <div class="cd-unit"><div class="cd-num" id="cd2-m">00</div><div class="cd-label">דקות</div></div>
+          <div class="cd-unit"><div class="cd-num" id="cd2-s">00</div><div class="cd-label">שניות</div></div>
+        </div>
+      </div>
     </div>
 
     <div class="cta-card">
-      <h3>רוצה לקחת את זה צעד קדימה ?</h3>
-      <p>ב-4 ימים גילית כמה כסף אתה יכול לחסוך, להרוויח ולהגדיל. תוכנית הליווי שלנו תעזור לך ליישם את הכל.</p>
-      <a class="cta-btn" href="#contact">אני רוצה לשמוע עוד ←</a>
+      <h3>הוובינר שיפתח את הכל</h3>
+      <p>שלב העצמאות המלאה מחכה לך. הירשם עכשיו ותבטיח את המקום.</p>
+      <a class="cta-btn" href="#webinar" id="webinarLink">הירשם לוובינר עכשיו &#8592;</a>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goPage(1)">&#8594; חזרה לציר</button>
     </div>
   </div>
+
 </div>
 
 <script>
-function fmt(n) { return '₪' + Math.round(n).toLocaleString('he-IL'); }
-function pct(n) { return n.toFixed(1) + '%'; }
+// ═══════════════════════════════════════════════════════════
+// Config
+// ═══════════════════════════════════════════════════════════
+const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI';
 
-// Pension projection with management fees
-function projectPension(balance, monthlyContrib, years, annualReturn, mgmtFee) {
-  const monthlyReturn = (annualReturn - mgmtFee / 100) / 12;
-  let total = balance;
-  for (let m = 0; m < years * 12; m++) {
-    total = total * (1 + monthlyReturn / 100) + monthlyContrib;
+// Pension constants (from israeli-pension-advisor)
+const PENSION_CEILING = 44000;
+const RETIREMENT_AGE = 67;
+const LIFE_EXPECTANCY = 90;
+const ANNUAL_RETURN = 0.06;
+
+// Webinar URL placeholder
+const WEBINAR_URL = '#webinar-register';
+
+// ═══════════════════════════════════════════════════════════
+// State
+// ═══════════════════════════════════════════════════════════
+let pid = null;
+let participantData = null;
+let userAge = 35;
+let userIncome = 15000;
+let userName = 'משתתף';
+let monthlyExpense = 0;
+let savingsCommitment = 0;
+let oxygenChart = null;
+
+// ═══════════════════════════════════════════════════════════
+// Helpers
+// ═══════════════════════════════════════════════════════════
+function fmt(n) {
+  if (!isFinite(n) || isNaN(n)) return '₪0';
+  return '₪' + Math.round(n).toLocaleString('he-IL');
+}
+
+function pad2(n) { return String(n).padStart(2, '0'); }
+
+// ═══════════════════════════════════════════════════════════
+// Webinar date - next Wednesday at 20:00 Israel time
+// ═══════════════════════════════════════════════════════════
+function getNextWebinarDate() {
+  const now = new Date();
+  const target = new Date(now);
+  // Wednesday = 3 (Sunday = 0)
+  const daysUntilWed = ((3 - now.getDay()) + 7) % 7;
+  let addDays = daysUntilWed;
+  // If today is Wednesday and past 20:00, push to next week
+  if (daysUntilWed === 0 && now.getHours() >= 20) {
+    addDays = 7;
   }
+  // If 0 days but before 20:00, keep today
+  target.setDate(now.getDate() + addDays);
+  target.setHours(20, 0, 0, 0);
+  return target;
+}
+
+const WEBINAR_DATE = getNextWebinarDate();
+
+// ═══════════════════════════════════════════════════════════
+// Load from Supabase
+// ═══════════════════════════════════════════════════════════
+async function loadFromSupabase(pid) {
+  const res = await fetch(`${SUPA_URL}/functions/v1/get-participant-v10?pid=${encodeURIComponent(pid)}`, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+  if (res.status === 404) throw new Error('לא נמצאו נתונים');
+  if (!res.ok) throw new Error('שגיאה בטעינה מהשרת');
+  return await res.json();
+}
+
+// ═══════════════════════════════════════════════════════════
+// Calculate total monthly expenses from row
+// ═══════════════════════════════════════════════════════════
+function calcMonthlyExpense(row) {
+  let total = 0;
+
+  // Try expenses_detail JSON first
+  if (row.expenses_detail) {
+    try {
+      const detail = typeof row.expenses_detail === 'string' ? JSON.parse(row.expenses_detail) : row.expenses_detail;
+      if (detail && typeof detail === 'object') {
+        Object.entries(detail).forEach(([k, v]) => {
+          if (typeof v === 'number' && !k.endsWith('_desc')) {
+            total += v;
+          }
+        });
+        if (total > 0) return total;
+      }
+    } catch(e) { /* fall through */ }
+  }
+
+  // Legacy columns
+  const legacyKeys = [
+    'rent','arnona','utilities','telecom','car_insurance','loans','education',
+    'leasing','groceries','dining','coffee','transport','health','shopping','leisure','kids'
+  ];
+  legacyKeys.forEach(k => {
+    total += parseFloat(row[k] || 0) || 0;
+  });
+
   return total;
 }
 
-function runPension() {
-  const name = document.getElementById('f_name').value || 'משתתף';
-  const age = parseInt(document.getElementById('f_age').value) || 35;
-  const gross = parseFloat(document.getElementById('f_gross').value) || 0;
-  const contribPct = parseFloat(document.getElementById('f_contrib').value) || 7;
-  const employerPct = parseFloat(document.getElementById('f_employer').value) || 6.5;
-  const fundType = document.getElementById('f_fund_type').value;
-  const mgmtFee = parseFloat(document.getElementById('f_mgmt_fee').value) || 0.5;
-  const balance = parseFloat(document.getElementById('f_balance').value) || 0;
-
-  if (!gross) { alert('תמלא שכר ברוטו'); return; }
-
-  const yearsToRetire = Math.max(1, 67 - age);
-  const totalContribPct = contribPct + employerPct;
-  const monthlyContrib = gross * totalContribPct / 100;
-
-  // Project with current settings
-  const avgReturn = 5.5; // average annual return for Israeli pension funds
-  const projected = projectPension(balance, monthlyContrib, yearsToRetire, avgReturn, mgmtFee);
-
-  // Project with optimized (lower fee)
-  const optimalFee = 0.15;
-  const projectedOptimal = projectPension(balance, monthlyContrib, yearsToRetire, avgReturn, optimalFee);
-  const feeLoss = projectedOptimal - projected;
-
-  // Monthly pension estimate (4% rule adapted)
-  const monthlyPension = projected * 0.004; // ~4.8% annual withdrawal / 12
-  const monthlyPensionOptimal = projectedOptimal * 0.004;
-
-  // Target: 70% of current gross as pension income
-  const target = gross * 0.7;
-  const gapPct = target > 0 ? Math.round(monthlyPension / target * 100) : 0;
-  const hasGap = gapPct < 100;
-
-  // Hero
-  document.getElementById('heroCard').innerHTML = `
-    <div class="hero-label">הפנסיה הצפויה שלך בגיל 67</div>
-    <div class="hero-amount" style="color:${hasGap ? 'var(--orange)' : 'var(--green)'}">${fmt(projected)}</div>
-    <div class="hero-tag" style="background:${hasGap ? 'var(--orange-light)' : 'var(--green-light)'};color:${hasGap ? 'var(--orange)' : 'var(--green-text)'}">
-      ${hasGap ? `מכסה ${gapPct}% מהיעד (${fmt(target)}/חודש)` : '✓ מכסה את היעד שלך'}
-    </div>`;
-
-  // Stats
-  document.getElementById('statsGrid').innerHTML = `
-    <div class="stat"><div class="stat-label">הפרשה חודשית</div><div class="stat-val" style="color:var(--blue)">${fmt(monthlyContrib)}</div><div class="stat-sub">${pct(totalContribPct)} מהברוטו</div></div>
-    <div class="stat"><div class="stat-label">צבירה נוכחית</div><div class="stat-val" style="color:var(--purple)">${fmt(balance)}</div></div>
-    <div class="stat"><div class="stat-label">פנסיה חודשית צפויה</div><div class="stat-val" style="color:${hasGap?'var(--orange)':'var(--green)'}">${fmt(monthlyPension)}</div><div class="stat-sub">${gapPct}% מהיעד</div></div>
-    <div class="stat"><div class="stat-label">שנים עד פרישה</div><div class="stat-val" style="color:var(--navy)">${yearsToRetire}</div></div>`;
-
-  // Fee impact
-  const feeColor = mgmtFee > 0.5 ? 'bad' : mgmtFee > 0.25 ? 'warn' : 'good';
-  document.getElementById('feeCard').innerHTML = `
-    <h3>💰 כמה דמי הניהול עולים לך ?</h3>
-    <div class="tip-card ${feeColor}">
-      <div class="tip-title">דמי ניהול: ${pct(mgmtFee)} מהצבירה</div>
-      <div class="tip-desc">${mgmtFee > 0.25
-        ? `אם תוריד ל-0.15% (אפשרי בהתמקחות) תחסוך <strong>${fmt(feeLoss)}</strong> עד פרישה. זה ${fmt(feeLoss/yearsToRetire/12)} יותר בפנסיה כל חודש.`
-        : 'דמי הניהול שלך נמוכים. כל הכבוד.'}</div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-      <div class="stat" style="border-color:var(--red)"><div class="stat-label">עם ${pct(mgmtFee)} דמ"נ</div><div class="stat-val" style="color:var(--red)">${fmt(projected)}</div></div>
-      <div class="stat" style="border-color:var(--green)"><div class="stat-label">עם 0.15% דמ"נ</div><div class="stat-val" style="color:var(--green)">${fmt(projectedOptimal)}</div></div>
-    </div>
-    <div style="text-align:center;margin-top:8px;font-size:12px;color:var(--dark-mid)">הפרש: <strong style="color:var(--red)">${fmt(feeLoss)}</strong> שנשרפים על דמי ניהול</div>`;
-
-  // Tips
-  let tips = '';
-
-  if (contribPct < 7) {
-    tips += `<div class="tip-card warn"><div class="tip-title">⚠️ הפרשה נמוכה</div><div class="tip-desc">מפריש ${pct(contribPct)} מתוך 8.33% מקסימום. העלאה ל-8.33% תוסיף ${fmt((8.33-contribPct)/100*gross)} לחודש לפנסיה.</div></div>`;
-  }
-
-  if (fundType === 'unknown') {
-    tips += `<div class="tip-card warn"><div class="tip-title">⚠️ לא יודע באיזו קרן</div><div class="tip-desc">זה הנתון הכי חשוב. תבקש מהמעסיק או תכנס לאתר הר הביטוח (har-habituach.gov.il) ותגלה.</div></div>`;
-  }
-
-  if (mgmtFee > 0.5) {
-    tips += `<div class="tip-card bad"><div class="tip-title">🔴 דמי ניהול גבוהים</div><div class="tip-desc">תתקשר לקרן ותבקש הורדה ל-0.15-0.25%. אם מסרבים, תעבור קרן. זה חוקי ולוקח 5 דקות.</div></div>`;
-  }
-
-  if (!balance) {
-    tips += `<div class="tip-card warn"><div class="tip-title">📋 חסר נתון צבירה</div><div class="tip-desc">הזן את סכום הצבירה מהדוח השנתי. בלי זה החישוב מתחיל מ-0 ולא מדויק.</div></div>`;
-  }
-
-  if (hasGap && gapPct < 70) {
-    tips += `<div class="tip-card bad"><div class="tip-title">🔴 פער גדול מהיעד</div><div class="tip-desc">הפנסיה הצפויה מכסה רק ${gapPct}% ממה שתצטרך. כדאי לפתוח גמל להשקעה או להגדיל הפרשות.</div></div>`;
-  }
-
-  if (tips === '') {
-    tips = `<div class="tip-card good"><div class="tip-title">✅ המצב נראה טוב</div><div class="tip-desc">ההפרשות תקינות ודמי הניהול סבירים. תבדוק פעם בשנה שהכל עדיין תקין.</div></div>`;
-  }
-
-  document.getElementById('tipsCard').innerHTML = `<h3>💡 המלצות</h3>${tips}`;
-
-  // 4-day summary
-  const commit = JSON.parse(localStorage.getItem('makpatza_commit') || 'null');
-  const pathData = JSON.parse(localStorage.getItem('makpatza_path') || 'null');
-  const pathLabels = {nego: 'מו"מ שכר', side: 'הכנסה נוספת', skill: 'שדרוג מקצועי'};
-
-  let summary = '';
-  summary += `<div class="summary-row"><div class="summary-label">🏠 יום 1 - מיפוי פיננסי</div><div class="summary-val">✅ הושלם</div></div>`;
-
-  if (commit) {
-    summary += `<div class="summary-row"><div class="summary-label">✂️ יום 2 - הקטנת הוצאות</div><div class="summary-val" style="color:var(--green)">חיסכון: ${fmt(commit.saving)}/חודש</div></div>`;
+// ═══════════════════════════════════════════════════════════
+// Pension projection logic (port from israeli-pension-advisor)
+// ═══════════════════════════════════════════════════════════
+function projectMonth(balance, income, contributionRate, currentAge, monthlyExpenseDraw) {
+  const insurable = Math.min(income, PENSION_CEILING);
+  const monthlyReturn = Math.pow(1 + ANNUAL_RETURN, 1/12) - 1;
+  let contribution;
+  if (currentAge < RETIREMENT_AGE) {
+    contribution = insurable * contributionRate;
   } else {
-    summary += `<div class="summary-row"><div class="summary-label">✂️ יום 2 - הקטנת הוצאות</div><div class="summary-val">✅ הושלם</div></div>`;
+    contribution = -monthlyExpenseDraw;
   }
-
-  if (pathData) {
-    summary += `<div class="summary-row"><div class="summary-label">📈 יום 3 - הגדלת הכנסה</div><div class="summary-val" style="color:var(--green)">נתיב: ${pathLabels[pathData.path] || pathData.path}</div></div>`;
-  } else {
-    summary += `<div class="summary-row"><div class="summary-label">📈 יום 3 - הגדלת הכנסה</div><div class="summary-val">✅ הושלם</div></div>`;
-  }
-
-  summary += `<div class="summary-row"><div class="summary-label">🏦 יום 4 - בדיקת פנסיה</div><div class="summary-val" style="color:var(--green)">צפי: ${fmt(projected)}</div></div>`;
-
-  // Total potential
-  const monthlySaving = commit ? commit.saving : 0;
-  const monthlyGain = pathData ? pathData.gain : 0;
-  const monthlyFee = feeLoss / yearsToRetire / 12;
-  const totalMonthly = monthlySaving + monthlyGain + Math.round(monthlyFee);
-
-  if (totalMonthly > 0) {
-    summary += `<div style="background:var(--gold-bg);border:2px solid var(--gold);border-radius:12px;padding:16px;margin-top:12px;text-align:center">
-      <div style="font-size:13px;color:var(--dark-mid)">פוטנציאל חודשי שגילית ב-4 ימים</div>
-      <div style="font-size:36px;font-weight:900;color:var(--gold-dark)">${fmt(totalMonthly)}</div>
-      <div style="font-size:12px;color:var(--dark-mid)">${fmt(totalMonthly*12)}/שנה | ${fmt(totalMonthly*120)}/עשור</div>
-    </div>`;
-  }
-
-  document.getElementById('summaryContent').innerHTML = summary;
-
-  // Save age for other pages
-  localStorage.setItem('makpatza_age', age);
-
-  document.getElementById('results').style.display = 'block';
-  document.getElementById('formCard').style.display = 'none';
-  window.scrollTo({top: 0, behavior: 'smooth'});
+  return balance * (1 + monthlyReturn) + contribution;
 }
 
-// Pre-fill from localStorage
-const savedAge = localStorage.getItem('makpatza_age');
-if (savedAge) document.getElementById('f_age').value = savedAge;
+// Project full trajectory from current age to age 90
+// Returns { years: [], balances: [], runOutAge: number|null }
+function projectTrajectory(startBalance, income, contribRate, startAge, monthlyExpenseDraw) {
+  const years = [];
+  const balances = [];
+  let balance = startBalance;
+  let runOutAge = null;
+
+  // Add starting point
+  years.push(startAge);
+  balances.push(Math.max(0, balance));
+
+  const totalMonths = (LIFE_EXPECTANCY - startAge) * 12;
+  for (let m = 1; m <= totalMonths; m++) {
+    const currentAgeFloat = startAge + (m / 12);
+    const currentAgeInt = Math.floor(currentAgeFloat);
+    balance = projectMonth(balance, income, contribRate, currentAgeInt, monthlyExpenseDraw);
+
+    if (balance < 0 && runOutAge === null) {
+      runOutAge = currentAgeFloat;
+      balance = 0;
+    } else if (balance < 0) {
+      balance = 0;
+    }
+
+    // Sample every 12 months (yearly)
+    if (m % 12 === 0) {
+      years.push(startAge + (m / 12));
+      balances.push(Math.max(0, balance));
+    }
+  }
+
+  return { years, balances, runOutAge };
+}
+
+// ═══════════════════════════════════════════════════════════
+// Build chart on Page 1
+// ═══════════════════════════════════════════════════════════
+function buildOxygenChart() {
+  const balance = parseFloat(document.getElementById('f_pension_balance').value) || 0;
+  const contribRate = parseFloat(document.getElementById('f_contrib_rate').value) || 0.185;
+
+  // Effective monthly expense as draw amount (covers retirement living)
+  // If no expense data, default to 50% of income
+  const drawAmount = monthlyExpense > 0 ? monthlyExpense : userIncome * 0.5;
+
+  // Status quo: current pension only
+  const statusQuo = projectTrajectory(balance, userIncome, contribRate, userAge, drawAmount);
+
+  // Yellow path: same trajectory + savings_commitment from day 2
+  // The commitment is invested monthly at same return until retirement, then drawn
+  const yellowDraw = drawAmount; // same expense baseline
+  const yellow = projectTrajectoryWithExtra(balance, userIncome, contribRate, userAge, yellowDraw, savingsCommitment);
+
+  // Green: locked - 1.6x more aggressive (visualization only)
+  const green = projectTrajectoryWithExtra(balance, userIncome, contribRate, userAge, yellowDraw, savingsCommitment * 4);
+
+  // Build labels (ages)
+  const labels = statusQuo.years.map(y => Math.round(y));
+
+  const ctx = document.getElementById('oxygenChart').getContext('2d');
+
+  if (oxygenChart) {
+    oxygenChart.destroy();
+  }
+
+  oxygenChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'בקצב הנוכחי',
+          data: statusQuo.balances,
+          borderColor: '#C0392B',
+          backgroundColor: 'rgba(192, 57, 43, 0.08)',
+          borderWidth: 3,
+          tension: 0.3,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          fill: false
+        },
+        {
+          label: 'עם פעולות האתגר',
+          data: yellow.balances,
+          borderColor: '#B8892E',
+          backgroundColor: 'rgba(184, 137, 46, 0.08)',
+          borderWidth: 3,
+          tension: 0.3,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          fill: false
+        },
+        {
+          label: 'עצמאות מלאה (נעול)',
+          data: green.balances,
+          borderColor: 'rgba(46, 125, 82, 0.4)',
+          backgroundColor: 'rgba(46, 125, 82, 0.04)',
+          borderWidth: 2,
+          borderDash: [6, 6],
+          tension: 0.3,
+          pointRadius: 0,
+          pointHoverRadius: 0,
+          fill: false
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        mode: 'index',
+        intersect: false
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          rtl: true,
+          textDirection: 'rtl',
+          backgroundColor: 'rgba(26, 39, 68, 0.95)',
+          titleColor: '#E8C77A',
+          bodyColor: '#fff',
+          padding: 10,
+          callbacks: {
+            title: function(ctx) {
+              return 'גיל ' + ctx[0].label;
+            },
+            label: function(ctx) {
+              return ctx.dataset.label + ': ' + fmt(ctx.parsed.y);
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'גיל', color: '#5C4E3C', font: { family: 'Heebo', size: 11, weight: '600' } },
+          ticks: {
+            color: '#5C4E3C',
+            font: { family: 'Heebo', size: 10 },
+            maxRotation: 0,
+            autoSkip: true,
+            maxTicksLimit: 8
+          },
+          grid: { color: 'rgba(230, 213, 195, 0.5)' }
+        },
+        y: {
+          title: { display: true, text: 'יתרה (₪)', color: '#5C4E3C', font: { family: 'Heebo', size: 11, weight: '600' } },
+          ticks: {
+            color: '#5C4E3C',
+            font: { family: 'Heebo', size: 10 },
+            callback: function(value) {
+              if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+              if (value >= 1000) return Math.round(value / 1000) + 'K';
+              return value;
+            }
+          },
+          grid: { color: 'rgba(230, 213, 195, 0.5)' },
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  // Update stats cards
+  buildOxyStats(statusQuo, yellow);
+}
+
+// Project with extra monthly contribution from challenge actions
+function projectTrajectoryWithExtra(startBalance, income, contribRate, startAge, monthlyExpenseDraw, extraMonthly) {
+  const years = [];
+  const balances = [];
+  let balance = startBalance;
+
+  years.push(startAge);
+  balances.push(Math.max(0, balance));
+
+  const monthlyReturn = Math.pow(1 + ANNUAL_RETURN, 1/12) - 1;
+  const insurable = Math.min(income, PENSION_CEILING);
+
+  const totalMonths = (LIFE_EXPECTANCY - startAge) * 12;
+  for (let m = 1; m <= totalMonths; m++) {
+    const currentAgeFloat = startAge + (m / 12);
+    const currentAgeInt = Math.floor(currentAgeFloat);
+
+    let contribution;
+    if (currentAgeInt < RETIREMENT_AGE) {
+      contribution = (insurable * contribRate) + extraMonthly;
+    } else {
+      // After retirement: stop adding, draw for living, but extra savings give cushion
+      contribution = -monthlyExpenseDraw;
+    }
+
+    balance = balance * (1 + monthlyReturn) + contribution;
+    if (balance < 0) balance = 0;
+
+    if (m % 12 === 0) {
+      years.push(startAge + (m / 12));
+      balances.push(Math.max(0, balance));
+    }
+  }
+
+  // Find run out age
+  let runOutAge = null;
+  for (let i = 0; i < balances.length; i++) {
+    if (balances[i] <= 0 && years[i] > RETIREMENT_AGE) {
+      runOutAge = years[i];
+      break;
+    }
+  }
+
+  return { years, balances, runOutAge };
+}
+
+// ═══════════════════════════════════════════════════════════
+// Build oxygen stats above chart
+// ═══════════════════════════════════════════════════════════
+function buildOxyStats(statusQuo, yellow) {
+  const redMsg = statusQuo.runOutAge
+    ? `החמצן ייגמר בגיל ${Math.round(statusQuo.runOutAge)}`
+    : `מספיק עד גיל ${LIFE_EXPECTANCY}`;
+
+  const yellowMsg = yellow.runOutAge
+    ? `החמצן מספיק עד גיל ${Math.round(yellow.runOutAge)}`
+    : `מספיק עד גיל ${LIFE_EXPECTANCY}+`;
+
+  document.getElementById('oxyStats').innerHTML = `
+    <div class="oxy-stat red">
+      <div class="oxy-icon">🔴</div>
+      <div class="oxy-info">
+        <div class="oxy-label">בקצב הנוכחי</div>
+        <div class="oxy-value">${redMsg}</div>
+      </div>
+    </div>
+    <div class="oxy-stat yellow">
+      <div class="oxy-icon">🟡</div>
+      <div class="oxy-info">
+        <div class="oxy-label">עם פעולות האתגר (₪${savingsCommitment.toLocaleString('he-IL')}/חודש)</div>
+        <div class="oxy-value">${yellowMsg}</div>
+      </div>
+    </div>
+    <div class="oxy-stat green-locked">
+      <div class="oxy-icon">🟢</div>
+      <div class="oxy-info">
+        <div class="oxy-label">עצמאות מלאה</div>
+        <div class="oxy-value">פתח בוובינר ביום רביעי</div>
+      </div>
+      <div class="lock-tag">🔒 נעול</div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════
+// Build summary on Page 2
+// ═══════════════════════════════════════════════════════════
+function buildSummary() {
+  const yearsToRetire = Math.max(1, RETIREMENT_AGE - userAge);
+  const cumulative = savingsCommitment * 12 * yearsToRetire;
+
+  // Compound: monthly contribution at 6% annual until retirement
+  const r = ANNUAL_RETURN / 12;
+  const n = yearsToRetire * 12;
+  const compound = savingsCommitment * ((Math.pow(1 + r, n) - 1) / r);
+
+  document.getElementById('sumCommit').textContent = fmt(savingsCommitment);
+  document.getElementById('sumCumulative').textContent = fmt(cumulative);
+  document.getElementById('sumCompound').textContent = fmt(compound);
+
+  // Animate readiness ring to 80%
+  // circumference = 2 * PI * 75 ≈ 471.2
+  // 80% fill = 471.2 * 0.2 = 94.24 dashoffset
+  setTimeout(() => {
+    document.getElementById('ringFill').style.strokeDashoffset = '94.24';
+  }, 300);
+
+  // Set webinar link
+  document.getElementById('webinarLink').href = WEBINAR_URL;
+}
+
+// ═══════════════════════════════════════════════════════════
+// Countdown logic
+// ═══════════════════════════════════════════════════════════
+function updateCountdowns() {
+  const now = Date.now();
+  const target = WEBINAR_DATE.getTime();
+  const diff = Math.max(0, target - now);
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  const mins = Math.floor((diff / (1000 * 60)) % 60);
+  const secs = Math.floor((diff / 1000) % 60);
+
+  const ids = [
+    ['cd1-d', 'cd1-h', 'cd1-m', 'cd1-s'],
+    ['cd2-d', 'cd2-h', 'cd2-m', 'cd2-s']
+  ];
+  ids.forEach(([d, h, m, s]) => {
+    const dEl = document.getElementById(d);
+    const hEl = document.getElementById(h);
+    const mEl = document.getElementById(m);
+    const sEl = document.getElementById(s);
+    if (dEl) dEl.textContent = pad2(days);
+    if (hEl) hEl.textContent = pad2(hours);
+    if (mEl) mEl.textContent = pad2(mins);
+    if (sEl) sEl.textContent = pad2(secs);
+  });
+}
+
+setInterval(updateCountdowns, 1000);
+
+// ═══════════════════════════════════════════════════════════
+// Navigation
+// ═══════════════════════════════════════════════════════════
+let currentPage = 0;
+
+function goPage(n) {
+  // Validate page 0 -> 1
+  if (n === 1 && currentPage === 0) {
+    const balance = document.getElementById('f_pension_balance').value;
+    if (!balance || parseFloat(balance) < 0) {
+      alert('תמלא את הצבירה הקיימת (אפשר 0 אם אין)');
+      document.getElementById('f_pension_balance').focus();
+      return;
+    }
+  }
+
+  // Build content on navigation
+  if (n === 1) {
+    setTimeout(() => buildOxygenChart(), 100);
+  }
+  if (n === 2) {
+    buildSummary();
+  }
+
+  document.getElementById('page-' + currentPage).classList.remove('active');
+  document.getElementById('page-' + n).classList.add('active');
+
+  // Update progress dots (0-2)
+  for (let i = 0; i <= 2; i++) {
+    const dot = document.getElementById('pd-' + i);
+    const line = document.getElementById('pl-' + i);
+    if (dot) dot.classList.remove('active', 'done');
+    if (line) line.classList.remove('done');
+    if (i < n) {
+      if (dot) { dot.classList.add('done'); dot.textContent = '✓'; }
+      if (line) line.classList.add('done');
+    } else if (i === n) {
+      if (dot) { dot.classList.add('active'); dot.textContent = (i + 1); }
+    } else {
+      if (dot) dot.textContent = (i + 1);
+    }
+  }
+
+  currentPage = n;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════════════════════════
+// Init - load participant from URL pid or localStorage
+// ═══════════════════════════════════════════════════════════
+async function init() {
+  const params = new URLSearchParams(window.location.search);
+  pid = params.get('pid') || localStorage.getItem('challenge_pid');
+
+  if (!pid) {
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('errorScreen').style.display = 'block';
+    document.getElementById('errorMsg').textContent = 'לא נמצא מזהה משתתף. תחזור ליום 1 ותמלא את השאלון.';
+    document.getElementById('progressBar').style.display = 'none';
+    return;
+  }
+
+  try {
+    const row = await loadFromSupabase(pid);
+    participantData = row;
+    userAge = parseInt(row.age) || 35;
+    userIncome = parseFloat(row.income || 0) + parseFloat(row.income_extra || 0);
+    if (userIncome <= 0) userIncome = 15000;
+    userName = row.name || 'משתתף';
+    monthlyExpense = calcMonthlyExpense(row);
+    savingsCommitment = parseFloat(row.savings_commitment || 0) || 0;
+
+    // Hide loading, show page 0
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('page-0').classList.add('active');
+
+    // Pre-fill form defaults based on job_type
+    if (row.job_type === 'self_employed') {
+      document.getElementById('f_contrib_rate').value = '0.1276';
+    }
+
+    // Initial countdown render
+    updateCountdowns();
+  } catch (err) {
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('errorScreen').style.display = 'block';
+    document.getElementById('errorMsg').textContent = err.message;
+    document.getElementById('progressBar').style.display = 'none';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
