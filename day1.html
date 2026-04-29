@@ -843,7 +843,9 @@ async function submitForm() {
     emergency_fund: 0,
     annual_subs: 0,
     // Detailed expense JSON
-    expenses_detail: expensesDetail
+    expenses_detail: expensesDetail,
+    // Cohort from URL (?cohort=pilot|lms), default pilot
+    cohort: (new URLSearchParams(location.search).get('cohort') || 'pilot').toLowerCase()
   };
 
   try {
@@ -852,6 +854,17 @@ async function submitForm() {
       headers: { 'Content-Type': 'application/json; charset=utf-8' },
       body: JSON.stringify(row),
     });
+
+    if (res.status === 403) {
+      const errData = await res.json();
+      if (errData.error === 'late_registration') {
+        err.innerHTML = '<strong>הרישום סגור.</strong><br>הקוהורט הזה כבר התחיל. הקוהורט הבא ייפתח בקרוב.';
+        err.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'שלח וסכם ←';
+        return;
+      }
+    }
 
     if (!res.ok) {
       const errBody = await res.text();
@@ -911,6 +924,20 @@ function goToDay2() {
 
 // ── Init ──
 document.addEventListener('DOMContentLoaded', function() {
+  // Already submitted? Skip to summary instead of empty form
+  const existingPid = localStorage.getItem('challenge_pid');
+  if (existingPid && !location.search.includes('reset=1')) {
+    // Show "already submitted" version of summary
+    document.getElementById('mainProgress').style.display = 'flex';
+    ['pd-0','pd-1','pd-2','pd-3'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('done');
+    });
+    document.getElementById('pd-4').classList.add('active');
+    showAlreadyDoneScreen(existingPid);
+    return;
+  }
+
   buildCategories();
   checkLock();
 
@@ -918,6 +945,31 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('mainProgress').style.display = 'flex';
   document.getElementById('pd-0').classList.add('active');
 });
+
+function showAlreadyDoneScreen(pid) {
+  // Hide all pages, show a custom "already done" message
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const card = document.querySelector('#page-4 .card') || document.querySelector('.card');
+  if (!card) return;
+
+  // Replace content with already-done state
+  const summaryPage = document.getElementById('page-4') || document.createElement('div');
+  summaryPage.id = 'page-4';
+  summaryPage.className = 'page active';
+  summaryPage.innerHTML = `
+    <div class="card" style="text-align:center;">
+      <h2 style="font-size:24px;margin-bottom:12px;">✓ כבר השלמת את יום 1</h2>
+      <p style="color:var(--dark-mid);margin-bottom:20px;">הנתונים שלך נשמרו. תמשיך מהמקום שעצרת.</p>
+      <a href="day2.html?pid=${encodeURIComponent(pid)}" class="btn btn-next" style="display:inline-block;text-decoration:none;padding:14px 28px;">המשך ליום 2 →</a>
+      <p style="margin-top:16px;font-size:12px;color:var(--dark-mid);">
+        רוצה למלא מחדש ?
+        <a href="?reset=1" style="color:var(--gold-dark);font-weight:600;">אפס את הנתונים</a>
+      </p>
+    </div>`;
+  if (!summaryPage.parentNode) {
+    document.querySelector('.container').appendChild(summaryPage);
+  }
+}
 </script>
 </body>
 </html>
