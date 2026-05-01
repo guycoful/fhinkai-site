@@ -1,4 +1,4 @@
-name: Deploy to JetServer cPanel
+name: Validate fhinkai-site
 
 on:
   push:
@@ -6,39 +6,18 @@ on:
       - master
   workflow_dispatch:
 
-concurrency:
-  group: fhinkai-site-production
-  cancel-in-progress: true
-
 jobs:
-  deploy:
+  validate:
     runs-on: ubuntu-latest
-    env:
-      CPANEL_HOST: israel136.jetserver.net:2083
-      CPANEL_USERNAME: ${{ secrets.CPANEL_USERNAME || secrets.FTP_USERNAME || 'fhinkaic' }}
-      CPANEL_DIR: public_html
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Validate cPanel credentials
-        env:
-          CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
-          CPANEL_PASSWORD: ${{ secrets.CPANEL_PASSWORD || secrets.FTP_PASSWORD }}
+      - name: Validate static site files
         run: |
           set -euo pipefail
 
-          if [ -z "${CPANEL_API_TOKEN}" ] && [ -z "${CPANEL_PASSWORD}" ]; then
-            echo "Missing cPanel credentials." >&2
-            echo "Set CPANEL_API_TOKEN, or set CPANEL_PASSWORD. Existing FTP_PASSWORD is accepted as a fallback." >&2
-            exit 1
-          fi
-
-      - name: Prepare static file manifest
-        run: |
-          set -euo pipefail
-
+          test -f index.html
           find . -type f \
             ! -path './.git/*' \
             ! -path './.github/*' \
@@ -48,64 +27,13 @@ jobs:
             | sort > deploy-files.txt
 
           test -s deploy-files.txt
-          grep -qx 'index.html' deploy-files.txt
 
-          echo "Files selected for deployment:"
+          echo "Files ready for JetServer cron deployment:"
           cat deploy-files.txt
 
-      - name: Upload files through cPanel UAPI
-        env:
-          CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
-          CPANEL_PASSWORD: ${{ secrets.CPANEL_PASSWORD || secrets.FTP_PASSWORD }}
+      - name: Deployment note
         run: |
-          set -euo pipefail
-
-          CPANEL_BASE="${CPANEL_HOST#https://}"
-          CPANEL_BASE="${CPANEL_BASE#http://}"
-          API_URL="https://${CPANEL_BASE}/execute/Fileman/upload_files"
-
-          auth_args=()
-          if [ -n "${CPANEL_API_TOKEN}" ]; then
-            auth_args=(-H "Authorization: cpanel ${CPANEL_USERNAME}:${CPANEL_API_TOKEN}")
-          else
-            auth_args=(-u "${CPANEL_USERNAME}:${CPANEL_PASSWORD}")
-          fi
-
-          while IFS= read -r file; do
-            remote_dir="${CPANEL_DIR}"
-            relative_dir="$(dirname "$file")"
-
-            if [ "$relative_dir" != "." ]; then
-              remote_dir="${CPANEL_DIR}/${relative_dir}"
-            fi
-
-            echo "Uploading ${file} -> ${remote_dir}/"
-
-            response_file="$(mktemp)"
-            http_code="$(
-              curl -sS \
-                -o "$response_file" \
-                -w "%{http_code}" \
-                "${auth_args[@]}" \
-                -F "dir=${remote_dir}" \
-                -F "file-1=@${file};filename=$(basename "$file")" \
-                "$API_URL"
-            )"
-
-            cat "$response_file"
-            echo
-
-            if [ "$http_code" -lt 200 ] || [ "$http_code" -ge 300 ]; then
-              echo "cPanel UAPI returned HTTP ${http_code} while uploading ${file}" >&2
-              exit 1
-            fi
-
-            jq -e '.result.status == 1' "$response_file" > /dev/null
-          done < deploy-files.txt
-
-      - name: Verify deployed homepage
-        run: |
-          set -euo pipefail
-
-          curl -fsSL --retry 3 --retry-delay 5 https://fhinkai.com/ > /tmp/fhinkai-home.html
-          test -s /tmp/fhinkai-home.html
+          cat <<'EOF'
+          JetServer blocks GitHub-hosted runners from connecting to cPanel port 2083.
+          Production deployment is pulled from JetServer by cPanel Cron using cpanel-deploy.php.
+          EOF
