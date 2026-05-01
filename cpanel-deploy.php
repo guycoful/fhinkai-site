@@ -20,7 +20,7 @@ function logLine(string $message): void
     fwrite(STDOUT, '[' . gmdate('Y-m-d H:i:s') . ' UTC] ' . $message . PHP_EOL);
 }
 
-function fail(string $message): never
+function fail(string $message): void
 {
     logLine('ERROR: ' . $message);
     exit(1);
@@ -72,7 +72,7 @@ function readState(): array
     try {
         $state = json_decode((string) file_get_contents(STATE_FILE), true, 512, JSON_THROW_ON_ERROR);
         return is_array($state) ? $state : [];
-    } catch (Throwable) {
+    } catch (Throwable $e) {
         return [];
     }
 }
