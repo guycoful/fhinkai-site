@@ -2,212 +2,647 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>יום 3 - הגדלת ההכנסה | המקפצה הפיננסית</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>יום 3 - שיחה עם המנטור | המקפצה הפיננסית</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --gold: #D4A853; --gold-light: #E8C77A; --gold-dark: #B8892E; --gold-bg: #FBF3E1;
-    --warm-white: #FDF8F0; --cream: #F5EDE0; --cream-dark: #E6D5C3;
-    --white: #ffffff; --dark: #2C2419; --dark-mid: #5C4E3C;
-    --navy: #1A2744; --green: #2E7D52; --green-light: #E8F5EE; --green-text: #1B5E3B;
-    --red: #C0392B; --red-light: #FDEEEC; --red-text: #922B21;
-    --blue: #2E6B9E; --blue-light: #EBF3FA;
-    --purple: #6B3FA0; --purple-light: #F3ECFF;
-    --orange: #C87A1A; --orange-light: #FFF3E0;
-    --radius: 16px; --shadow: 0 2px 12px rgba(44,36,25,.06);
+    --gold: #D4A853;
+    --gold-light: #E8C77A;
+    --gold-dark: #B8892E;
+    --gold-bg: #FBF3E1;
+    --warm-white: #FDF8F0;
+    --cream: #F5EDE0;
+    --cream-dark: #E6D5C3;
+    --white: #FFFFFF;
+    --dark: #2C2419;
+    --dark-mid: #5C4E3C;
+    --navy: #1A2744;
+    --green: #2E7D52;
+    --red: #C0392B;
+    --radius: 16px;
+    --shadow: 0 2px 12px rgba(44,36,25,.06);
   }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Heebo', sans-serif; background: var(--warm-white); color: var(--dark); direction: rtl; min-height: 100vh; line-height: 1.6; }
 
-  .header { background: var(--navy); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+  html, body { height: 100%; }
+
+  body {
+    font-family: 'Heebo', sans-serif;
+    background: var(--warm-white);
+    color: var(--dark);
+    direction: rtl;
+    line-height: 1.6;
+    -webkit-text-size-adjust: 100%;
+    overflow-x: hidden;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: var(--navy);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
   .header-logo { font-size: 16px; font-weight: 700; color: var(--gold); }
-  .header-badge { background: var(--gold-bg); color: var(--gold-dark); padding: 4px 14px; border-radius: 50px; font-size: 12px; font-weight: 600; }
+  .header-badge {
+    background: var(--gold-bg);
+    color: var(--gold-dark);
+    padding: 4px 14px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 600;
+  }
 
+  /* ── Container ── */
   .container { max-width: 600px; margin: 0 auto; padding: 20px 16px 40px; }
 
-  .welcome { text-align: center; padding: 28px 16px 24px; background: linear-gradient(180deg, var(--cream) 0%, var(--warm-white) 100%); margin: -20px -16px 20px; }
-  .welcome h1 { font-size: clamp(22px, 5vw, 28px); font-weight: 800; margin-bottom: 6px; }
-  .welcome h1 span { color: var(--gold-dark); }
-  .welcome p { font-size: 14px; color: var(--dark-mid); max-width: 380px; margin: 0 auto; }
+  /* ── Pages ── */
+  .page { display: none; }
+  .page.active { display: block; animation: fadeIn .4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
-  .card { background: var(--white); border: 1px solid var(--cream-dark); border-radius: var(--radius); padding: 20px 16px; margin-bottom: 14px; box-shadow: var(--shadow); }
-  .card h3 { font-size: 15px; font-weight: 700; margin-bottom: 14px; }
-
-  /* Form */
-  .form-group { margin-bottom: 14px; }
-  .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--dark-mid); }
-  .form-group input, .form-group select {
-    width: 100%; padding: 10px 12px; border: 1px solid var(--cream-dark); border-radius: 10px;
-    font-family: Heebo; font-size: 14px; color: var(--dark); background: var(--white); outline: none;
-    transition: border-color .2s;
+  /* ── Card ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--cream-dark);
+    border-radius: var(--radius);
+    padding: 24px 18px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
   }
-  .form-group input:focus, .form-group select:focus { border-color: var(--gold); }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .submit-btn {
-    width: 100%; margin-top: 8px;
+  .card h2 { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+
+  /* ── Hero (welcome) ── */
+  .hero-msg {
+    text-align: center;
+    padding: 28px 16px 20px;
+    background: linear-gradient(180deg, var(--cream) 0%, var(--warm-white) 100%);
+    margin: -20px -16px 20px;
+  }
+  .hero-msg .agent-emoji {
+    width: 76px; height: 76px;
     background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-    color: var(--navy); border: none; padding: 14px;
-    border-radius: 50px; font-family: Heebo; font-size: 15px; font-weight: 800; cursor: pointer;
+    border-radius: 50%;
+    margin: 0 auto 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 38px;
+    box-shadow: 0 4px 16px rgba(212,168,83,.3);
+  }
+  .hero-msg h1 { font-size: clamp(20px, 5vw, 26px); font-weight: 800; margin-bottom: 6px; }
+  .hero-msg h1 span { color: var(--gold-dark); }
+  .hero-msg p { font-size: 14px; color: var(--dark-mid); max-width: 460px; margin: 0 auto; line-height: 1.7; }
+
+  .greeting-box {
+    background: var(--cream);
+    border-radius: 14px;
+    padding: 18px 18px;
+    margin: 18px 0;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--dark);
+    white-space: pre-wrap;
+    border-right: 4px solid var(--gold);
   }
 
-  /* Hero gap */
-  .hero-gap { background: var(--white); border: 2px solid var(--gold); border-radius: var(--radius); padding: 28px 20px; text-align: center; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(212,168,83,.12); }
-  .hero-label { font-size: 13px; color: var(--dark-mid); margin-bottom: 6px; }
-  .hero-amount { font-size: clamp(36px, 9vw, 52px); font-weight: 900; line-height: 1; margin-bottom: 8px; }
-  .hero-amount.gap { color: var(--orange); }
-  .hero-amount.ok { color: var(--green); }
-  .hero-tag { display: inline-block; font-size: 13px; font-weight: 600; padding: 4px 16px; border-radius: 50px; }
-  .hero-tag.gap { background: var(--orange-light); color: var(--orange); }
-  .hero-tag.ok { background: var(--green-light); color: var(--green-text); }
+  .info-strip {
+    display: flex;
+    gap: 10px;
+    margin: 16px 0 8px;
+  }
+  .info-pill {
+    flex: 1;
+    background: var(--gold-bg);
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+    border: 1px solid var(--cream-dark);
+  }
+  .info-pill .pill-num {
+    font-size: 22px; font-weight: 900; color: var(--gold-dark);
+  }
+  .info-pill .pill-label {
+    font-size: 11px; color: var(--dark-mid); margin-top: 2px;
+  }
 
-  /* Stats */
-  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-  .stat { background: var(--white); border: 1px solid var(--cream-dark); border-radius: 12px; padding: 14px 12px; text-align: center; box-shadow: var(--shadow); }
-  .stat-label { font-size: 11px; color: var(--dark-mid); margin-bottom: 2px; }
-  .stat-val { font-size: clamp(16px, 4vw, 20px); font-weight: 800; }
-  .stat-sub { font-size: 10px; color: var(--dark-mid); margin-top: 1px; }
+  /* ── Buttons ── */
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Heebo';
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform .15s;
+    min-height: 52px;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: var(--navy);
+    box-shadow: 0 4px 16px rgba(212,168,83,.35);
+  }
 
-  /* Path cards */
-  .path { padding: 16px; margin-bottom: 10px; border-radius: 12px; border: 1px solid var(--cream-dark); cursor: pointer; transition: all .2s; }
-  .path:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
-  .path.nego { border-right: 4px solid var(--blue); background: var(--blue-light); }
-  .path.side { border-right: 4px solid var(--purple); background: var(--purple-light); }
-  .path.skill { border-right: 4px solid var(--green); background: var(--green-light); }
-  .path-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-  .path-title { font-size: 14px; font-weight: 700; }
-  .path-gain { font-size: 13px; font-weight: 800; }
-  .path.nego .path-gain { color: var(--blue); }
-  .path.side .path-gain { color: var(--purple); }
-  .path.skill .path-gain { color: var(--green-text); }
-  .path-desc { font-size: 12px; color: var(--dark-mid); line-height: 1.5; }
-  .path-timeline { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 50px; margin-top: 6px; font-weight: 600; }
-  .path.nego .path-timeline { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue); }
-  .path.side .path-timeline { background: var(--purple-light); color: var(--purple); border: 1px solid var(--purple); }
-  .path.skill .path-timeline { background: var(--green-light); color: var(--green-text); border: 1px solid var(--green); }
+  /* ── Loading ── */
+  .loading-screen { text-align: center; padding: 60px 20px; }
+  .loading-screen .spinner {
+    width: 48px; height: 48px;
+    border: 4px solid var(--cream-dark);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-screen p { font-size: 15px; color: var(--dark-mid); font-weight: 600; }
 
-  /* Commit */
-  .commit-area { margin-top: 14px; padding: 16px; background: var(--gold-bg); border-radius: 12px; border: 1px solid var(--gold); }
-  .commit-area h4 { font-size: 13px; font-weight: 700; margin-bottom: 10px; }
-  .path-select { display: flex; flex-direction: column; gap: 8px; }
-  .path-option { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--white); border-radius: 10px; border: 2px solid var(--cream-dark); cursor: pointer; font-size: 13px; font-weight: 600; transition: all .2s; }
-  .path-option.selected { border-color: var(--gold-dark); background: var(--gold-bg); }
-  .path-option input[type=radio] { accent-color: var(--gold-dark); }
-  .commit-btn { width: 100%; margin-top: 12px; background: linear-gradient(135deg, var(--navy), #2a3f6f); color: var(--gold); border: none; padding: 14px; border-radius: 50px; font-family: Heebo; font-size: 15px; font-weight: 800; cursor: pointer; }
-  .commit-done { text-align: center; padding: 16px; background: var(--green-light); border-radius: 12px; font-size: 14px; color: var(--green-text); font-weight: 600; margin-top: 12px; display: none; }
+  /* ── Error ── */
+  .error-screen { text-align: center; padding: 40px 20px; display: none; }
+  .error-screen .err-icon { font-size: 48px; margin-bottom: 12px; }
+  .error-screen h2 { font-size: 18px; margin-bottom: 8px; }
+  .error-screen p { font-size: 14px; color: var(--dark-mid); margin-bottom: 16px; }
+  .error-screen a {
+    display: inline-block; margin-top: 8px;
+    background: var(--gold); color: var(--navy);
+    padding: 10px 20px; border-radius: 50px;
+    text-decoration: none; font-weight: 700; font-size: 14px;
+  }
 
-  /* CTA */
-  .cta-card { background: linear-gradient(135deg, var(--navy), #2a3f6f); border-radius: var(--radius); padding: 28px 20px; text-align: center; color: var(--white); margin-top: 8px; }
-  .cta-card h3 { font-size: 20px; font-weight: 800; color: var(--gold); margin-bottom: 8px; }
-  .cta-card p { font-size: 14px; opacity: .85; margin-bottom: 20px; }
-  .cta-btn { display: inline-block; background: var(--gold); color: var(--navy); padding: 14px 32px; border-radius: 50px; font-size: 15px; font-weight: 800; text-decoration: none; }
+  /* ════════════════════════════════════════════ */
+  /* CHAT SCREEN                                  */
+  /* ════════════════════════════════════════════ */
+  .chat-page {
+    display: none;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    max-width: 600px;
+    margin: 0 auto;
+    background: var(--warm-white);
+  }
+  .chat-page.active { display: flex; animation: fadeIn .4s ease; }
 
-  #results { display: none; }
+  .chat-header {
+    background: var(--navy);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(212,168,83,.2);
+  }
+  .chat-header .agent-avatar {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .chat-header .agent-info { flex: 1; min-width: 0; }
+  .chat-header .agent-name {
+    font-size: 15px; font-weight: 800; color: var(--gold);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .chat-header .agent-status {
+    font-size: 11px; color: rgba(255,255,255,.6); font-weight: 500;
+  }
+  .chat-header .day-badge {
+    background: var(--gold-bg);
+    color: var(--gold-dark);
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* Progress bar */
+  .progress-wrap {
+    height: 4px;
+    background: var(--cream-dark);
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold-light), var(--gold-dark));
+    transition: width .4s ease;
+    width: 0%;
+  }
+  .progress-text {
+    text-align: center;
+    font-size: 11px;
+    color: var(--dark-mid);
+    padding: 6px 12px;
+    background: var(--cream);
+    flex-shrink: 0;
+    font-weight: 600;
+  }
+
+  /* Messages area */
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: var(--warm-white);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .chat-msg {
+    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 18px;
+    margin-bottom: 8px;
+    line-height: 1.65;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    font-size: 15px;
+    box-shadow: 0 1px 2px rgba(44,36,25,.05);
+    animation: bubbleIn .25s ease;
+  }
+  @keyframes bubbleIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .chat-msg.user {
+    align-self: flex-end;
+    background: var(--gold-light);
+    color: var(--dark);
+    border-bottom-left-radius: 4px;
+  }
+  .chat-msg.agent {
+    align-self: flex-start;
+    background: var(--cream);
+    color: var(--dark);
+    border-bottom-right-radius: 4px;
+  }
+  .chat-msg.thinking {
+    align-self: flex-start;
+    background: var(--cream);
+    font-style: italic;
+    color: var(--dark-mid);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .thinking-dots {
+    display: inline-flex;
+    gap: 3px;
+  }
+  .thinking-dots span {
+    width: 6px; height: 6px;
+    background: var(--gold-dark);
+    border-radius: 50%;
+    animation: dotPulse 1.2s infinite ease-in-out;
+  }
+  .thinking-dots span:nth-child(2) { animation-delay: .15s; }
+  .thinking-dots span:nth-child(3) { animation-delay: .3s; }
+  @keyframes dotPulse {
+    0%, 60%, 100% { opacity: .3; transform: scale(.8); }
+    30% { opacity: 1; transform: scale(1.1); }
+  }
+
+  .msg-error {
+    align-self: flex-start;
+    background: #FDEEEC;
+    color: #922B21;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 13px;
+    margin: 0 0 8px 0;
+    max-width: 85%;
+    border-right: 3px solid var(--red);
+  }
+  .msg-error button {
+    margin-top: 8px;
+    background: var(--red);
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Heebo';
+    cursor: pointer;
+  }
+
+  /* Input area */
+  .chat-input-wrap {
+    background: var(--white);
+    border-top: 1px solid var(--cream-dark);
+    padding: 10px 12px 12px;
+    flex-shrink: 0;
+    box-shadow: 0 -2px 8px rgba(44,36,25,.04);
+  }
+  .chat-input-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+  }
+  .chat-textarea {
+    flex: 1;
+    min-height: 44px;
+    max-height: 120px;
+    padding: 11px 14px;
+    border: 1.5px solid var(--cream-dark);
+    border-radius: 22px;
+    font-family: 'Heebo';
+    font-size: 15px;
+    color: var(--dark);
+    background: var(--warm-white);
+    resize: none;
+    outline: none;
+    line-height: 1.5;
+    transition: border-color .2s;
+    direction: rtl;
+  }
+  .chat-textarea:focus {
+    border-color: var(--gold);
+    background: var(--white);
+  }
+  .chat-textarea:disabled { opacity: .6; }
+  .send-btn {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    border: none;
+    border-radius: 50%;
+    color: var(--navy);
+    font-size: 20px;
+    font-weight: 900;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .15s;
+    box-shadow: 0 2px 8px rgba(212,168,83,.3);
+  }
+  .send-btn:hover:not(:disabled) { transform: scale(1.05); }
+  .send-btn:disabled { opacity: .4; cursor: not-allowed; }
+  .send-btn svg { width: 20px; height: 20px; transform: scaleX(-1); }
+
+  .turns-helper {
+    text-align: center;
+    font-size: 11px;
+    color: var(--dark-mid);
+    margin-top: 6px;
+    font-weight: 500;
+  }
+  .turns-helper.warn { color: var(--gold-dark); font-weight: 700; }
+
+  /* ── Session ended screen ── */
+  .ended-card {
+    background: var(--white);
+    border: 1px solid var(--cream-dark);
+    border-radius: var(--radius);
+    padding: 28px 20px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .ended-card .check-circle {
+    width: 70px; height: 70px;
+    background: linear-gradient(135deg, var(--green), #1B5E3B);
+    border-radius: 50%;
+    margin: 0 auto 14px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 34px;
+    animation: popIn .5s ease;
+  }
+  @keyframes popIn { 0% { transform: scale(0); } 60% { transform: scale(1.2); } 100% { transform: scale(1); } }
+  .ended-card h2 { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+  .ended-card .final-msg {
+    background: var(--cream);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 16px 0;
+    text-align: right;
+    font-size: 14px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    color: var(--dark);
+    border-right: 3px solid var(--gold);
+  }
+  .stats-row {
+    display: flex;
+    gap: 10px;
+    margin: 16px 0;
+  }
+  .stat-pill {
+    flex: 1;
+    background: var(--gold-bg);
+    border-radius: 12px;
+    padding: 12px 8px;
+    text-align: center;
+  }
+  .stat-pill .stat-num {
+    font-size: 18px; font-weight: 900; color: var(--gold-dark);
+  }
+  .stat-pill .stat-lbl {
+    font-size: 11px; color: var(--dark-mid); margin-top: 2px;
+  }
+
+  .cta-card {
+    background: var(--navy);
+    border-radius: var(--radius);
+    padding: 24px 20px;
+    text-align: center;
+  }
+  .cta-card h3 { color: var(--gold); font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+  .cta-card p { color: rgba(255,255,255,.75); font-size: 13px; margin-bottom: 16px; line-height: 1.6; }
 </style>
 </head>
 <body>
 
+<!-- Page wrapper for non-chat states -->
+<div id="appWrap">
+
 <div class="header">
-  <div class="header-logo">💰 המקפצה הפיננסית</div>
-  <div class="header-badge">יום 3 - הגדלת הכנסה</div>
+  <div class="header-logo">המקפצה הפיננסית</div>
+  <div class="header-badge">יום 3 מתוך 4</div>
 </div>
 
 <div class="container">
-  <div class="welcome">
-    <h1>ביום 2 ראית לאן <span>הכסף הולך</span></h1>
-    <p>היום נבדוק אם אתה מרוויח מה שמגיע לך, ואיך לשנות את זה</p>
+
+  <!-- Loading -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="spinner"></div>
+    <p>טוען את המנטור שלך...</p>
   </div>
 
-  <!-- Input form -->
-  <div class="card" id="formCard">
-    <h3>📋 קצת עלייך</h3>
-    <div class="form-group">
-      <label>שם (להתאמה אישית)</label>
-      <input type="text" id="f_name" placeholder="גיא" />
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>תחום עיסוק</label>
-        <select id="f_field">
-          <option value="">בחר...</option>
-          <option value="tech">הייטק / פיתוח</option>
-          <option value="finance">פיננסים / ביטוח</option>
-          <option value="marketing">שיווק / פרסום</option>
-          <option value="sales">מכירות</option>
-          <option value="hr">HR / משאבי אנוש</option>
-          <option value="ops">תפעול / לוגיסטיקה</option>
-          <option value="education">חינוך / הדרכה</option>
-          <option value="health">בריאות / רפואה</option>
-          <option value="retail">קמעונאות / שירות</option>
-          <option value="other">אחר</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>שנות ניסיון</label>
-        <select id="f_exp">
-          <option value="1">0-2 שנים</option>
-          <option value="2">3-5 שנים</option>
-          <option value="3" selected>6-10 שנים</option>
-          <option value="4">10+ שנים</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>שכר ברוטו (₪)</label>
-        <input type="number" id="f_salary" placeholder="12000" />
-      </div>
-      <div class="form-group">
-        <label>יעד שכר חלומי (₪)</label>
-        <input type="number" id="f_target" placeholder="18000" />
-      </div>
-    </div>
-    <div class="form-group">
-      <label>האם יש לך הכנסה נוספת ?</label>
-      <select id="f_side">
-        <option value="none">לא</option>
-        <option value="freelance">פרילנס / עצמאי</option>
-        <option value="business">עסק קטן</option>
-        <option value="invest">השקעות / נדל"ן</option>
-      </select>
-    </div>
-    <button class="submit-btn" onclick="runAnalysis()">🚀 נחשב את הפוטנציאל שלי</button>
+  <!-- Error -->
+  <div class="error-screen" id="errorScreen">
+    <div class="err-icon">⚠️</div>
+    <h2 id="errorTitle">שגיאה</h2>
+    <p id="errorMsg">אין מזהה משתתף. תחזור ליום 1.</p>
+    <a href="day1.html" id="errorBackLink">חזרה ליום 1</a>
   </div>
 
-  <!-- Results -->
-  <div id="results">
-    <div class="hero-gap" id="heroGap"></div>
-    <div class="stats" id="statsGrid"></div>
+  <!-- Welcome page -->
+  <div class="page" id="welcomePage">
+    <div class="hero-msg">
+      <div class="agent-emoji">💬</div>
+      <h1>היכרות עם <span id="welcomeAgentName">המנטור</span></h1>
+      <p>15 סבבי שיחה. שאלה אחת בכל פעם. בסוף תקבל משימה אחת ברורה לשבוע.</p>
+    </div>
 
-    <div class="card" id="pathsCard"></div>
+    <div class="card">
+      <div class="greeting-box" id="welcomeGreeting"></div>
 
-    <div class="card" id="commitCard">
-      <h3>🎯 מה אתה בוחר להתמקד בו ?</h3>
-      <div class="path-select" id="pathOptions"></div>
-      <button class="commit-btn" onclick="commitPath()">✅ אני בוחר בנתיב הזה</button>
-      <div class="commit-done" id="commitDone"></div>
+      <div class="info-strip">
+        <div class="info-pill">
+          <div class="pill-num">15</div>
+          <div class="pill-label">סבבי שיחה</div>
+        </div>
+        <div class="info-pill">
+          <div class="pill-num">1</div>
+          <div class="pill-label">משימה לשבוע</div>
+        </div>
+        <div class="info-pill">
+          <div class="pill-num">~10</div>
+          <div class="pill-label">דקות</div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="startBtn">מתחיל את השיחה &#8592;</button>
+    </div>
+  </div>
+
+  <!-- Session ended page -->
+  <div class="page" id="endedPage">
+    <div class="ended-card">
+      <div class="check-circle">✓</div>
+      <h2>סיכמנו את יום 3</h2>
+      <div class="final-msg" id="finalMsg"></div>
+      <div class="stats-row">
+        <div class="stat-pill">
+          <div class="stat-num" id="endedTurns">15</div>
+          <div class="stat-lbl">סבבים שהושלמו</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-num" style="font-size:14px" id="endedAgent">המנטור</div>
+          <div class="stat-lbl">המנטור שלך</div>
+        </div>
+      </div>
     </div>
 
     <div class="cta-card">
-      <h3>מוכן ליום 4 ?</h3>
-      <p>נבדוק את הפנסיה שלך - הסכום שאתה לא רואה אבל הכי חשוב לעתיד שלך</p>
-      <a class="cta-btn" href="index.html">חזרה למסלול ←</a>
+      <h3>השלב הבא</h3>
+      <p>ביום 4 נראה את ציר החמצן הפיננסי שלך - מה קורה בקצב הנוכחי לעומת הקצב החדש.</p>
+      <button class="btn btn-primary" id="goDay4Btn">ליום 4 - מבחן החמצן &#8592;</button>
     </div>
+  </div>
+
+</div>
+</div>
+
+<!-- Chat (full screen) -->
+<div class="chat-page" id="chatPage">
+  <div class="chat-header">
+    <div class="agent-avatar">💬</div>
+    <div class="agent-info">
+      <div class="agent-name" id="chatAgentName">המנטור</div>
+      <div class="agent-status">המקפצה הפיננסית · יום 3</div>
+    </div>
+    <div class="day-badge" id="chatTurnsBadge">0/15</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <div class="progress-text" id="progressText">0 מתוך 15 סבבים</div>
+  <div class="chat-messages" id="messagesArea"></div>
+  <div class="chat-input-wrap">
+    <div class="chat-input-row">
+      <textarea class="chat-textarea" id="chatInput" rows="1" placeholder="כתוב את התשובה שלך..." maxlength="2000"></textarea>
+      <button class="send-btn" id="sendBtn" aria-label="שלח">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+      </button>
+    </div>
+    <div class="turns-helper" id="turnsHelper">15 סבבים נשארו</div>
   </div>
 </div>
 
 <script>
-// ── Day Unlock Check ──
-async function checkDayUnlock(pid, dayNumber) {
+// ═══════════════════════════════════════════════════════════
+// Config
+// ═══════════════════════════════════════════════════════════
+const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
+const CHAT_ENDPOINT = `${SUPA_URL}/functions/v1/chat-agent-v10`;
+const MAX_TURNS = 15;
+
+// ═══════════════════════════════════════════════════════════
+// State
+// ═══════════════════════════════════════════════════════════
+let pid = null;
+let agentName = 'המנטור';
+let history = []; // [{role:'user'|'model', text:''}]
+let turnsCount = 0;
+let sessionEnded = false;
+let isSending = false;
+
+// ═══════════════════════════════════════════════════════════
+// Helpers
+// ═══════════════════════════════════════════════════════════
+function $(id) { return document.getElementById(id); }
+
+function lsKey(suffix) { return `day3_${suffix}_${pid}`; }
+
+function saveHistory() {
+  if (!pid) return;
+  try {
+    localStorage.setItem(lsKey('chat'), JSON.stringify({
+      history,
+      turnsCount,
+      sessionEnded,
+      agentName,
+      ts: Date.now()
+    }));
+  } catch(e) { console.warn('save failed', e); }
+}
+
+function loadHistory() {
+  if (!pid) return null;
+  try {
+    const raw = localStorage.getItem(lsKey('chat'));
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e) { return null; }
+}
+
+function isStarted() {
+  if (!pid) return false;
+  return localStorage.getItem(lsKey('started')) === 'true';
+}
+
+function markStarted() {
+  if (!pid) return;
+  localStorage.setItem(lsKey('started'), 'true');
+}
+
+// ═══════════════════════════════════════════════════════════
+// Day Unlock Check (copied verbatim from day2.html pattern)
+// ═══════════════════════════════════════════════════════════
+async function checkDayUnlock(p, dayNumber) {
   try {
     const res = await fetch(
-      `https://vuvavjmbvdqnwtleudqh.supabase.co/functions/v1/check-day-unlock?pid=${encodeURIComponent(pid)}&day=${dayNumber}`,
+      `${SUPA_URL}/functions/v1/check-day-unlock?pid=${encodeURIComponent(p)}&day=${dayNumber}`,
       { headers: { 'Content-Type': 'application/json' } }
     );
-    if (!res.ok) {
-      // If 404 (no participant), treat as unlocked - let normal flow handle missing data
-      return { unlocked: true };
-    }
+    if (!res.ok) return { unlocked: true };
     return await res.json();
   } catch(e) {
     console.warn('Unlock check failed, allowing access:', e);
@@ -216,7 +651,6 @@ async function checkDayUnlock(pid, dayNumber) {
 }
 
 function showLockedScreen(unlockData, dayNumber) {
-  // Hide all existing content
   document.body.innerHTML = `
     <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#FDF8F0;font-family:Heebo,sans-serif;direction:rtl;padding:20px;">
       <div style="max-width:480px;text-align:center;background:#fff;border-radius:20px;padding:40px 28px;box-shadow:0 4px 24px rgba(0,0,0,.08);">
@@ -228,29 +662,20 @@ function showLockedScreen(unlockData, dayNumber) {
         <a id="lockBackLink" href="day${dayNumber - 1}.html" style="display:inline-block;margin-top:20px;color:#B8892E;font-weight:600;text-decoration:none;font-size:13px;">← חזרה ליום ${dayNumber - 1}</a>
       </div>
     </div>`;
-
-  // Format unlock date
   const unlockAt = new Date(unlockData.unlockAt);
   document.getElementById('lockUnlockDate').textContent = unlockAt.toLocaleString('he-IL', {
     day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Jerusalem'
   });
-
-  // Update back link with pid if available
   const params = new URLSearchParams(location.search);
-  const pid = params.get('pid') || localStorage.getItem('challenge_pid');
-  if (pid) {
-    document.getElementById('lockBackLink').href = `day${dayNumber - 1}.html?pid=${pid}`;
+  const p = params.get('pid') || localStorage.getItem('challenge_pid');
+  if (p) {
+    document.getElementById('lockBackLink').href = `day${dayNumber - 1}.html?pid=${p}`;
   }
-
-  // Live countdown
   const targetTime = unlockAt.getTime();
   const updateCountdown = () => {
     const now = Date.now();
     const diff = Math.max(0, targetTime - now);
-    if (diff === 0) {
-      location.reload();
-      return;
-    }
+    if (diff === 0) { location.reload(); return; }
     const days = Math.floor(diff / (24*3600*1000));
     const hours = Math.floor((diff % (24*3600*1000)) / (3600*1000));
     const minutes = Math.floor((diff % (3600*1000)) / (60*1000));
@@ -264,156 +689,340 @@ function showLockedScreen(unlockData, dayNumber) {
   setInterval(updateCountdown, 1000);
 }
 
-// Wraps init logic with unlock check. Call this instead of original init.
 async function unlockGate(dayNumber, originalInitFn) {
   const params = new URLSearchParams(location.search);
-  const pid = params.get('pid') || localStorage.getItem('challenge_pid');
-  if (!pid) {
-    // No pid - let original logic handle (it will show error screen)
-    originalInitFn();
-    return;
-  }
-  const unlockData = await checkDayUnlock(pid, dayNumber);
-  if (!unlockData.unlocked) {
-    showLockedScreen(unlockData, dayNumber);
-    return;
-  }
+  const p = params.get('pid') || localStorage.getItem('challenge_pid');
+  if (!p) { originalInitFn(); return; }
+  const unlockData = await checkDayUnlock(p, dayNumber);
+  if (!unlockData.unlocked) { showLockedScreen(unlockData, dayNumber); return; }
   originalInitFn();
 }
 
-// Day3 is a static form page - originalInit is a no-op (form is already rendered)
-function originalInit() { /* nothing to init - form is already in DOM */ }
-
-document.addEventListener('DOMContentLoaded', () => unlockGate(3, originalInit));
-
-function fmt(n) { return '₪' + Math.round(n).toLocaleString('he-IL'); }
-
-// Market benchmarks by field + experience (median gross monthly, Israel 2024-2025)
-const MARKET = {
-  tech:     [10000, 17000, 25000, 35000],
-  finance:  [8000,  13000, 18000, 25000],
-  marketing:[7000,  11000, 15000, 20000],
-  sales:    [8000,  13000, 18000, 24000],
-  hr:       [7000,  11000, 14000, 18000],
-  ops:      [6500,  10000, 13000, 17000],
-  education:[6000,   9000, 12000, 15000],
-  health:   [8000,  13000, 18000, 26000],
-  retail:   [6000,   8500, 11000, 14000],
-  other:    [7000,  11000, 15000, 20000],
-};
-
-const FIELD_LABELS = {
-  tech:'הייטק/פיתוח', finance:'פיננסים/ביטוח', marketing:'שיווק/פרסום',
-  sales:'מכירות', hr:'HR', ops:'תפעול', education:'חינוך', health:'בריאות',
-  retail:'קמעונאות', other:'אחר'
-};
-
-function gv(id) { return document.getElementById(id).value; }
-function gn(id) { return parseFloat(document.getElementById(id).value) || 0; }
-
-function runAnalysis() {
-  const name    = gv('f_name') || 'משתתף';
-  const field   = gv('f_field') || 'other';
-  const expIdx  = parseInt(gv('f_exp')) - 1;
-  const salary  = gn('f_salary');
-  const target  = gn('f_target');
-  const side    = gv('f_side');
-
-  if (!salary) { alert('תמלא שכר נוכחי'); return; }
-
-  const marketMedian = MARKET[field][expIdx];
-  const gap = marketMedian - salary;
-  const hasGap = gap > 0;
-  const gapPct = marketMedian > 0 ? Math.round(gap / marketMedian * 100) : 0;
-
-  // Hero
-  document.getElementById('heroGap').innerHTML = hasGap
-    ? `<div class="hero-label">אתה מרוויח <strong>${gapPct}% פחות</strong> מהממוצע בשוק</div>
-       <div class="hero-amount gap">${fmt(gap)}/חודש</div>
-       <div class="hero-tag gap">פוטנציאל נסתר: ${fmt(gap * 12)}/שנה</div>`
-    : `<div class="hero-label">שכרך תואם את השוק ב${FIELD_LABELS[field]}</div>
-       <div class="hero-amount ok">${fmt(salary)}</div>
-       <div class="hero-tag ok">✓ שכר תחרותי - הפוטנציאל בצמיחה</div>`;
-
-  // Stats
-  const netoApprox = salary * 0.72;
-  const targetGap = target > salary ? target - salary : 0;
-  document.getElementById('statsGrid').innerHTML = `
-    <div class="stat"><div class="stat-label">שכרך הנוכחי</div><div class="stat-val" style="color:var(--blue)">${fmt(salary)}</div><div class="stat-sub">נטו: ~${fmt(netoApprox)}</div></div>
-    <div class="stat"><div class="stat-label">ממוצע שוק (${FIELD_LABELS[field]})</div><div class="stat-val" style="color:var(--orange)">${fmt(marketMedian)}</div><div class="stat-sub">ניסיון ${['0-2','3-5','6-10','10+'][expIdx]} שנים</div></div>
-    ${target > 0 ? `<div class="stat"><div class="stat-label">היעד שלך</div><div class="stat-val" style="color:var(--purple)">${fmt(target)}</div><div class="stat-sub">פער: ${fmt(targetGap)}/חודש</div></div>` : ''}
-    <div class="stat"><div class="stat-label">פוטנציאל שנתי</div><div class="stat-val" style="color:var(--green)">${fmt((hasGap ? gap : targetGap || salary * 0.2) * 12)}</div><div class="stat-sub">אם תנצל את הפוטנציאל</div></div>`;
-
-  // Paths
-  const negoGain = hasGap ? Math.round(gap * 0.6) : Math.round(salary * 0.12);
-  const sideGain = side === 'none' ? 3000 : 6000;
-  const skillGain = hasGap ? Math.round(gap * 0.4) : Math.round(salary * 0.18);
-
-  const negoTips = hasGap
-    ? `פער של ${fmt(gap)}/חודש מול שוק - יש לך כלים לדרוש העלאה. ${gapPct}% מתחת לממוצע זה עניין לדיון.`
-    : 'שכרך תחרותי, אבל שינוי חברה ממוצעת מביא 15-25% העלאה. עדיף מו"מ מתוך בחירה.';
-
-  let paths = `<h3>🗺️ 3 נתיבים להגדלת הכנסה</h3>`;
-  paths += `
-    <div class="path nego">
-      <div class="path-head">
-        <div class="path-title">💼 מו"מ שכר / שינוי חברה</div>
-        <div class="path-gain">+${fmt(negoGain)}/חודש</div>
-      </div>
-      <div class="path-desc">${negoTips}</div>
-      <div class="path-timeline">⏱ 1-3 חודשים</div>
-    </div>
-    <div class="path side">
-      <div class="path-head">
-        <div class="path-title">🚀 הכנסה נוספת / פרילנס</div>
-        <div class="path-gain">+${fmt(sideGain)}/חודש</div>
-      </div>
-      <div class="path-desc">${side === 'none'
-        ? '3,000 ₪/חודש = 15 שעות פרילנס ב-200 ₪/שעה. ממוצע ריאלי להתחלה ב-6-8 חודשים.'
-        : 'כבר יש לך הכנסה נוספת! הכפלה עם כלים נכונים היא המטרה. AI יכול לחסוך לך 10 שעות בשבוע.'}</div>
-      <div class="path-timeline">⏱ 3-6 חודשים</div>
-    </div>
-    <div class="path skill">
-      <div class="path-head">
-        <div class="path-title">📚 שדרוג מקצועי / הסמכה</div>
-        <div class="path-gain">+${fmt(skillGain)}/חודש</div>
-      </div>
-      <div class="path-desc">השקעה בכישורים מובילים להעלאה של 15-25%. קורס AI/Data ב-${FIELD_LABELS[field]} מחזיר השקעה תוך 2-4 חודשים.</div>
-      <div class="path-timeline">⏱ 3-12 חודשים</div>
-    </div>`;
-  document.getElementById('pathsCard').innerHTML = paths;
-
-  // Path selector
-  let opts = '';
-  opts += `<div class="path-option" id="po_nego" onclick="selectPath('nego')"><input type="radio" name="path" value="nego"> 💼 מו"מ שכר / שינוי חברה (+${fmt(negoGain)}/חודש)</div>`;
-  opts += `<div class="path-option" id="po_side" onclick="selectPath('side')"><input type="radio" name="path" value="side"> 🚀 הכנסה נוספת / פרילנס (+${fmt(sideGain)}/חודש)</div>`;
-  opts += `<div class="path-option" id="po_skill" onclick="selectPath('skill')"><input type="radio" name="path" value="skill"> 📚 שדרוג מקצועי (+${fmt(skillGain)}/חודש)</div>`;
-  document.getElementById('pathOptions').innerHTML = opts;
-  window._gains = {nego: negoGain, side: sideGain, skill: skillGain};
-  window._name = name;
-
-  document.getElementById('results').style.display = 'block';
-  document.getElementById('formCard').style.display = 'none';
-  window.scrollTo({top: 0, behavior: 'smooth'});
+// ═══════════════════════════════════════════════════════════
+// API
+// ═══════════════════════════════════════════════════════════
+async function callChat(message, sendHistory) {
+  const body = { pid, message };
+  if (sendHistory && Array.isArray(sendHistory)) {
+    body.history = sendHistory.slice(-14);
+  }
+  const res = await fetch(CHAT_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    let errText = 'שגיאת שרת';
+    try {
+      const errJson = await res.json();
+      errText = errJson.error || errText;
+    } catch(e) {}
+    throw new Error(errText);
+  }
+  return await res.json();
 }
 
-function selectPath(p) {
-  document.querySelectorAll('.path-option').forEach(el => el.classList.remove('selected'));
-  document.getElementById('po_'+p).classList.add('selected');
-  document.getElementById('po_'+p).querySelector('input').checked = true;
-  window._selectedPath = p;
+// ═══════════════════════════════════════════════════════════
+// Screens
+// ═══════════════════════════════════════════════════════════
+function showScreen(name) {
+  $('loadingScreen').style.display = 'none';
+  $('errorScreen').style.display = 'none';
+  $('welcomePage').classList.remove('active');
+  $('endedPage').classList.remove('active');
+  $('chatPage').classList.remove('active');
+  $('appWrap').style.display = 'block';
+
+  if (name === 'loading') $('loadingScreen').style.display = 'block';
+  else if (name === 'error') $('errorScreen').style.display = 'block';
+  else if (name === 'welcome') $('welcomePage').classList.add('active');
+  else if (name === 'ended') $('endedPage').classList.add('active');
+  else if (name === 'chat') {
+    $('appWrap').style.display = 'none';
+    $('chatPage').classList.add('active');
+    setTimeout(scrollChatToBottom, 50);
+  }
 }
 
-function commitPath() {
-  const p = window._selectedPath;
-  if (!p) { alert('תבחר נתיב'); return; }
-  const labels = {nego: 'מו"מ שכר', side: 'הכנסה נוספת', skill: 'שדרוג מקצועי'};
-  const gain = window._gains[p];
-  document.getElementById('commitDone').innerHTML = `✅ ${window._name}, בחרת ב${labels[p]}.<br>פוטנציאל: +${Math.round(gain).toLocaleString()} ₪/חודש = +${Math.round(gain*12).toLocaleString()} ₪/שנה.<br>ביום 4 נסגור את הפנסיה - הסכום הכי גדול שמחכה לך.`;
-  document.getElementById('commitDone').style.display = 'block';
-  document.querySelector('.commit-btn').style.display = 'none';
-  localStorage.setItem('makpatza_path', JSON.stringify({path: p, gain, ts: Date.now()}));
+function showError(msg) {
+  $('errorMsg').textContent = msg;
+  const params = new URLSearchParams(location.search);
+  const p = params.get('pid') || localStorage.getItem('challenge_pid');
+  $('errorBackLink').href = p ? `day1.html?pid=${p}` : 'day1.html';
+  showScreen('error');
 }
+
+// ═══════════════════════════════════════════════════════════
+// Render chat
+// ═══════════════════════════════════════════════════════════
+function scrollChatToBottom() {
+  const m = $('messagesArea');
+  m.scrollTop = m.scrollHeight;
+}
+
+function renderAllMessages() {
+  const area = $('messagesArea');
+  area.innerHTML = '';
+  history.forEach(msg => {
+    appendBubble(msg.role === 'user' ? 'user' : 'agent', msg.text, false);
+  });
+  scrollChatToBottom();
+}
+
+function appendBubble(type, text, animate) {
+  const area = $('messagesArea');
+  const div = document.createElement('div');
+  div.className = `chat-msg ${type}`;
+  div.textContent = text;
+  if (!animate) div.style.animation = 'none';
+  area.appendChild(div);
+  scrollChatToBottom();
+  return div;
+}
+
+function appendThinking() {
+  const area = $('messagesArea');
+  const div = document.createElement('div');
+  div.className = 'chat-msg thinking';
+  div.id = 'thinkingMsg';
+  div.innerHTML = `<span>מקליד</span><span class="thinking-dots"><span></span><span></span><span></span></span>`;
+  area.appendChild(div);
+  scrollChatToBottom();
+  return div;
+}
+
+function removeThinking() {
+  const t = $('thinkingMsg');
+  if (t) t.remove();
+}
+
+function appendErrorBubble(errMsg, retryFn) {
+  const area = $('messagesArea');
+  const div = document.createElement('div');
+  div.className = 'msg-error';
+  const span = document.createElement('div');
+  span.textContent = `שגיאה. ${errMsg}. נסה שוב...`;
+  const btn = document.createElement('button');
+  btn.textContent = 'נסה שוב';
+  btn.onclick = () => {
+    div.remove();
+    retryFn();
+  };
+  div.appendChild(span);
+  div.appendChild(btn);
+  area.appendChild(div);
+  scrollChatToBottom();
+}
+
+function updateProgress() {
+  const pct = Math.min(100, (turnsCount / MAX_TURNS) * 100);
+  $('progressFill').style.width = pct + '%';
+  $('progressText').textContent = `${turnsCount} מתוך ${MAX_TURNS} סבבים`;
+  $('chatTurnsBadge').textContent = `${turnsCount}/${MAX_TURNS}`;
+  const remaining = Math.max(0, MAX_TURNS - turnsCount);
+  const helper = $('turnsHelper');
+  helper.textContent = `${remaining} סבבים נשארו`;
+  helper.classList.toggle('warn', remaining > 0 && remaining <= 3);
+}
+
+// ═══════════════════════════════════════════════════════════
+// Send flow
+// ═══════════════════════════════════════════════════════════
+function setSending(val) {
+  isSending = val;
+  $('chatInput').disabled = val;
+  $('sendBtn').disabled = val;
+}
+
+async function sendMessage(text) {
+  if (!text || isSending || sessionEnded) return;
+  const trimmed = text.trim();
+  if (!trimmed) return;
+
+  // Optimistic UI: add user bubble immediately
+  history.push({ role: 'user', text: trimmed });
+  appendBubble('user', trimmed, true);
+  saveHistory();
+
+  $('chatInput').value = '';
+  autoResize();
+
+  setSending(true);
+  appendThinking();
+
+  // History to send: everything except the message we just added
+  const histToSend = history.slice(0, -1);
+
+  try {
+    const data = await callChat(trimmed, histToSend);
+    removeThinking();
+
+    const responseText = data.response || '';
+    history.push({ role: 'model', text: responseText });
+    appendBubble('agent', responseText, true);
+
+    if (typeof data.turns_count === 'number') turnsCount = data.turns_count;
+    if (data.agent_name) {
+      agentName = data.agent_name;
+      $('chatAgentName').textContent = agentName;
+    }
+    updateProgress();
+    saveHistory();
+
+    if (data.session_ended || turnsCount >= MAX_TURNS) {
+      sessionEnded = true;
+      saveHistory();
+      setTimeout(() => {
+        showEndedScreen(responseText);
+      }, 2000);
+    } else {
+      setSending(false);
+      $('chatInput').focus();
+    }
+  } catch(err) {
+    removeThinking();
+    setSending(false);
+    // Remove the user message from history so retry won't double it
+    history.pop();
+    saveHistory();
+    appendErrorBubble(err.message || 'בעיית רשת', () => {
+      sendMessage(trimmed);
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// Ended screen
+// ═══════════════════════════════════════════════════════════
+function showEndedScreen(finalText) {
+  let lastAgent = finalText;
+  if (!lastAgent) {
+    for (let i = history.length - 1; i >= 0; i--) {
+      if (history[i].role === 'model') { lastAgent = history[i].text; break; }
+    }
+  }
+  $('finalMsg').textContent = lastAgent || '';
+  $('endedTurns').textContent = String(turnsCount);
+  $('endedAgent').textContent = agentName;
+  $('goDay4Btn').onclick = () => {
+    const url = 'day4.html' + (pid ? '?pid=' + encodeURIComponent(pid) : '');
+    window.location.href = url;
+  };
+  showScreen('ended');
+}
+
+// ═══════════════════════════════════════════════════════════
+// Textarea auto-resize
+// ═══════════════════════════════════════════════════════════
+function autoResize() {
+  const ta = $('chatInput');
+  ta.style.height = 'auto';
+  const newHeight = Math.min(120, ta.scrollHeight);
+  ta.style.height = newHeight + 'px';
+}
+
+// ═══════════════════════════════════════════════════════════
+// Welcome -> Chat transition
+// ═══════════════════════════════════════════════════════════
+function startChat() {
+  markStarted();
+  renderAllMessages();
+  updateProgress();
+  showScreen('chat');
+  setTimeout(() => $('chatInput').focus(), 200);
+}
+
+// ═══════════════════════════════════════════════════════════
+// Init
+// ═══════════════════════════════════════════════════════════
+async function init() {
+  const params = new URLSearchParams(location.search);
+  pid = params.get('pid') || localStorage.getItem('challenge_pid');
+
+  if (!pid) {
+    showError('אין מזהה משתתף. תחזור ליום 1.');
+    return;
+  }
+
+  localStorage.setItem('challenge_pid', pid);
+
+  // Check stored state
+  const stored = loadHistory();
+  if (stored && stored.history && stored.history.length > 0) {
+    // Returning user
+    history = stored.history;
+    turnsCount = stored.turnsCount || 0;
+    sessionEnded = !!stored.sessionEnded;
+    agentName = stored.agentName || 'המנטור';
+    $('chatAgentName').textContent = agentName;
+
+    if (sessionEnded) {
+      let lastAgent = '';
+      for (let i = history.length - 1; i >= 0; i--) {
+        if (history[i].role === 'model') { lastAgent = history[i].text; break; }
+      }
+      showEndedScreen(lastAgent);
+      return;
+    }
+
+    if (isStarted()) {
+      // Restore chat directly
+      renderAllMessages();
+      updateProgress();
+      showScreen('chat');
+      setTimeout(() => $('chatInput').focus(), 200);
+      return;
+    }
+
+    // History exists but didn't click start yet - show welcome with greeting
+    const firstAgent = history.find(m => m.role === 'model');
+    $('welcomeAgentName').textContent = agentName;
+    $('welcomeGreeting').textContent = firstAgent ? firstAgent.text : '';
+    showScreen('welcome');
+    return;
+  }
+
+  // First time - fetch greeting via __init__
+  showScreen('loading');
+  try {
+    const data = await callChat('__init__', []);
+    agentName = data.agent_name || 'המנטור';
+    const greeting = data.response || '';
+    history = [{ role: 'model', text: greeting }];
+    turnsCount = data.turns_count || 0;
+    sessionEnded = false;
+    saveHistory();
+
+    $('welcomeAgentName').textContent = agentName;
+    $('welcomeGreeting').textContent = greeting;
+    $('chatAgentName').textContent = agentName;
+    showScreen('welcome');
+  } catch(err) {
+    showError('בעיה בטעינת המנטור: ' + (err.message || 'שגיאת רשת'));
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// Wire up
+// ═══════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  $('startBtn').addEventListener('click', startChat);
+
+  $('sendBtn').addEventListener('click', () => {
+    sendMessage($('chatInput').value);
+  });
+
+  $('chatInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage($('chatInput').value);
+    }
+  });
+
+  $('chatInput').addEventListener('input', autoResize);
+
+  unlockGate(3, init);
+});
 </script>
 </body>
 </html>
