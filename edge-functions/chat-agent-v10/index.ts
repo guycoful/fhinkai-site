@@ -8,7 +8,7 @@ const CORS = {
 };
 
 const MAX_TURNS = 15;
-const GEMINI_MODEL = 'gemini-2.0-flash-exp';
+const GEMINI_MODEL = 'gemini-2.0-flash';
 
 // ============================================================
 // System Prompts (from Omri Chen, May 1 2026)
