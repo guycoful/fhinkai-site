@@ -1,4 +1,4 @@
-name: Deploy to fhinkai.com
+name: Validate fhinkai-site
 
 on:
   push:
@@ -7,26 +7,33 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  validate:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /
-          local-dir: ./
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.github/**
-            **/.DS_Store
-            **/README.md
-            **/*.log
+      - name: Validate static site files
+        run: |
+          set -euo pipefail
+
+          test -f index.html
+          find . -type f \
+            ! -path './.git/*' \
+            ! -path './.github/*' \
+            ! -name '.DS_Store' \
+            ! -name 'Thumbs.db' \
+            | sed 's#^\./##' \
+            | sort > deploy-files.txt
+
+          test -s deploy-files.txt
+
+          echo "Files ready for JetServer cron deployment:"
+          cat deploy-files.txt
+
+      - name: Deployment note
+        run: |
+          cat <<'EOF'
+          JetServer blocks GitHub-hosted runners from connecting to cPanel port 2083.
+          Production deployment is pulled from JetServer by cPanel Cron using cpanel-deploy.php.
+          EOF
