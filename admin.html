@@ -119,7 +119,21 @@
 
 <script>
 const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI';
+const ADMIN_FN = `${SUPA_URL}/functions/v1/admin-list-participants`;
+const TOKEN_STORAGE_KEY = 'fhinkai_admin_token';
+
+function getAdminToken() {
+  let t = sessionStorage.getItem(TOKEN_STORAGE_KEY);
+  if (!t) {
+    t = prompt('הזן סיסמת אדמין:');
+    if (t) sessionStorage.setItem(TOKEN_STORAGE_KEY, t);
+  }
+  return t || '';
+}
+
+function clearAdminToken() {
+  sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+}
 
 function fmt(n) { return '₪' + Math.round(n || 0).toLocaleString('he-IL'); }
 function fmtDate(d) { if (!d) return '-'; const dt = new Date(d); return dt.toLocaleDateString('he-IL'); }
@@ -139,10 +153,24 @@ async function loadParticipants() {
   document.getElementById('participantsTable').style.display = 'none';
   document.getElementById('emptyState').style.display = 'none';
 
-  const res = await fetch(`${SUPA_URL}/rest/v1/challenge_participants?select=*&order=created_at.desc`, {
-    headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` }
+  const token = getAdminToken();
+  if (!token) {
+    document.getElementById('loadingMsg').textContent = 'דרושה סיסמה לטעינת הנתונים. רענן את הדף.';
+    return;
+  }
+
+  const res = await fetch(ADMIN_FN, {
+    headers: { 'Authorization': `Bearer ${token}` }
   });
-  const rows = await res.json();
+
+  if (res.status === 401) {
+    clearAdminToken();
+    document.getElementById('loadingMsg').textContent = 'סיסמה שגויה. רענן את הדף ונסה שוב.';
+    return;
+  }
+
+  const body = await res.json();
+  const rows = body.rows || [];
 
   document.getElementById('loadingMsg').style.display = 'none';
 
@@ -195,16 +223,23 @@ function copyLink(pid) {
   });
 }
 
-function exportCSV() {
-  fetch(`${SUPA_URL}/rest/v1/challenge_participants?select=*&order=created_at.desc`, {
-    headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}`, 'Accept': 'text/csv' }
-  }).then(r => r.text()).then(csv => {
-    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'challenge_participants.csv';
-    a.click();
+async function exportCSV() {
+  const token = getAdminToken();
+  if (!token) return;
+  const res = await fetch(`${ADMIN_FN}?format=csv`, {
+    headers: { 'Authorization': `Bearer ${token}` }
   });
+  if (res.status === 401) {
+    clearAdminToken();
+    alert('\u05E1\u05D9\u05E1\u05DE\u05D4 \u05E9\u05D2\u05D5\u05D9\u05D4. \u05E8\u05E2\u05E0\u05DF \u05D0\u05EA \u05D4\u05D3\u05E3 \u05D5\u05E0\u05E1\u05D4 \u05E9\u05D5\u05D1.');
+    return;
+  }
+  const csv = await res.text();
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'challenge_participants.csv';
+  a.click();
 }
 
 loadParticipants();
