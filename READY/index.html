@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5" />
+  <meta name="description" content="FHINK AI — שאלון פתיחה: לפני שמתחילים, נכיר את נקודת הפתיחה הפיננסית שלך." />
+  <meta name="theme-color" content="#26A59A" />
+  <title>FHINK AI · שאלון פתיחה</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" type="image/png" href="assets/logo-mark.png">
+</head>
+<body>
+
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow--top"></div>
+    <div class="bg-glow bg-glow--bottom"></div>
+  </div>
+
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <a href="#" class="brand" aria-label="FHINK AI">
+        <img src="assets/logo.png" alt="FHINK AI · Financial Thinking Powered by AI" class="brand-logo" />
+      </a>
+      <div class="brand-pill" id="brandPill">
+        <span class="pulse-dot" aria-hidden="true"></span>
+        <span class="brand-pill__text">
+          <span class="brand-pill__day" id="dayLabel">יום 0</span>
+          <span class="brand-pill__sep" aria-hidden="true">·</span>
+          <span class="brand-pill__title">המקפצה הפיננסית</span>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" id="app">
+
+    <!-- ============================= SCREEN 0 — INTRO ============================= -->
+    <section class="screen is-active" data-screen="intro" aria-labelledby="intro-title">
+      <div class="card card--intro">
+        <div class="intro-badge">
+          <span class="intro-badge__sparkle" aria-hidden="true"></span>
+          יום 0 · שאלון פתיחה
+        </div>
+
+        <h1 id="intro-title" class="title-xl">
+          לפני שמתחילים את האתגר<span class="title-xl__mid">,</span><br/>
+          נכיר את <span class="title-xl__accent">נקודת הפתיחה</span> שלך
+        </h1>
+
+        <p class="lead">
+          4 ימים שיכולים לשנות הכל. השאלון הקצר הזה עוזר לנו להבין את נקודת הפתיחה,
+          הציפיות והמחויבות שלך — כדי שהמסע יהיה מותאם בדיוק עבורך.
+          <br/>
+          <strong>אין כאן תשובות נכונות או לא נכונות.</strong>
+        </p>
+
+        <ul class="value-points" role="list">
+          <li class="value-point">
+            <span class="value-point__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"></circle>
+                <polyline points="12 7 12 12 15 14"></polyline>
+              </svg>
+            </span>
+            <div>
+              <div class="value-point__title">3–5 דקות</div>
+              <div class="value-point__desc">מילוי קצר ולא מאיים</div>
+            </div>
+          </li>
+          <li class="value-point">
+            <span class="value-point__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2l2.39 4.84 5.34.78-3.86 3.77.91 5.31L12 14.77l-4.78 2.5.91-5.31L4.27 7.62l5.34-.78L12 2z"></path>
+              </svg>
+            </span>
+            <div>
+              <div class="value-point__title">חוויה מותאמת</div>
+              <div class="value-point__desc">התאמת האתגר במיוחד עבורך</div>
+            </div>
+          </li>
+          <li class="value-point">
+            <span class="value-point__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 17l5-5 4 4 8-8"></path>
+                <polyline points="14 8 20 8 20 14"></polyline>
+              </svg>
+            </span>
+            <div>
+              <div class="value-point__title">תמונה ברורה יותר</div>
+              <div class="value-point__desc">בהירות פיננסית כבר מהיום הראשון</div>
+            </div>
+          </li>
+        </ul>
+
+        <div class="actions actions--intro">
+          <button type="button" class="btn btn--primary btn--cta" data-action="next">
+            <span>התחל שאלון</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <p class="helper helper--center">
+          3 דקות · ללא הרשמה · המידע נשמר אצלך בלבד
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================= STEP 1 — BASIC DETAILS ============================= -->
+    <section class="screen" data-screen="step1" aria-labelledby="step1-title">
+      <div class="card">
+        <div class="progress">
+          <div class="progress-meta">
+            <span class="progress-text">שלב 1 מתוך 4</span>
+            <span class="progress-percent">25%</span>
+          </div>
+          <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="25">
+            <div class="progress-fill" style="width:25%"></div>
+          </div>
+        </div>
+
+        <h2 id="step1-title" class="title-lg">קצת עליך</h2>
+        <p class="subtitle">נתחיל בכמה פרטים שיעזרו לנו להבין את נקודת הפתיחה שלך — ולהתאים את האתגר במיוחד אליך.</p>
+
+        <form class="form" data-step="1" novalidate>
+
+          <div class="field">
+            <label class="field-label" for="fullName">שם מלא</label>
+            <input type="text" id="fullName" name="fullName" class="input" placeholder="לדוגמה: דנה לוי" autocomplete="name" required />
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="field-label" for="age">גיל</label>
+              <input type="number" id="age" name="age" class="input" placeholder="לדוגמה: 34" min="14" max="120" inputmode="numeric" required />
+            </div>
+
+            <div class="field">
+              <label class="field-label" for="gender">מין</label>
+              <div class="select-wrap">
+                <select id="gender" name="gender" class="input select" required>
+                  <option value="" disabled selected>בחר/י</option>
+                  <option value="זכר">זכר</option>
+                  <option value="נקבה">נקבה</option>
+                  <option value="אחר">אחר</option>
+                  <option value="מעדיף לא להשיב">מעדיף/ה לא להשיב</option>
+                </select>
+                <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="maritalStatus">מצב משפחתי</label>
+            <div class="select-wrap">
+              <select id="maritalStatus" name="maritalStatus" class="input select" required>
+                <option value="" disabled selected>בחר/י</option>
+                <option value="רווק/ה">רווק/ה</option>
+                <option value="בזוגיות">בזוגיות</option>
+                <option value="נשוי/אה">נשוי/אה</option>
+                <option value="גרוש/ה">גרוש/ה</option>
+                <option value="אלמן/ה">אלמן/ה</option>
+                <option value="אחר">אחר</option>
+              </select>
+              <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">מספר ילדים</label>
+            <div class="segmented" role="radiogroup" aria-label="מספר ילדים">
+              <input type="radio" id="kids-0" name="children" value="0" />
+              <label for="kids-0" class="segmented-option">0</label>
+              <input type="radio" id="kids-1" name="children" value="1" />
+              <label for="kids-1" class="segmented-option">1</label>
+              <input type="radio" id="kids-2" name="children" value="2" />
+              <label for="kids-2" class="segmented-option">2</label>
+              <input type="radio" id="kids-3" name="children" value="3" />
+              <label for="kids-3" class="segmented-option">3</label>
+              <input type="radio" id="kids-4" name="children" value="4+" />
+              <label for="kids-4" class="segmented-option">4 ומעלה</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">מצב תעסוקתי</label>
+            <div class="cards-grid cards-grid--2" role="radiogroup" aria-label="מצב תעסוקתי">
+              <input type="radio" id="emp-1" name="employment" value="שכיר/ה" />
+              <label for="emp-1" class="answer-card">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">שכיר/ה</span>
+              </label>
+
+              <input type="radio" id="emp-2" name="employment" value="עצמאי/ת" />
+              <label for="emp-2" class="answer-card">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">עצמאי/ת</span>
+              </label>
+
+              <input type="radio" id="emp-3" name="employment" value="שכיר/ה ועצמאי/ת" />
+              <label for="emp-3" class="answer-card">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">שכיר/ה ועצמאי/ת</span>
+              </label>
+
+              <input type="radio" id="emp-4" name="employment" value="לא עובד/ת כרגע" />
+              <label for="emp-4" class="answer-card">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">לא עובד/ת כרגע</span>
+              </label>
+
+              <input type="radio" id="emp-5" name="employment" value="אחר" />
+              <label for="emp-5" class="answer-card answer-card--span">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">אחר</span>
+              </label>
+            </div>
+          </div>
+
+        </form>
+
+        <div class="actions">
+          <button type="button" class="btn btn--secondary" data-action="back">חזרה</button>
+          <button type="button" class="btn btn--primary" data-action="next">
+            המשך
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================= STEP 2 — FINANCIAL BEHAVIOR ============================= -->
+    <section class="screen" data-screen="step2" aria-labelledby="step2-title">
+      <div class="card">
+        <div class="progress">
+          <div class="progress-meta">
+            <span class="progress-text">שלב 2 מתוך 4</span>
+            <span class="progress-percent">50%</span>
+          </div>
+          <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+            <div class="progress-fill" style="width:50%"></div>
+          </div>
+        </div>
+
+        <h2 id="step2-title" class="title-lg">איך נראית ההתנהלות שלך היום</h2>
+        <p class="subtitle" data-greet>כמה שאלות קצרות שיעזרו להבין איפה את/ה ניצב/ת כרגע מול הכסף.</p>
+
+        <form class="form" data-step="2" novalidate>
+
+          <fieldset class="q-block">
+            <legend class="q-title">עד כמה אתה עוקב כיום אחרי ההוצאות שלך?</legend>
+            <div class="cards-stack" role="radiogroup" aria-label="מעקב הוצאות">
+              <input type="radio" id="q1-a" name="q1" value="בכלל לא" />
+              <label for="q1-a" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">בכלל לא</span>
+              </label>
+              <input type="radio" id="q1-b" name="q1" value="מדי פעם" />
+              <label for="q1-b" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">מדי פעם</span>
+              </label>
+              <input type="radio" id="q1-c" name="q1" value="באופן חלקי אבל לא מסודר" />
+              <label for="q1-c" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">באופן חלקי אבל לא מסודר</span>
+              </label>
+              <input type="radio" id="q1-d" name="q1" value="באופן קבוע ומסודר" />
+              <label for="q1-d" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">באופן קבוע ומסודר</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="q-block">
+            <legend class="q-title">האם יש לך תקציב חודשי שאתה פועל לפיו?</legend>
+            <div class="cards-stack" role="radiogroup" aria-label="תקציב חודשי">
+              <input type="radio" id="q2-a" name="q2" value="לא" />
+              <label for="q2-a" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">לא</span>
+              </label>
+              <input type="radio" id="q2-b" name="q2" value="הערכה כללית בראש" />
+              <label for="q2-b" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">יש לי הערכה כללית בראש</span>
+              </label>
+              <input type="radio" id="q2-c" name="q2" value="יש תקציב אבל לא תמיד עומד בו" />
+              <label for="q2-c" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">יש לי תקציב, אבל לא תמיד עומד בו</span>
+              </label>
+              <input type="radio" id="q2-d" name="q2" value="כן ועוקב אחריו" />
+              <label for="q2-d" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">כן, יש תקציב ואני עוקב אחריו בפועל</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="q-block">
+            <legend class="q-title">האם יש לך חיסכון חודשי קבוע?</legend>
+            <div class="cards-stack" role="radiogroup" aria-label="חיסכון חודשי">
+              <input type="radio" id="q3-a" name="q3" value="לא" />
+              <label for="q3-a" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">לא</span>
+              </label>
+              <input type="radio" id="q3-b" name="q3" value="לפעמים כשנשאר כסף" />
+              <label for="q3-b" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">לפעמים, כשנשאר כסף</span>
+              </label>
+              <input type="radio" id="q3-c" name="q3" value="כן הסכום משתנה" />
+              <label for="q3-c" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">כן, אבל הסכום משתנה</span>
+              </label>
+              <input type="radio" id="q3-d" name="q3" value="כן סכום קבוע" />
+              <label for="q3-d" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">כן, סכום קבוע בכל חודש</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="q-block">
+            <legend class="q-title">עד כמה אתה מרגיש בטוח בקבלת החלטות פיננסיות?</legend>
+            <div class="cards-stack" role="radiogroup" aria-label="ביטחון בהחלטות">
+              <input type="radio" id="q4-a" name="q4" value="בכלל לא בטוח" />
+              <label for="q4-a" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">בכלל לא בטוח</span>
+              </label>
+              <input type="radio" id="q4-b" name="q4" value="לא מספיק בטוח" />
+              <label for="q4-b" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">לא מספיק בטוח</span>
+              </label>
+              <input type="radio" id="q4-c" name="q4" value="די בטוח" />
+              <label for="q4-c" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">די בטוח</span>
+              </label>
+              <input type="radio" id="q4-d" name="q4" value="בטוח מאוד" />
+              <label for="q4-d" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">בטוח מאוד</span>
+              </label>
+            </div>
+          </fieldset>
+
+        </form>
+
+        <div class="actions">
+          <button type="button" class="btn btn--secondary" data-action="back">חזרה</button>
+          <button type="button" class="btn btn--primary" data-action="next">
+            המשך
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================= STEP 3 — PAIN POINTS ============================= -->
+    <section class="screen" data-screen="step3" aria-labelledby="step3-title">
+      <div class="card">
+        <div class="progress">
+          <div class="progress-meta">
+            <span class="progress-text">שלב 3 מתוך 4</span>
+            <span class="progress-percent">75%</span>
+          </div>
+          <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="75">
+            <div class="progress-fill" style="width:75%"></div>
+          </div>
+        </div>
+
+        <h2 id="step3-title" class="title-lg">איפה הכי חסר לך סדר כרגע?</h2>
+        <p class="subtitle" data-greet>אלה התחומים שנעמיק בהם באתגר. בחר/י את אלה שהבהירות בהם הכי תעזור לך — אפשר לבחור כמה.</p>
+
+        <form class="form" data-step="3" novalidate>
+
+          <div class="cards-grid cards-grid--2 cards-grid--check">
+
+            <input type="checkbox" id="p1" name="painPoints" value="ניהול הוצאות" />
+            <label for="p1" class="answer-card">
+              <span class="answer-card__check answer-card__check--box" aria-hidden="true"></span>
+              <span class="answer-card__text">ניהול הוצאות</span>
+            </label>
+
+            <input type="checkbox" id="p2" name="painPoints" value="בניית תקציב חודשי" />
+            <label for="p2" class="answer-card">
+              <span class="answer-card__check answer-card__check--box" aria-hidden="true"></span>
+              <span class="answer-card__text">בניית תקציב חודשי</span>
+            </label>
+
+            <input type="checkbox" id="p3" name="painPoints" value="חיסכון חודשי" />
+            <label for="p3" class="answer-card">
+              <span class="answer-card__check answer-card__check--box" aria-hidden="true"></span>
+              <span class="answer-card__text">חיסכון חודשי</span>
+            </label>
+
+            <input type="checkbox" id="p4" name="painPoints" value="חובות והלוואות" />
+            <label for="p4" class="answer-card">
+              <span class="answer-card__check answer-card__check--box" aria-hidden="true"></span>
+              <span class="answer-card__text">חובות והלוואות</span>
+            </label>
+
+            <input type="checkbox" id="p5" name="painPoints" value="הגדלת הכנסה" />
+            <label for="p5" class="answer-card">
+              <span class="answer-card__check answer-card__check--box" aria-hidden="true"></span>
+              <span class="answer-card__text">הגדלת הכנסה</span>
+            </label>
+
+            <input type="checkbox" id="p6" name="painPoints" value="השקעות" />
+            <label for="p6" class="answer-card">
+              <span class="answer-card__check answer-card__check--box" aria-hidden="true"></span>
+              <span class="answer-card__text">השקעות</span>
+            </label>
+
+            <input type="checkbox" id="p7" name="painPoints" value="פנסיה וביטוחים" />
+            <label for="p7" class="answer-card">
+              <span class="answer-card__check answer-card__check--box" aria-hidden="true"></span>
+              <span class="answer-card__text">פנסיה וביטוחים</span>
+            </label>
+
+            <input type="checkbox" id="p8" name="painPoints" value="אני לא יודע מאיפה להתחיל" />
+            <label for="p8" class="answer-card">
+              <span class="answer-card__check answer-card__check--box" aria-hidden="true"></span>
+              <span class="answer-card__text">אני לא יודע מאיפה להתחיל</span>
+            </label>
+
+            <input type="checkbox" id="p9" name="painPoints" value="אחר" data-other="painOther" />
+            <label for="p9" class="answer-card answer-card--span">
+              <span class="answer-card__check answer-card__check--box" aria-hidden="true"></span>
+              <span class="answer-card__text">אחר</span>
+            </label>
+          </div>
+
+          <div class="field other-field" id="painOther" hidden>
+            <label class="field-label" for="painOtherText">פרט/י בקצרה</label>
+            <textarea id="painOtherText" name="painOtherText" class="textarea" rows="3" placeholder="כתוב/י כאן בקצרה..."></textarea>
+          </div>
+
+        </form>
+
+        <div class="actions">
+          <button type="button" class="btn btn--secondary" data-action="back">חזרה</button>
+          <button type="button" class="btn btn--primary" data-action="next">
+            המשך
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================= STEP 4 — GOALS ============================= -->
+    <section class="screen" data-screen="step4" aria-labelledby="step4-title">
+      <div class="card">
+        <div class="progress">
+          <div class="progress-meta">
+            <span class="progress-text">שלב 4 מתוך 4</span>
+            <span class="progress-percent">100%</span>
+          </div>
+          <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+            <div class="progress-fill" style="width:100%"></div>
+          </div>
+        </div>
+
+        <h2 id="step4-title" class="title-lg">המטרה שלך מהמסע</h2>
+        <p class="subtitle" data-greet>שלב אחרון. כאן נבין מה הכי חשוב לך להשיג וכמה את/ה מוכן/ה להתחייב לתהליך קצר ומעשי.</p>
+
+        <form class="form" data-step="4" novalidate>
+
+          <div class="q-block">
+            <label class="q-title" for="goalOutcome">מה התוצאה שהכי חשוב לך לראות בחיים הפיננסיים שלך בעקבות האתגר?</label>
+            <textarea id="goalOutcome" name="goalOutcome" class="textarea" rows="3" placeholder="כתוב/י כמה משפטים מהלב..."></textarea>
+          </div>
+
+          <fieldset class="q-block">
+            <legend class="q-title">עד כמה את/ה מחויב/ת להקדיש כחצי שעה ביום במהלך האתגר?</legend>
+            <div class="cards-stack" role="radiogroup" aria-label="מחויבות לזמן">
+              <input type="radio" id="g1-a" name="commitment" value="לא בטוח שאצליח" />
+              <label for="g1-a" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">לא בטוח שאצליח להקדיש זמן</span>
+              </label>
+              <input type="radio" id="g1-b" name="commitment" value="מוכן חלקית" />
+              <label for="g1-b" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">מוכן חלקית</span>
+              </label>
+              <input type="radio" id="g1-c" name="commitment" value="מוכן ומחויב" />
+              <label for="g1-c" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">מוכן ומחויב</span>
+              </label>
+              <input type="radio" id="g1-d" name="commitment" value="מחויב מאוד" />
+              <label for="g1-d" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">מחויב מאוד</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="q-block">
+            <legend class="q-title">עד כמה את/ה מאמין/ה שבזכות האתגר תוכל/י לחסוך כמה מאות שקלים בחודש?</legend>
+            <div class="cards-stack" role="radiogroup" aria-label="אמונה בחיסכון">
+              <input type="radio" id="g2-a" name="belief" value="בכלל לא מאמין" />
+              <label for="g2-a" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">בכלל לא מאמין שזה אפשרי עבורי</span>
+              </label>
+              <input type="radio" id="g2-b" name="belief" value="אולי לא בטוח" />
+              <label for="g2-b" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">אולי, אבל אני לא בטוח</span>
+              </label>
+              <input type="radio" id="g2-c" name="belief" value="מאמין שאפשרי" />
+              <label for="g2-c" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">מאמין שזה אפשרי</span>
+              </label>
+              <input type="radio" id="g2-d" name="belief" value="מאמין מאוד" />
+              <label for="g2-d" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">מאמין מאוד שזה אפשרי</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="q-block">
+            <legend class="q-title">עד כמה את/ה חושב/ת שאת/ה מתנהל/ת נכון פיננסית כיום?</legend>
+            <div class="cards-stack" role="radiogroup" aria-label="התנהלות נכונה">
+              <input type="radio" id="g3-a" name="currentMgmt" value="בכלל לא נכון" />
+              <label for="g3-a" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">בכלל לא נכון</span>
+              </label>
+              <input type="radio" id="g3-b" name="currentMgmt" value="לא מספיק נכון" />
+              <label for="g3-b" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">לא מספיק נכון</span>
+              </label>
+              <input type="radio" id="g3-c" name="currentMgmt" value="די נכון" />
+              <label for="g3-c" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">די נכון</span>
+              </label>
+              <input type="radio" id="g3-d" name="currentMgmt" value="נכון מאוד" />
+              <label for="g3-d" class="answer-card answer-card--lg">
+                <span class="answer-card__check" aria-hidden="true"></span>
+                <span class="answer-card__text">נכון מאוד</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="q-block">
+            <label class="q-title" for="lifeChanges">אילו שינויים בחיים יכול שיפור פיננסי לאפשר עבורך?</label>
+            <p class="q-hint">לדוגמה: יותר שקט נפשי, פחות לחץ, יותר זמן למשפחה, יכולת להשקיע בעתיד.</p>
+            <textarea id="lifeChanges" name="lifeChanges" class="textarea" rows="3" placeholder="כתוב/י מה שעולה לך..."></textarea>
+          </div>
+
+        </form>
+
+        <div class="actions">
+          <button type="button" class="btn btn--secondary" data-action="back">חזרה</button>
+          <button type="button" class="btn btn--primary" data-action="finish">
+            סיום
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================= SCREEN 5 — DONE ============================= -->
+    <section class="screen" data-screen="done" aria-labelledby="done-title">
+      <div class="card card--done">
+        <div class="success-check" aria-hidden="true">
+          <svg viewBox="0 0 52 52" class="success-check__svg">
+            <circle class="success-check__circle" cx="26" cy="26" r="24" fill="none" stroke-width="2"></circle>
+            <path class="success-check__path" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M14 27 l8 8 l16 -18"></path>
+          </svg>
+        </div>
+
+        <h2 id="done-title" class="title-xl">
+          <span id="doneGreeting">מעולה</span>, השאלון הושלם
+        </h2>
+        <p class="lead lead--center">
+          יש לנו עכשיו תמונת פתיחה ברורה.
+          <br/>
+          המסע שלך באתגר 4 הימים מתחיל עכשיו — ממוקד בדיוק לעניין שלך.
+        </p>
+
+        <div class="recap" id="recap">
+          <!-- Filled dynamically by JS -->
+        </div>
+
+        <div class="roadmap" aria-label="המסלול שלך באתגר">
+          <div class="roadmap-head">
+            <span class="roadmap-title">המסלול שלך מכאן</span>
+            <span class="roadmap-meta">4 ימים · כ-30 דק׳ ביום</span>
+          </div>
+          <ol class="roadmap-list">
+            <li class="roadmap-day roadmap-day--active">
+              <span class="roadmap-day__num">1</span>
+              <div class="roadmap-day__body">
+                <span class="roadmap-day__title">מיפוי פיננסי</span>
+                <span class="roadmap-day__desc">ממלאים שאלון קצר על הכנסות והוצאות</span>
+              </div>
+              <span class="roadmap-day__status">מתחיל עכשיו</span>
+            </li>
+            <li class="roadmap-day">
+              <span class="roadmap-day__num">2</span>
+              <div class="roadmap-day__body">
+                <span class="roadmap-day__title">ניתוח והקטנת הוצאות</span>
+                <span class="roadmap-day__desc">רואים את המספרים וסוגרים דליפה אחת</span>
+              </div>
+              <span class="roadmap-day__status" aria-label="נעול">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="5" y="11" width="14" height="9" rx="2"></rect>
+                  <path d="M8 11V8a4 4 0 0 1 8 0v3"></path>
+                </svg>
+              </span>
+            </li>
+            <li class="roadmap-day">
+              <span class="roadmap-day__num">3</span>
+              <div class="roadmap-day__body">
+                <span class="roadmap-day__title">הגדלת הכנסות</span>
+                <span class="roadmap-day__desc">פותחים את צד ההכנסה ובוחרים כיוון</span>
+              </div>
+              <span class="roadmap-day__status" aria-label="נעול">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="5" y="11" width="14" height="9" rx="2"></rect>
+                  <path d="M8 11V8a4 4 0 0 1 8 0v3"></path>
+                </svg>
+              </span>
+            </li>
+            <li class="roadmap-day">
+              <span class="roadmap-day__num">4</span>
+              <div class="roadmap-day__body">
+                <span class="roadmap-day__title">השקעות ופנסיה</span>
+                <span class="roadmap-day__desc">מנתחים פנסיה ומחברים לעתיד</span>
+              </div>
+              <span class="roadmap-day__status" aria-label="נעול">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="5" y="11" width="14" height="9" rx="2"></rect>
+                  <path d="M8 11V8a4 4 0 0 1 8 0v3"></path>
+                </svg>
+              </span>
+            </li>
+          </ol>
+        </div>
+
+        <div class="actions actions--intro">
+          <button type="button" class="btn btn--primary btn--cta" data-action="day1">
+            <span>התחל את יום 1</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <p class="helper helper--center">
+          תוכל/י לחזור ולעדכן תשובות בכל שלב באתגר.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>© 2026 FHINK AI · כל הזכויות שמורות</span>
+      <span class="footer-dot" aria-hidden="true">·</span>
+      <span class="footer-tag">Financial Thinking <em>Powered by AI</em></span>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="alert" aria-live="polite" hidden>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="8" x2="12" y2="12"></line>
+      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+    </svg>
+    <span class="toast__text"></span>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
