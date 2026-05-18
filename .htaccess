@@ -28,12 +28,12 @@ RewriteRule ^(landing|READY)/script\.js$ - [E=FHINK_FLOW_JS:1]
     # still redirected to /questionnaire for up to 30 days. Keep the general
     # short cache windows above, but fully disable browser reuse on the
     # conversion-critical HTML and JS entrypoints.
-    Header always unset Cache-Control env=FHINK_FLOW_HTML
-    Header always unset Cache-Control env=FHINK_FLOW_JS
-    Header always set Cache-Control "no-store, no-cache, must-revalidate, max-age=0" env=FHINK_FLOW_HTML
-    Header always set Cache-Control "no-store, no-cache, must-revalidate, max-age=0" env=FHINK_FLOW_JS
-    Header always set Pragma "no-cache" env=FHINK_FLOW_HTML
-    Header always set Pragma "no-cache" env=FHINK_FLOW_JS
-    Header always set Expires "0" env=FHINK_FLOW_HTML
-    Header always set Expires "0" env=FHINK_FLOW_JS
+    Header unset Cache-Control env=FHINK_FLOW_HTML
+    Header unset Cache-Control env=FHINK_FLOW_JS
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0" env=FHINK_FLOW_HTML
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0" env=FHINK_FLOW_JS
+    Header set Pragma "no-cache" env=FHINK_FLOW_HTML
+    Header set Pragma "no-cache" env=FHINK_FLOW_JS
+    Header set Expires "0" env=FHINK_FLOW_HTML
+    Header set Expires "0" env=FHINK_FLOW_JS
 </IfModule>
