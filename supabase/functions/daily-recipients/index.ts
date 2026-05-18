@@ -47,7 +47,7 @@ Deno.serve(async (req: Request) => {
 
     let query = supabase
       .from('challenge_participants')
-      .select('id, name, phone, cohort, challenge_start_at');
+      .select('id, name, phone, cohort, challenge_start_at, last_reminder_day, last_reminder_sent_at');
     if (cohortFilter) query = query.eq('cohort', cohortFilter);
 
     const { data: participants, error } = await query;
@@ -76,6 +76,12 @@ Deno.serve(async (req: Request) => {
       ) + 1;
 
       if (dayNumber < 1 || dayNumber > 4) continue;
+
+      if (!dryRun && p.last_reminder_day === dayNumber && p.last_reminder_sent_at) {
+        const sentAt = new Date(p.last_reminder_sent_at);
+        const hoursSinceSent = (now.getTime() - sentAt.getTime()) / (60 * 60 * 1000);
+        if (hoursSinceSent < 20) continue;
+      }
 
       const link = `${BASE_URL}/day${dayNumber}.html?pid=${p.id}`;
       const name = (p.name || '').split(' ')[0] || 'משתתף';
