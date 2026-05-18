@@ -18,10 +18,10 @@ RewriteRule ^(landing|READY)/script\.js$ - [E=FHINK_FLOW_JS:1]
     # for the entire pilot window. Override with short cache windows so future
     # fixes propagate within minutes.
     <FilesMatch "\.html$">
-        Header set Cache-Control "public, max-age=300, must-revalidate"
+        Header set Cache-Control "public, max-age=300, must-revalidate" env=!FHINK_FLOW_HTML
     </FilesMatch>
     <FilesMatch "\.(js|css)$">
-        Header set Cache-Control "public, max-age=600, must-revalidate"
+        Header set Cache-Control "public, max-age=600, must-revalidate" env=!FHINK_FLOW_JS
     </FilesMatch>
 
     # The landing flow broke when browsers kept a stale /landing/script.js that
