@@ -2,6 +2,9 @@
 RewriteEngine On
 RewriteCond %{HTTPS} !=on
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE]
+RewriteRule ^(landing|READY)/?$ - [E=FHINK_FLOW_HTML:1]
+RewriteRule ^(landing|READY)/index\.html$ - [E=FHINK_FLOW_HTML:1]
+RewriteRule ^(landing|READY)/script\.js$ - [E=FHINK_FLOW_JS:1]
 
 # Security headers
 <IfModule mod_headers.c>
@@ -20,4 +23,17 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE]
     <FilesMatch "\.(js|css)$">
         Header set Cache-Control "public, max-age=600, must-revalidate"
     </FilesMatch>
+
+    # The landing flow broke when browsers kept a stale /landing/script.js that
+    # still redirected to /questionnaire for up to 30 days. Keep the general
+    # short cache windows above, but fully disable browser reuse on the
+    # conversion-critical HTML and JS entrypoints.
+    Header always unset Cache-Control env=FHINK_FLOW_HTML
+    Header always unset Cache-Control env=FHINK_FLOW_JS
+    Header always set Cache-Control "no-store, no-cache, must-revalidate, max-age=0" env=FHINK_FLOW_HTML
+    Header always set Cache-Control "no-store, no-cache, must-revalidate, max-age=0" env=FHINK_FLOW_JS
+    Header always set Pragma "no-cache" env=FHINK_FLOW_HTML
+    Header always set Pragma "no-cache" env=FHINK_FLOW_JS
+    Header always set Expires "0" env=FHINK_FLOW_HTML
+    Header always set Expires "0" env=FHINK_FLOW_JS
 </IfModule>
