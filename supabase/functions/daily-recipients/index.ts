@@ -23,6 +23,15 @@ function buildMessage(name: string, dayNumber: number, link: string): string {
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
 
+  const requiredToken = Deno.env.get('DAILY_RECIPIENTS_TOKEN');
+  const providedToken = req.headers.get('x-recipients-token');
+  if (requiredToken && providedToken !== requiredToken) {
+    return new Response(JSON.stringify({ error: 'unauthorized' }), {
+      status: 401,
+      headers: { ...CORS, 'Content-Type': 'application/json' },
+    });
+  }
+
   try {
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
