@@ -13,10 +13,11 @@
   // Config
   // -----------------------------
   const CONFIG = {
-    endpoint: '/api/lead',                 // ← to be wired by Claude Code / Gai
-    redirectTo: '/questionnaire',          // ← path of the opening questionnaire
+    endpoint: 'https://vuvavjmbvdqnwtleudqh.supabase.co/functions/v1/create-lead',
+    redirectTo: '/READY/',                 // opening questionnaire (Asaf's final version)
     redirectDelayMs: 2000,                 // time on success screen before redirect
     storageKey: 'fhink_lead_v1',           // localStorage key for prefill recovery
+    cohort: 'pilot',
   };
 
   // -----------------------------
@@ -125,7 +126,14 @@
     submitBtn.disabled = true;
     submitBtn.querySelector('span').textContent = 'שולח...';
 
-    const payload = { fullName, phone, email, gender, source: 'landing-pilot' };
+    const payload = {
+      name: fullName,
+      phone,
+      email,
+      gender,
+      source: new URLSearchParams(window.location.search).get('src') || 'landing-pilot',
+      cohort: CONFIG.cohort,
+    };
 
     try {
       localStorage.setItem(CONFIG.storageKey, JSON.stringify(payload));
