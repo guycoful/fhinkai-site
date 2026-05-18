@@ -9,4 +9,15 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE]
     Header always set X-Content-Type-Options "nosniff"
     Header always set X-Frame-Options "SAMEORIGIN"
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # JetServer LiteSpeed defaults to 30-day cache on static files. On 18.5.2026
+    # a script.js fix went live but browsers kept serving the cached 404 version
+    # for the entire pilot window. Override with short cache windows so future
+    # fixes propagate within minutes.
+    <FilesMatch "\.html$">
+        Header set Cache-Control "public, max-age=300, must-revalidate"
+    </FilesMatch>
+    <FilesMatch "\.(js|css)$">
+        Header set Cache-Control "public, max-age=600, must-revalidate"
+    </FilesMatch>
 </IfModule>
