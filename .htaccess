@@ -3,6 +3,13 @@ RewriteEngine On
 RewriteCond %{HTTPS} !=on
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE]
 
+# 18.5.2026 emergency: /landing/ has a broken script.js cached for 30 days in
+# every visitor's browser. Move pilot traffic to /start/ which no browser has
+# in cache, redirect /landing/ permanently so any new request that still hits
+# /landing/ ends up at the working page.
+RewriteRule ^landing/?$ /start/ [L,R=301]
+RewriteRule ^landing/(.*)$ /start/$1 [L,R=301]
+
 # Security headers
 <IfModule mod_headers.c>
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
