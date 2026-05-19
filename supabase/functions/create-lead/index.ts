@@ -62,7 +62,7 @@ Deno.serve(async (req: Request) => {
 
     const { data, error } = await supabase
       .from('challenge_leads')
-      .insert(row)
+      .upsert(row, { onConflict: 'phone', ignoreDuplicates: false })
       .select()
       .single();
 
