@@ -7,8 +7,8 @@ ENV_FILE="/home/claude/.claude/channels/telegram/.env"
 
 BOT_TOKEN="${TELEGRAM_BOT_TOKEN:?TELEGRAM_BOT_TOKEN not set}"
 CHAT_ID="${TELEGRAM_CHAT_ID:?TELEGRAM_CHAT_ID not set}"
-STATE_FILE="/tmp/fhinkai_health_state"
-LOG_FILE="/var/log/fhinkai-health.log"
+STATE_FILE="${HOME}/.fhinkai-health-state"
+LOG_FILE="${HOME}/.fhinkai-health.log"
 NOW=$(date '+%Y-%m-%d %H:%M:%S %Z')
 
 telegram() {
@@ -69,7 +69,7 @@ if [[ -n "$NEW_FAILS" ]]; then
 
 Down:
 ${NEW_FAILS}"
-  echo "[$NOW] ALERT: $NEW_FAILS" >> "$LOG_FILE"
+  echo "[$NOW] ALERT: $NEW_FAILS" >> "$LOG_FILE" 2>/dev/null || true
 fi
 
 if [[ -n "$RECOVERED" ]]; then
@@ -77,11 +77,13 @@ if [[ -n "$RECOVERED" ]]; then
 
 Back up:
 ${RECOVERED}"
-  echo "[$NOW] RECOVERY: $RECOVERED" >> "$LOG_FILE"
+  echo "[$NOW] RECOVERY: $RECOVERED" >> "$LOG_FILE" 2>/dev/null || true
 fi
 
 echo "$CURRENT" > "$STATE_FILE"
 
 if [[ -z "$CURRENT" ]]; then
-  echo "[$NOW] PASS all 5" >> "$LOG_FILE"
+  echo "[$NOW] PASS all 5" >> "$LOG_FILE" 2>/dev/null || true
 fi
+
+exit 0
