@@ -17,10 +17,24 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: guycoful/fhinkai-site
+          WHATSAPP_ALERT_URL: ${{ secrets.WHATSAPP_ALERT_URL }}
         run: |
           set +e
           FAILED=0
           NOW=$(date -u '+%Y-%m-%d %H:%M UTC')
+          FAILED_NAMES=""
+
+          send_whatsapp_alert() {
+            local msg="$1"
+            if [[ -z "$WHATSAPP_ALERT_URL" ]]; then
+              echo "WHATSAPP_ALERT_URL not set — skipping WhatsApp alert"
+              return
+            fi
+            local encoded
+            encoded=$(printf '%s' "$msg" | jq -sRr @uri)
+            curl -s -o /dev/null -w "WhatsApp alert HTTP %{http_code}\n" \
+              "${WHATSAPP_ALERT_URL}&text=${encoded}" || true
+          }
 
           open_or_comment() {
             local title="$1"
@@ -66,6 +80,7 @@ jobs:
             if [[ "$STATUS" != "$expected_status" ]]; then
               echo "FAIL [$name]: expected $expected_status got $STATUS"
               FAILED=1
+              FAILED_NAMES="${FAILED_NAMES}${name} (HTTP ${STATUS})\n"
               TITLE="[health-check] ${name} failing - ${NOW}"
               ISSUE_BODY="**Endpoint:** \`${name}\`
 **Expected status:** \`${expected_status}\`
@@ -79,6 +94,7 @@ ${BODY}
             elif [[ -n "$body_must_contain" ]] && ! echo "$BODY" | grep -q "$body_must_contain"; then
               echo "FAIL [$name]: body missing '${body_must_contain}'"
               FAILED=1
+              FAILED_NAMES="${FAILED_NAMES}${name} (body mismatch)\n"
               TITLE="[health-check] ${name} failing - ${NOW}"
               ISSUE_BODY="**Endpoint:** \`${name}\`
 **Expected status:** \`${expected_status}\` (received OK)
@@ -134,5 +150,7 @@ ${BODY}
           if [[ "$FAILED" -eq 0 ]]; then
             echo "PASS: all 5 endpoints healthy at ${NOW}"
           else
+            ALERT_MSG="🚨 fhinkai health-check FAIL ${NOW}\n\nDown:\n$(printf "$FAILED_NAMES")\n\nhttps://github.com/${REPO}/issues"
+            send_whatsapp_alert "$ALERT_MSG"
             exit 1
           fi
