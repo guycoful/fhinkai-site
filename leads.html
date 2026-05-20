@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>לידים — המקפצה הפיננסית</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1A2744;
+    --gold: #D4A853; --gold-dark: #B8892E; --gold-bg: #FBF3E1;
+    --warm-white: #FDF8F0; --cream: #F5EDE0; --cream-dark: #E6D5C3;
+    --white: #fff;
+    --dark: #2C2419; --dark-mid: #5C4E3C;
+    --green: #2E7D52; --green-light: #E8F5EE;
+    --red: #C0392B;
+    --blue: #2E6B9E; --blue-light: #E8F0F8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Heebo', sans-serif; background: var(--warm-white); color: var(--dark); direction: rtl; min-height: 100vh; }
+
+  /* ── Login screen ── */
+  .login-screen {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; background: var(--navy); padding: 20px;
+  }
+  .login-card {
+    background: var(--white); border-radius: 20px; padding: 40px 32px;
+    width: 100%; max-width: 380px; text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+  }
+  .login-logo { font-size: 28px; font-weight: 900; color: var(--navy); margin-bottom: 4px; }
+  .login-sub { font-size: 14px; color: var(--dark-mid); margin-bottom: 32px; }
+  .login-card label { display: block; text-align: right; font-size: 12px; font-weight: 600; color: var(--dark-mid); margin-bottom: 5px; }
+  .login-card input {
+    width: 100%; padding: 11px 14px; border: 1.5px solid var(--cream-dark);
+    border-radius: 10px; font-family: 'Heebo'; font-size: 14px; color: var(--dark);
+    background: var(--warm-white); margin-bottom: 14px; outline: none; transition: border-color .2s;
+  }
+  .login-card input:focus { border-color: var(--gold); }
+  .btn-login {
+    width: 100%; padding: 13px; border: none; border-radius: 50px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: var(--navy); font-family: 'Heebo'; font-size: 15px; font-weight: 800;
+    cursor: pointer; transition: transform .15s, box-shadow .15s;
+  }
+  .btn-login:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212,168,83,.4); }
+  .btn-login:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+  .login-error {
+    display: none; margin-top: 14px; padding: 10px 14px;
+    background: #FDEEEC; border-radius: 8px;
+    color: var(--red); font-size: 13px; font-weight: 600;
+  }
+
+  /* ── Dashboard ── */
+  .dashboard { display: none; }
+
+  .header {
+    background: var(--navy); padding: 14px 20px;
+    display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10;
+  }
+  .header h1 { font-size: 16px; font-weight: 700; color: var(--gold); }
+  .btn { padding: 8px 18px; border: none; border-radius: 50px; font-family: 'Heebo'; font-size: 13px; font-weight: 600; cursor: pointer; transition: transform .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,.35); color: white; }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 20px 16px; }
+
+  /* ── KPI cards ── */
+  .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+  @media (max-width: 640px) { .stats-bar { grid-template-columns: 1fr 1fr; } }
+  .stat-box {
+    background: var(--white); border: 1px solid var(--cream-dark);
+    border-radius: 14px; padding: 18px 16px; text-align: center;
+  }
+  .stat-box .num { font-size: 32px; font-weight: 900; color: var(--navy); }
+  .stat-box .num.gold { color: var(--gold-dark); }
+  .stat-box .num.green { color: var(--green); }
+  .stat-box .lbl { font-size: 11px; color: var(--dark-mid); margin-top: 4px; font-weight: 500; }
+
+  /* ── Source breakdown ── */
+  .section { background: var(--white); border: 1px solid var(--cream-dark); border-radius: 14px; padding: 20px; margin-bottom: 20px; }
+  .section-title { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 16px; }
+
+  .source-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .source-label { width: 130px; font-size: 13px; font-weight: 600; color: var(--dark-mid); text-align: right; flex-shrink: 0; }
+  .source-bar-wrap { flex: 1; background: var(--cream); border-radius: 50px; height: 10px; overflow: hidden; }
+  .source-bar { height: 100%; border-radius: 50px; transition: width .5s ease; }
+  .source-bar.gold { background: var(--gold); }
+  .source-bar.blue { background: var(--blue); }
+  .source-bar.green { background: var(--green); }
+  .source-bar.gray { background: var(--cream-dark); }
+  .source-count { width: 32px; font-size: 13px; font-weight: 700; color: var(--dark); text-align: left; flex-shrink: 0; }
+
+  /* ── Table section ── */
+  .search-box {
+    width: 100%; padding: 10px 14px; border: 1.5px solid var(--cream-dark);
+    border-radius: 10px; font-family: 'Heebo'; font-size: 14px; color: var(--dark);
+    background: var(--warm-white); outline: none; margin-bottom: 16px; transition: border-color .2s;
+  }
+  .search-box:focus { border-color: var(--gold); }
+
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 640px; }
+  thead { background: var(--cream); }
+  th {
+    padding: 11px 10px; font-weight: 700; font-size: 11px; color: var(--dark-mid);
+    text-transform: uppercase; letter-spacing: .5px; text-align: right; white-space: nowrap;
+  }
+  td { padding: 10px; border-top: 1px solid var(--cream); vertical-align: middle; }
+  tr:hover td { background: var(--gold-bg); }
+
+  .badge {
+    display: inline-block; padding: 3px 10px; border-radius: 50px;
+    font-size: 11px; font-weight: 700; letter-spacing: .3px;
+  }
+  .badge-gold { background: var(--gold-bg); color: var(--gold-dark); }
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-gray { background: var(--cream); color: var(--dark-mid); }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--dark-mid); }
+  .empty-state .icon { font-size: 40px; margin-bottom: 10px; }
+  .loading-msg { text-align: center; padding: 40px; color: var(--dark-mid); font-size: 15px; }
+
+  .phone-cell { direction: ltr; text-align: right; unicode-bidi: plaintext; }
+</style>
+</head>
+<body>
+
+<!-- ── Login screen ── -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">המקפצה הפיננסית</div>
+    <div class="login-sub">לידים — כניסת מנהל</div>
+    <div>
+      <label for="loginEmail">אימייל</label>
+      <input type="email" id="loginEmail" placeholder="admin@example.com" autocomplete="email">
+      <label for="loginPassword">סיסמה</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+      <button class="btn-login" id="loginBtn" onclick="doLogin()">כניסה</button>
+      <div class="login-error" id="loginError"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Dashboard ── -->
+<div class="dashboard" id="dashboard">
+  <div class="header">
+    <h1>דשבורד לידים</h1>
+    <button class="btn btn-outline" onclick="doLogout()">התנתקות</button>
+  </div>
+
+  <div class="container">
+    <div id="dashLoading" class="loading-msg">טוען נתונים...</div>
+
+    <div id="dashContent" style="display:none">
+      <!-- KPI cards -->
+      <div class="stats-bar">
+        <div class="stat-box">
+          <div class="num gold" id="kpiTotal">-</div>
+          <div class="lbl">סה"כ לידים</div>
+        </div>
+        <div class="stat-box">
+          <div class="num green" id="kpiNew24">-</div>
+          <div class="lbl">חדשים ב-24 שעות</div>
+        </div>
+        <div class="stat-box">
+          <div class="num" id="kpiLanding">-</div>
+          <div class="lbl">דף נחיתה</div>
+        </div>
+        <div class="stat-box">
+          <div class="num" id="kpiDirect">-</div>
+          <div class="lbl">ישיר / LMS</div>
+        </div>
+      </div>
+
+      <!-- Source breakdown -->
+      <div class="section">
+        <div class="section-title">פירוט מקורות</div>
+        <div id="sourceBreakdown"></div>
+      </div>
+
+      <!-- Leads table -->
+      <div class="section">
+        <div class="section-title">רשימת לידים</div>
+        <input type="search" class="search-box" id="searchBox" placeholder="חיפוש לפי שם, טלפון או מייל..." oninput="filterTable()">
+        <div class="table-wrap">
+          <table id="leadsTable">
+            <thead>
+              <tr>
+                <th>שם</th>
+                <th>טלפון</th>
+                <th>מייל</th>
+                <th>מקור</th>
+                <th>Cohort</th>
+                <th>תאריך הצטרפות</th>
+              </tr>
+            </thead>
+            <tbody id="leadsBody"></tbody>
+          </table>
+          <div class="empty-state" id="emptyState" style="display:none">
+            <div class="icon">🔍</div>
+            <div>לא נמצאו תוצאות</div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /dashContent -->
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI';
+const EDGE_FN_URL = `${SUPABASE_URL}/functions/v1/get-leads-data`;
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let allLeads = [];
+
+// ── Helpers ──
+function formatPhone(p) {
+  if (!p) return '';
+  if (p.startsWith('972')) return '0' + p.substring(3);
+  return p;
+}
+
+function formatDate(d) {
+  if (!d) return '-';
+  // IL time = UTC+3
+  const dt = new Date(new Date(d).getTime() + 3 * 60 * 60 * 1000);
+  const dd = String(dt.getUTCDate()).padStart(2, '0');
+  const mm = String(dt.getUTCMonth() + 1).padStart(2, '0');
+  const hh = String(dt.getUTCHours()).padStart(2, '0');
+  const min = String(dt.getUTCMinutes()).padStart(2, '0');
+  return `${dd}/${mm} ${hh}:${min}`;
+}
+
+function sourceBadge(source) {
+  const s = (source || '').toLowerCase();
+  if (s === 'landing-pilot') return `<span class="badge badge-gold">${source}</span>`;
+  if (s === 'pilot')         return `<span class="badge badge-blue">${source}</span>`;
+  if (s === 'lms')           return `<span class="badge badge-green">${source}</span>`;
+  return `<span class="badge badge-gray">${source || 'unknown'}</span>`;
+}
+
+function sourceBarClass(source) {
+  const s = (source || '').toLowerCase();
+  if (s === 'landing-pilot') return 'gold';
+  if (s === 'pilot')         return 'blue';
+  if (s === 'lms')           return 'green';
+  return 'gray';
+}
+
+// ── Auth ──
+async function checkSession() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    showDashboard(session.access_token);
+  } else {
+    showLogin();
+  }
+}
+
+function showLogin() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+}
+
+function showDashboard(token) {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  loadData(token);
+}
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const btn = document.getElementById('loginBtn');
+  const errEl = document.getElementById('loginError');
+
+  errEl.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'מתחבר...';
+
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+  btn.disabled = false;
+  btn.textContent = 'כניסה';
+
+  if (error) {
+    errEl.textContent = 'שגיאה בהתחברות: ' + (error.message || 'בדוק אימייל וסיסמה');
+    errEl.style.display = 'block';
+    return;
+  }
+
+  showDashboard(data.session.access_token);
+}
+
+// Allow Enter key in login form
+document.getElementById('loginPassword').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+document.getElementById('loginEmail').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+async function doLogout() {
+  await supabase.auth.signOut();
+  allLeads = [];
+  document.getElementById('dashContent').style.display = 'none';
+  document.getElementById('dashLoading').style.display = 'block';
+  document.getElementById('dashLoading').textContent = 'טוען נתונים...';
+  showLogin();
+}
+
+// ── Data ──
+async function loadData(token) {
+  document.getElementById('dashLoading').style.display = 'block';
+  document.getElementById('dashContent').style.display = 'none';
+
+  try {
+    const res = await fetch(EDGE_FN_URL, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (res.status === 401) {
+      document.getElementById('dashLoading').textContent = 'אין הרשאות מנהל.';
+      return;
+    }
+    if (!res.ok) {
+      const body = await res.text();
+      document.getElementById('dashLoading').textContent = `שגיאה בטעינת הנתונים (${res.status}): ${body}`;
+      return;
+    }
+
+    const json = await res.json();
+    allLeads = json.leads || [];
+    const stats = json.stats || {};
+
+    renderKPI(stats);
+    renderSourceBreakdown(stats);
+    renderTable(allLeads);
+
+    document.getElementById('dashLoading').style.display = 'none';
+    document.getElementById('dashContent').style.display = 'block';
+  } catch (e) {
+    document.getElementById('dashLoading').textContent = 'שגיאה: ' + e.message;
+  }
+}
+
+function renderKPI(stats) {
+  document.getElementById('kpiTotal').textContent = stats.total ?? 0;
+  document.getElementById('kpiNew24').textContent = stats.new_24h ?? 0;
+
+  const bySource = stats.by_source || {};
+  const landingCount = bySource['landing-pilot'] || 0;
+  const directCount = Object.entries(bySource)
+    .filter(([k]) => k !== 'landing-pilot')
+    .reduce((sum, [, v]) => sum + v, 0);
+
+  document.getElementById('kpiLanding').textContent = landingCount;
+  document.getElementById('kpiDirect').textContent = directCount;
+
+  // Color kpiNew24 conditionally
+  const new24El = document.getElementById('kpiNew24');
+  new24El.style.color = (stats.new_24h > 0) ? 'var(--green)' : 'var(--dark)';
+}
+
+function renderSourceBreakdown(stats) {
+  const bySource = stats.by_source || {};
+  const total = stats.total || 1;
+  const wrap = document.getElementById('sourceBreakdown');
+  wrap.innerHTML = '';
+
+  const sorted = Object.entries(bySource).sort((a, b) => b[1] - a[1]);
+  if (!sorted.length) {
+    wrap.textContent = 'אין נתונים';
+    return;
+  }
+
+  for (const [source, count] of sorted) {
+    const pct = Math.round((count / total) * 100);
+    const barClass = sourceBarClass(source);
+    const row = document.createElement('div');
+    row.className = 'source-row';
+    row.innerHTML = `
+      <div class="source-label">${source || 'unknown'}</div>
+      <div class="source-bar-wrap">
+        <div class="source-bar ${barClass}" style="width: ${pct}%"></div>
+      </div>
+      <div class="source-count">${count}</div>
+    `;
+    wrap.appendChild(row);
+  }
+}
+
+function renderTable(leads) {
+  const tbody = document.getElementById('leadsBody');
+  const emptyEl = document.getElementById('emptyState');
+
+  tbody.innerHTML = '';
+
+  if (!leads.length) {
+    emptyEl.style.display = 'block';
+    return;
+  }
+  emptyEl.style.display = 'none';
+
+  for (const l of leads) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${escHtml(l.name || '-')}</strong></td>
+      <td class="phone-cell">${escHtml(formatPhone(l.phone))}</td>
+      <td>${escHtml(l.email || '-')}</td>
+      <td>${sourceBadge(l.source)}</td>
+      <td>${escHtml(l.cohort || '-')}</td>
+      <td style="white-space:nowrap">${formatDate(l.created_at)}</td>
+    `;
+    tbody.appendChild(tr);
+  }
+}
+
+function filterTable() {
+  const q = document.getElementById('searchBox').value.trim().toLowerCase();
+  if (!q) {
+    renderTable(allLeads);
+    return;
+  }
+  const filtered = allLeads.filter(l => {
+    return (
+      (l.name || '').toLowerCase().includes(q) ||
+      (l.phone || '').toLowerCase().includes(q) ||
+      (formatPhone(l.phone) || '').toLowerCase().includes(q) ||
+      (l.email || '').toLowerCase().includes(q)
+    );
+  });
+  renderTable(filtered);
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ── Init ──
+checkSession();
+</script>
+</body>
+</html>
