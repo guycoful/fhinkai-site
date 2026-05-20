@@ -486,6 +486,53 @@ const CATEGORIES = [
   }
 ];
 
+// Maps Day 1 category/item ids to the Day 2 (V11) schema keys it reads from
+// fhink_day1_v1.expenses[catId][itemId].amount. 'arnona' has no V11 slot, so
+// it folds into household:other (a "need" in V11's groupMap), summed.
+const D2_EXPENSE_MAP = {
+  household:    { cat: 'household',   items: { rent: 'rent_mortgage', arnona: 'other', electricity: 'electricity', water: 'water', gas: 'gas', vaad_bayit: 'house_committee', household_other: 'other' } },
+  insurance:    { cat: 'insurance',   items: { car_insurance: 'car_insurance', home_insurance: 'home_insurance', life_insurance: 'life_insurance', health_insurance: 'health_insurance', insurance_other: 'other' } },
+  health:       { cat: 'health',      items: { kupat_holim: 'health_fund', medication: 'medicine', dental: 'dental', glasses: 'optics', health_other: 'other' } },
+  hobbies:      { cat: 'classes',     items: { kids_hobbies: 'kids_classes', fitness: 'fitness', hobbies_other: 'other' } },
+  education:    { cat: 'education',   items: { daycare: 'kindergarten', afternoon: 'afternoon', tuition: 'tuition', education_other: 'other' } },
+  transport:    { cat: 'transport',  items: { fuel: 'fuel', parking: 'parking', public_transit: 'public', leasing: 'leasing', transport_other: 'other' } },
+  telecom:      { cat: 'comms',       items: { phone_bill: 'phone', internet: 'internet', tv: 'tv', streaming: 'streaming', telecom_other: 'other' } },
+  food:         { cat: 'food',        items: { groceries: 'supermarket', dining: 'restaurants', delivery: 'delivery', coffee: 'coffee', food_other: 'other' } },
+  leisure:      { cat: 'leisure',     items: { entertainment: 'entertainment', vacations: 'vacations', shopping: 'shopping', personal_hobbies: 'hobbies', leisure_other: 'other' } },
+  investments:  { cat: 'investments', items: { keren_hishtalmut: 'training_fund', extra_pension: 'extra_pension', gemel_invest: 'investments', child_savings: 'kids_savings', general_savings: 'general_savings', investments_other: 'other' } },
+  loans:        { cat: 'loans',       items: { bank_loans: 'bank_loans', credit_card: 'credit_cards', external_loans: 'private_loans', loans_other: 'other' } },
+};
+
+// Build the fhink_day1_v1 payload Day 2 (V11) reads. Additive: written
+// alongside the existing makpatza_/challenge_pid keys, never replacing them.
+function buildFhinkDay1V1() {
+  const fullName = document.getElementById('f_name').value.trim();
+  const firstName = fullName.split(' ')[0] || fullName;
+  const salary = gv('f_income');
+  const extra = gv('f_income2');
+
+  const expenses = {};
+  CATEGORIES.forEach(cat => {
+    const map = D2_EXPENSE_MAP[cat.id];
+    if (!map) return;
+    cat.items.forEach(item => {
+      const val = parseFloat(document.getElementById('exp_' + item.id).value) || 0;
+      if (val <= 0) return;
+      const v11Item = map.items[item.id];
+      if (!v11Item) return;
+      if (!expenses[map.cat]) expenses[map.cat] = {};
+      const prev = expenses[map.cat][v11Item] ? (parseFloat(expenses[map.cat][v11Item].amount) || 0) : 0;
+      expenses[map.cat][v11Item] = { amount: prev + val };
+    });
+  });
+
+  return {
+    user: { fullName: fullName, firstName: firstName, gender: '' },
+    basics: { salary: salary, additionalIncomes: extra > 0 ? [{ amount: extra }] : [] },
+    expenses: expenses,
+  };
+}
+
 // ── Build category UI (sequential, all visible) ──
 function buildCategories() {
   const panelsContainer = document.getElementById('catPanels');
@@ -878,6 +925,11 @@ async function submitForm() {
     if (pid) {
       localStorage.setItem('challenge_pid', pid);
     }
+
+    // Additive write for Day 2 (V11), which reads fhink_day1_v1.
+    try {
+      localStorage.setItem('fhink_day1_v1', JSON.stringify(buildFhinkDay1V1()));
+    } catch (_) {}
 
     // Save assessment if exists
     const assessRaw = localStorage.getItem('makpatza_assess');
