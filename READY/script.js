@@ -411,7 +411,13 @@
       else if (action === "day1") {
         showToast("מעבר ליום 1 של האתגר…");
         setTimeout(() => {
-          window.location.href = '/day1.html';
+          // Carry cohort to day1 so participants are tagged correctly (not defaulted to pilot)
+          const p = new URLSearchParams(window.location.search);
+          let cohort = p.get('cohort');
+          if (!cohort) {
+            try { cohort = (JSON.parse(localStorage.getItem('fhink_lead_v1') || 'null') || {}).cohort || ''; } catch (_) {}
+          }
+          window.location.href = '/day1.html' + (cohort ? '?cohort=' + encodeURIComponent(cohort) : '');
         }, 1400);
       }
     });

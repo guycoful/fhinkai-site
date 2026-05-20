@@ -551,6 +551,9 @@ function onExpenseInput(catId, itemId, isOther) {
 
   // Update running total
   updateExpenseTotal();
+
+  // Persist to Day-2 bridge keys
+  saveAsafSchema();
 }
 
 function updateCategoryIndicator(catId) {
@@ -604,6 +607,102 @@ function getAllExpenseData() {
     });
   });
   return detail;
+}
+
+// ════════════════════════════════════════════════════════════
+// Asaf Day-2 bridge: write fhink_day1_v1 + fhink_lead_v1
+// Day 2 (V11) reads these keys. Item ids must match data.js groupMap.
+// ════════════════════════════════════════════════════════════
+
+// day1 category id → Day-2 (Asaf) category id
+const ASAF_CAT = {
+  household:'household', insurance:'insurance', health:'health',
+  hobbies:'classes', education:'education', transport:'transport',
+  telecom:'comms', food:'food', leisure:'leisure',
+  investments:'investments', loans:'loans'
+};
+
+// day1 item id → Day-2 (Asaf) item id
+const ASAF_ITEM = {
+  rent:'rent_mortgage', arnona:'arnona', electricity:'electricity', water:'water',
+  gas:'gas', vaad_bayit:'house_committee', household_other:'other',
+  car_insurance:'car_insurance', home_insurance:'home_insurance',
+  life_insurance:'life_insurance', health_insurance:'health_insurance', insurance_other:'other',
+  kupat_holim:'health_fund', medication:'medicine', dental:'dental', glasses:'optics', health_other:'other',
+  kids_hobbies:'kids_classes', fitness:'fitness', hobbies_other:'other',
+  daycare:'kindergarten', afternoon:'afternoon', tuition:'tuition', education_other:'other',
+  fuel:'fuel', parking:'parking', public_transit:'public', leasing:'leasing', transport_other:'other',
+  phone_bill:'phone', internet:'internet', tv:'tv', streaming:'streaming', telecom_other:'other',
+  groceries:'supermarket', dining:'restaurants', delivery:'delivery', coffee:'coffee', food_other:'other',
+  entertainment:'entertainment', vacations:'vacations', shopping:'shopping', personal_hobbies:'hobbies', leisure_other:'other',
+  keren_hishtalmut:'training_fund', extra_pension:'extra_pension', gemel_invest:'investments',
+  child_savings:'kids_savings', general_savings:'general_savings', investments_other:'other',
+  bank_loans:'bank_loans', credit_card:'credit_cards', external_loans:'private_loans', loans_other:'other'
+};
+
+// day1 has no real gender field; infer from job type, else '' (Day 2 defaults to male)
+function deriveGender() {
+  const job = (document.getElementById('f_job') || {}).value || '';
+  if (job === 'שכירה') return 'נקבה';
+  if (job === 'שכיר')  return 'זכר';
+  return '';
+}
+
+function buildAsafExpenses() {
+  const expenses = {};
+  CATEGORIES.forEach(cat => {
+    const asafCat = ASAF_CAT[cat.id] || cat.id;
+    cat.items.forEach(item => {
+      const el = document.getElementById('exp_' + item.id);
+      const val = parseFloat(el && el.value) || 0;
+      if (val > 0) {
+        const asafItem = ASAF_ITEM[item.id] || item.id;
+        if (!expenses[asafCat]) expenses[asafCat] = {};
+        const entry = { amount: String(val) };
+        if (item.isOther) {
+          const t = document.getElementById('detail_text_' + item.id);
+          if (t && t.value.trim()) entry.desc = t.value.trim();
+        }
+        expenses[asafCat][asafItem] = entry;
+      }
+    });
+  });
+  return expenses;
+}
+
+function buildAdditionalIncomes() {
+  const list = [];
+  document.querySelectorAll('#extraIncomeList .income-row').forEach(row => {
+    const typeEl = row.querySelector('select');
+    const amtEl  = row.querySelector('input[type=number]');
+    const amount = parseFloat(amtEl && amtEl.value) || 0;
+    if (amount > 0) list.push({ type: typeEl ? typeEl.value : 'אחר', amount: amount });
+  });
+  return list;
+}
+
+// Writes both keys Day 2 expects. localStorage is the source of truth for the
+// internal pilot (DB sync planned 31.5). Called on every input + on submit.
+function saveAsafSchema() {
+  try {
+    const nameEl  = document.getElementById('f_name');
+    const emailEl = document.getElementById('f_email');
+    const phoneEl = document.getElementById('f_phone');
+    const incEl   = document.getElementById('f_income');
+    const name   = (nameEl  && nameEl.value  || '').trim();
+    const email  = (emailEl && emailEl.value || '').trim();
+    const phone  = (phoneEl && phoneEl.value || '').trim();
+    const salary = parseFloat(incEl && incEl.value) || 0;
+    const gender = deriveGender();
+
+    const day1 = {
+      user: { firstName: name, fullName: name, gender: gender },
+      basics: { salary: salary, additionalIncomes: buildAdditionalIncomes() },
+      expenses: buildAsafExpenses()
+    };
+    localStorage.setItem('fhink_day1_v1', JSON.stringify(day1));
+    localStorage.setItem('fhink_lead_v1', JSON.stringify({ fullName: name, gender: gender, email: email, phone: phone }));
+  } catch (_) {}
 }
 
 // ── Validate "other" fields ──
@@ -727,6 +826,7 @@ function calcExtraIncome() {
     total += parseFloat(inp.value) || 0;
   });
   document.getElementById('f_income2').value = total;
+  saveAsafSchema();
 }
 
 // ── Navigation ──
@@ -804,6 +904,9 @@ async function submitForm() {
   btn.disabled = true;
   btn.textContent = 'שולח...';
   err.style.display = 'none';
+
+  // Persist Day-2 bridge keys before the network call (localStorage = source of truth for pilot)
+  saveAsafSchema();
 
   const legacyCols = mapExpensesToLegacyColumns();
   const expensesDetail = JSON.stringify(getAllExpenseData());
@@ -941,6 +1044,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
   buildCategories();
   checkLock();
+
+  // Autosave Day-2 bridge keys on personal/contact field changes
+  ['f_name','f_income','f_job','f_email','f_phone'].forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el) { el.addEventListener('input', saveAsafSchema); el.addEventListener('change', saveAsafSchema); }
+  });
 
   // Show progress bar with page 0 active
   document.getElementById('mainProgress').style.display = 'flex';

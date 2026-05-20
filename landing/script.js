@@ -149,10 +149,12 @@
     // Show success
     showSuccess(fullName);
 
-    // Redirect to questionnaire
+    // Redirect to questionnaire, carrying cohort/src so they survive the funnel
     setTimeout(() => {
-      const url = `${CONFIG.redirectTo}?lead=${encodeURIComponent(email)}`;
-      window.location.href = url;
+      const params = new URLSearchParams({ lead: email });
+      if (payload.cohort) params.set('cohort', payload.cohort);
+      if (payload.source) params.set('src', payload.source);
+      window.location.href = `${CONFIG.redirectTo}?${params.toString()}`;
     }, CONFIG.redirectDelayMs);
   });
 
