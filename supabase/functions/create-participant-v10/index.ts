@@ -7,10 +7,17 @@ const CORS = {
   'Access-Control-Allow-Headers': 'authorization, apikey, content-type',
 };
 
+// Day-1 unlock time (stored as challenge_start_at)
 const COHORT_START: Record<string, string> = {
   'pilot': '2026-05-31T06:00:00+03:00',
   'rehearsal': '2026-05-20T06:00:00+03:00',
-  'lms': '2026-05-20T13:00:00+03:00',
+  'lms': '2026-05-20T11:30:00+03:00',
+};
+
+// Registration cutoff; defaults to COHORT_START when not overridden.
+// lms has no cutoff — registration stays open indefinitely.
+const COHORT_REG_CLOSE: Record<string, string> = {
+  'lms': '2099-12-31T00:00:00+03:00',
 };
 
 Deno.serve(async (req: Request) => {
@@ -45,9 +52,10 @@ Deno.serve(async (req: Request) => {
     const cohort = COHORT_START[cohortInput] ? cohortInput : 'pilot';
     const challenge_start_at = COHORT_START[cohort];
 
-    const startTime = new Date(challenge_start_at).getTime();
+    const regClose = COHORT_REG_CLOSE[cohort] ?? challenge_start_at;
+    const cutoff = new Date(regClose).getTime();
     const now = Date.now();
-    if (now > startTime) {
+    if (now > cutoff) {
       return new Response(JSON.stringify({
         error: 'late_registration',
         message: 'הרישום לקוהורט הזה נסגר. הקוהורט הבא יוכרז בקרוב.',
