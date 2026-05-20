@@ -132,7 +132,7 @@
       email,
       gender,
       source: new URLSearchParams(window.location.search).get('src') || 'landing-pilot',
-      cohort: CONFIG.cohort,
+      cohort: new URLSearchParams(window.location.search).get('cohort') || CONFIG.cohort,
     };
 
     try {
