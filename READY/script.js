@@ -210,6 +210,16 @@
     }[c]));
   }
 
+  function getLeadEmail() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const fromUrl = params.get('lead');
+      if (fromUrl) return fromUrl;
+      const saved = JSON.parse(localStorage.getItem('fhink_lead_v1') || 'null');
+      return saved?.email || null;
+    } catch (_) { return null; }
+  }
+
   function goNext() {
     if (currentIdx >= SCREENS.length - 1) return;
 
@@ -232,9 +242,20 @@
 
   function finish() {
     const formStep = document.querySelector('.form[data-step="4"]');
-    // Step 4 has open-ended questions — keep validation light
-    if (formStep) collectStep(formStep, { lenient: true });
+    if (formStep) {
+      const valid = validateStep(formStep, 4);
+      if (!valid) return;
+      collectStep(formStep, { lenient: true });
+    }
     persistAnswers();
+    const email = getLeadEmail();
+    if (email && window.location.protocol !== 'file:') {
+      fetch('https://vuvavjmbvdqnwtleudqh.supabase.co/functions/v1/save-pretest-answers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, answers }),
+      }).catch((e) => console.warn('[FHINK] pretest save failed:', e));
+    }
     showScreen(SCREENS.indexOf("done"));
   }
 
@@ -284,11 +305,15 @@
       return true;
     }
 
-    // Step 4: lenient — emotional, no hard requirements except a couple
     if (stepNum === 4) {
-      // Require commitment to give us a baseline signal
       if (!form.querySelector('input[name="commitment"]:checked')) {
         return failWith(null, "נא לציין את רמת המחויבות שלך");
+      }
+      if (!form.querySelector('input[name="belief"]:checked')) {
+        return failWith(null, "נא לציין את רמת האמונה שלך ביכולת");
+      }
+      if (!form.querySelector('input[name="currentMgmt"]:checked')) {
+        return failWith(null, "נא לציין את ההתנהלות הפיננסית הנוכחית שלך");
       }
       return true;
     }
@@ -384,12 +409,9 @@
       else if (action === "back") goBack();
       else if (action === "finish") finish();
       else if (action === "day1") {
-        // Reset and head to landing — in the real product this routes to Day 1
         showToast("מעבר ליום 1 של האתגר…");
         setTimeout(() => {
-          // Soft re-entry: jump back to intro
-          showScreen(0);
-          window.scrollTo({ top: 0, behavior: "smooth" });
+          window.location.href = '/day1.html';
         }, 1400);
       }
     });

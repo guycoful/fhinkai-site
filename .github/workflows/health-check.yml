@@ -1,0 +1,156 @@
+name: Health Check
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'   # every 30 minutes
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - name: Run health checks
+        id: checks
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: guycoful/fhinkai-site
+          WHATSAPP_ALERT_URL: ${{ secrets.WHATSAPP_ALERT_URL }}
+        run: |
+          set +e
+          FAILED=0
+          NOW=$(date -u '+%Y-%m-%d %H:%M UTC')
+          FAILED_NAMES=""
+
+          send_whatsapp_alert() {
+            local msg="$1"
+            if [[ -z "$WHATSAPP_ALERT_URL" ]]; then
+              echo "WHATSAPP_ALERT_URL not set — skipping WhatsApp alert"
+              return
+            fi
+            local encoded
+            encoded=$(printf '%s' "$msg" | jq -sRr @uri)
+            curl -s -o /dev/null -w "WhatsApp alert HTTP %{http_code}\n" \
+              "${WHATSAPP_ALERT_URL}&text=${encoded}" || true
+          }
+
+          open_or_comment() {
+            local title="$1"
+            local body="$2"
+            local prefix="${title%%- 20*}"   # strip timestamp for dedup search
+
+            # Search open issues with same prefix from last 24h
+            EXISTING=$(gh issue list \
+              --repo "$REPO" \
+              --state open \
+              --search "\"${prefix}\" in:title" \
+              --json number,createdAt \
+              --jq 'map(select(.createdAt > (now - 86400 | todate))) | .[0].number' 2>/dev/null)
+
+            if [[ -n "$EXISTING" && "$EXISTING" != "null" ]]; then
+              echo "Adding comment to existing issue #${EXISTING}"
+              gh issue comment "$EXISTING" --repo "$REPO" --body "$body"
+            else
+              # Check if 'bug' label exists
+              LABEL_ARG=""
+              if gh label list --repo "$REPO" --json name \
+                  --jq '.[].name' 2>/dev/null | grep -qx 'bug'; then
+                LABEL_ARG="--label bug"
+              fi
+              echo "Creating new issue: $title"
+              gh issue create --repo "$REPO" \
+                --title "$title" \
+                --body "$body" \
+                $LABEL_ARG
+            fi
+          }
+
+          check() {
+            local name="$1"
+            local expected_status="$2"
+            local body_must_contain="$3"
+            shift 3
+            local curl_args=("$@")
+
+            STATUS=$(curl -s -o /tmp/body -w '%{http_code}' "${curl_args[@]}")
+            BODY=$(head -c 500 /tmp/body)
+
+            if [[ "$STATUS" != "$expected_status" ]]; then
+              echo "FAIL [$name]: expected $expected_status got $STATUS"
+              FAILED=1
+              FAILED_NAMES="${FAILED_NAMES}${name} (HTTP ${STATUS})\n"
+              TITLE="[health-check] ${name} failing - ${NOW}"
+              ISSUE_BODY="**Endpoint:** \`${name}\`
+**Expected status:** \`${expected_status}\`
+**Actual status:** \`${STATUS}\`
+**Response body (first 500 chars):**
+\`\`\`
+${BODY}
+\`\`\`
+**Best guess at cause:** $(guess_cause "$STATUS" "$BODY")"
+              open_or_comment "$TITLE" "$ISSUE_BODY"
+            elif [[ -n "$body_must_contain" ]] && ! echo "$BODY" | grep -q "$body_must_contain"; then
+              echo "FAIL [$name]: body missing '${body_must_contain}'"
+              FAILED=1
+              FAILED_NAMES="${FAILED_NAMES}${name} (body mismatch)\n"
+              TITLE="[health-check] ${name} failing - ${NOW}"
+              ISSUE_BODY="**Endpoint:** \`${name}\`
+**Expected status:** \`${expected_status}\` (received OK)
+**Body check:** expected body to contain \`${body_must_contain}\` — not found
+**Response body (first 500 chars):**
+\`\`\`
+${BODY}
+\`\`\`
+**Best guess at cause:** Schema mismatch — response format changed"
+              open_or_comment "$TITLE" "$ISSUE_BODY"
+            else
+              echo "PASS [$name]"
+            fi
+          }
+
+          guess_cause() {
+            local status="$1"
+            local body="$2"
+            case "$status" in
+              000) echo "Timeout or DNS resolution failure" ;;
+              404) echo "404 Not Found — page/route removed or path changed" ;;
+              500|502|503|504) echo "Server error (${status}) — upstream crash or deployment issue" ;;
+              403) echo "403 Forbidden — auth/firewall issue" ;;
+              301|302) echo "Redirect — URL may have changed permanently" ;;
+              *) echo "Unexpected HTTP ${status}" ;;
+            esac
+          }
+
+          # 1. Landing page
+          check "fhinkai.com/landing/" "200" "" \
+            https://fhinkai.com/landing/
+
+          # 2. Day 1 page
+          check "fhinkai.com/day1.html" "200" "" \
+            https://fhinkai.com/day1.html
+
+          # 3. READY endpoint
+          check "fhinkai.com/READY/" "200" "" \
+            https://fhinkai.com/READY/
+
+          # 4. create-lead edge function
+          check "supabase/create-lead" "200" "id" \
+            -X POST \
+            -H "Content-Type: application/json" \
+            -d '{"name":"__HEALTHCHECK__","phone":"0500000000","email":"healthcheck@example.com","gender":"male","source":"healthcheck","cohort":"pilot"}' \
+            https://vuvavjmbvdqnwtleudqh.supabase.co/functions/v1/create-lead
+
+          # 5. daily-recipients edge function
+          check "supabase/daily-recipients" "200" "recipients" \
+            -H "x-recipients-token: drcp_b3b0509bfaddb39a3186891b4a57665d40e4847a238f69b6" \
+            "https://vuvavjmbvdqnwtleudqh.supabase.co/functions/v1/daily-recipients?dry_run=true&date=2026-05-31T08:00:00%2B03:00"
+
+          if [[ "$FAILED" -eq 0 ]]; then
+            echo "PASS: all 5 endpoints healthy at ${NOW}"
+          else
+            ALERT_MSG="🚨 fhinkai health-check FAIL ${NOW}\n\nDown:\n$(printf "$FAILED_NAMES")\n\nhttps://github.com/${REPO}/issues"
+            send_whatsapp_alert "$ALERT_MSG"
+            exit 1
+          fi
