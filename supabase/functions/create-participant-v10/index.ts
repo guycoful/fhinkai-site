@@ -10,7 +10,7 @@ const CORS = {
 const COHORT_START: Record<string, string> = {
   'pilot': '2026-05-31T06:00:00+03:00',
   'rehearsal': '2026-05-20T06:00:00+03:00',
-  'lms': '2026-05-20T06:00:00+03:00',
+  'lms': '2026-05-20T13:00:00+03:00',
 };
 
 Deno.serve(async (req: Request) => {
