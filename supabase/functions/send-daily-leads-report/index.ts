@@ -42,12 +42,19 @@ Deno.serve(async (req: Request) => {
     const nowMs = Date.now();
     const cutoff24h = new Date(nowMs - 24 * 60 * 60 * 1000);
 
-    const { data: leads, error } = await supabase
-      .from('challenge_leads')
-      .select('id, created_at, name, phone, email, source, cohort')
-      .order('created_at', { ascending: false });
+    const [{ data: leads, error }, { data: participants, error: pError }] = await Promise.all([
+      supabase
+        .from('challenge_leads')
+        .select('id, created_at, name, phone, email, source, cohort')
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('challenge_participants')
+        .select('id, created_at, name, phone, email, cohort')
+        .order('created_at', { ascending: false }),
+    ]);
 
     if (error) throw error;
+    if (pError) throw pError;
 
     const TEST_SOURCES = new Set(['healthcheck', 'e2e_test']);
     const TEST_EMAIL_PATTERNS = ['healthcheck', 'cachetest', 'cachefinal', 'e2e_test', 'test_landing_fix', 'example.com'];
@@ -59,10 +66,30 @@ Deno.serve(async (req: Request) => {
       if (TEST_EMAIL_PATTERNS.some(p => email.includes(p))) return false;
       return true;
     });
-    const new24h = realLeads.filter(l => new Date(l.created_at) >= cutoff24h);
+
+    // Add participants who arrived directly (not via landing page) — dedup by phone
+    const leadPhones = new Set(realLeads.map(l => l.phone).filter(Boolean));
+    const directParticipants = (participants ?? [])
+      .filter(p => {
+        if ((p.name || '').startsWith('__')) return false;
+        if (p.phone && leadPhones.has(p.phone)) return false;
+        return true;
+      })
+      .map(p => ({
+        id: p.id,
+        created_at: p.created_at,
+        name: p.name,
+        phone: p.phone ?? '',
+        email: p.email ?? '',
+        source: p.cohort ?? 'direct',
+        cohort: p.cohort,
+      }));
+
+    const allLeads = [...realLeads, ...directParticipants];
+    const new24h = allLeads.filter(l => new Date(l.created_at) >= cutoff24h);
 
     const sourceTallyAll: Record<string, number> = {};
-    for (const l of realLeads) {
+    for (const l of allLeads) {
       const s = l.source || 'unknown';
       sourceTallyAll[s] = (sourceTallyAll[s] || 0) + 1;
     }
@@ -79,7 +106,7 @@ Deno.serve(async (req: Request) => {
     lines.push(`📊 דוח לידים יומי - ${dateStr}`);
     lines.push('');
     lines.push(`*חדשים ב-24 השעות האחרונות:* ${new24h.length}`);
-    lines.push(`*סה"כ במערכת:* ${realLeads.length}`);
+    lines.push(`*סה"כ במערכת:* ${allLeads.length}`);
     lines.push('');
 
     if (new24h.length > 0) {
@@ -111,7 +138,7 @@ Deno.serve(async (req: Request) => {
     if (dryRun) {
       return new Response(JSON.stringify({
         dry_run: true,
-        total_leads: realLeads.length,
+        total_leads: allLeads.length,
         new_24h: new24h.length,
         message,
       }), { headers: { ...CORS, 'Content-Type': 'application/json' } });
@@ -143,7 +170,7 @@ Deno.serve(async (req: Request) => {
 
     return new Response(JSON.stringify({
       ok: true,
-      total_leads: realLeads.length,
+      total_leads: allLeads.length,
       new_24h: new24h.length,
       green_message_id: sendData.idMessage,
     }), { headers: { ...CORS, 'Content-Type': 'application/json' } });
