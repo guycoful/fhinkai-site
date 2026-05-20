@@ -14,9 +14,10 @@ const COHORT_START: Record<string, string> = {
   'lms': '2026-05-20T11:30:00+03:00',
 };
 
-// Registration cutoff; defaults to COHORT_START when not overridden
+// Registration cutoff; defaults to COHORT_START when not overridden.
+// lms has no cutoff — registration stays open indefinitely.
 const COHORT_REG_CLOSE: Record<string, string> = {
-  'lms': '2026-05-20T13:00:00+03:00',
+  'lms': '2099-12-31T00:00:00+03:00',
 };
 
 Deno.serve(async (req: Request) => {
