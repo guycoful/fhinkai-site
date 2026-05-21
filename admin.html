@@ -148,6 +148,7 @@
           <th>יתרה</th>
           <th>ניתוח</th>
           <th>תאריך</th>
+          <th>מקור</th>
           <th>פעולות</th>
         </tr>
       </thead>
@@ -177,7 +178,7 @@
     <div class="table-wrap">
       <div class="loading" id="leadsLoading">טוען נרשמים...</div>
       <table id="leadsTable" style="display:none">
-        <thead><tr><th>שם</th><th>טלפון</th><th>מקור</th><th>קוהורט</th><th>תאריך</th><th>סטטוס</th></tr></thead>
+        <thead><tr><th>שם</th><th>טלפון</th><th>מייל</th><th>מקור</th><th>קוהורט</th><th>תאריך</th><th>סטטוס</th></tr></thead>
         <tbody id="leadsBody"></tbody>
       </table>
     </div>
@@ -302,6 +303,7 @@ function renderParticipants() {
       <td class="${balClass}">${fmt(r.balance)}</td>
       <td>${sentBadge}</td>
       <td>${fmtDate(r.created_at)}</td>
+      <td>${r.lead_source || '-'}</td>
       <td>
         <button class="btn-sm" onclick="window.open('day2.html?pid=${r.id}')">צפה</button>
         <button class="btn-sm" onclick="copyLink('${r.id}')">העתק לינק</button>
@@ -389,6 +391,7 @@ function renderLeads() {
     tr.innerHTML = `
       <td><strong>${r.name || '-'}</strong></td>
       <td>${r.phone || '-'}</td>
+      <td>${r.email || '-'}</td>
       <td>${r.source || '-'}</td>
       <td>${r.cohort || '-'}</td>
       <td>${fmtDate(r.created_at)}</td>
