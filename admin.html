@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>אדמין - המקפצה הפיננסית</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -249,17 +252,23 @@ async function loadParticipants() {
   renderParticipants();
 }
 
-// A participant row is a test/system row. Convention: system rows are named __...__
-// (e.g. __QA_TEST__, __TEST_REHEARSAL, __validate_fix__, __test_lms__). Real names never start with __.
-function isTestParticipant(name) {
-  const n = String(name || '').trim();
-  return n.startsWith('__') || /test|בדיק|דמו|demo|healthcheck/i.test(n);
+// Self / test detection. System rows are named __...__ (e.g. __QA_TEST__, __validate_fix__).
+// Guy and Omri's own entries are not real prospects either — match by name and by phone.
+function normPhone(p) { let d = String(p || '').replace(/\D/g, ''); if (d.startsWith('972')) d = '0' + d.slice(3); return d; }
+const SELF_PHONES = ['0546232063', '0546232066', '0522955505'];
+const SELF_NAMES = ['גיא', 'גיא כהן', 'עמרי', 'עמרי חן', 'עומרי', 'עומרי חן'];
+function isTestParticipant(r) {
+  const n = String((r && r.name) || '').trim();
+  if (n.startsWith('__') || /test|בדיק|דמו|demo|healthcheck/i.test(n)) return true;
+  if (SELF_NAMES.includes(n)) return true;
+  if (SELF_PHONES.includes(normPhone(r && r.phone))) return true;
+  return false;
 }
 
 function renderParticipants() {
   if (ALL_PARTICIPANTS === null) return;
   const hide = document.getElementById('hidePartTests').checked;
-  const rows = hide ? ALL_PARTICIPANTS.filter(r => !isTestParticipant(r.name)) : ALL_PARTICIPANTS;
+  const rows = hide ? ALL_PARTICIPANTS.filter(r => !isTestParticipant(r)) : ALL_PARTICIPANTS;
 
   if (!ALL_PARTICIPANTS.length) {
     document.getElementById('emptyState').style.display = 'block';
