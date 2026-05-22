@@ -6,3 +6,7 @@
 2026-05-21T06:07:41.018Z [INFO]: No legacy tokens.json file found - migration not needed
 2026-05-21T06:07:41.067Z [INFO]: Found valid authentication tokens.
 2026-05-21T06:07:41.092Z [INFO]: Google Photos MCP server connected via STDIO
+2026-05-22T08:11:46.260Z [INFO]: Starting Google Photos MCP server in STDIO mode
+2026-05-22T08:11:46.284Z [INFO]: No legacy tokens.json file found - migration not needed
+2026-05-22T08:11:46.328Z [INFO]: Found valid authentication tokens.
+2026-05-22T08:11:46.350Z [INFO]: Google Photos MCP server connected via STDIO
