@@ -968,7 +968,11 @@ async function submitForm() {
   try {
     const res = await fetch(SUPA_URL + '/functions/v1/create-participant-v10', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'apikey': SUPA_KEY,
+        'Authorization': 'Bearer ' + SUPA_KEY,
+      },
       body: JSON.stringify(row),
     });
 
