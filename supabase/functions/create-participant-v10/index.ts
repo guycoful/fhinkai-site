@@ -79,7 +79,7 @@ Deno.serve(async (req: Request) => {
       'groceries','dining','coffee','transport','health','shopping','leisure','kids',
       'pension_extra','keren_hishtalmut','gemel_invest','child_savings','general_savings',
       'annual_insurance','emergency_fund','annual_subs',
-      'expenses_detail','agent_type'
+      'expenses_detail','agent_type','source'
     ];
     const row: Record<string, unknown> = {
       cohort,

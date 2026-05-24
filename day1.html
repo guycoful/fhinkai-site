@@ -960,8 +960,9 @@ async function submitForm() {
     annual_subs: 0,
     // Detailed expense JSON
     expenses_detail: expensesDetail,
-    // Cohort from URL (?cohort=pilot|lms), default pilot
-    cohort: (new URLSearchParams(location.search).get('cohort') || 'pilot').toLowerCase()
+    // Cohort/source from URL (?cohort=pilot|lms&src=...)
+    cohort: (new URLSearchParams(location.search).get('cohort') || 'pilot').toLowerCase(),
+    source: new URLSearchParams(location.search).get('src') || ''
   };
 
   try {

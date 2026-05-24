@@ -515,13 +515,21 @@
       else if (action === "day1") {
         showToast("מעבר ליום 1 של האתגר…");
         setTimeout(() => {
-          // Carry cohort to day1 so participants are tagged correctly (not defaulted to pilot)
+          // Carry attribution to day1 so participants keep the lead source.
           const p = new URLSearchParams(window.location.search);
           let cohort = p.get('cohort');
+          let src = p.get('src');
           if (!cohort) {
             try { cohort = (JSON.parse(localStorage.getItem('fhink_lead_v1') || 'null') || {}).cohort || ''; } catch (_) {}
           }
-          window.location.href = '/day1.html' + (cohort ? '?cohort=' + encodeURIComponent(cohort) : '');
+          if (!src) {
+            try { src = (JSON.parse(localStorage.getItem('fhink_lead_v1') || 'null') || {}).source || ''; } catch (_) {}
+          }
+          const params = new URLSearchParams();
+          if (cohort) params.set('cohort', cohort);
+          if (src) params.set('src', src);
+          const qs = params.toString();
+          window.location.href = '/day1.html' + (qs ? '?' + qs : '');
         }, 1400);
       }
     });
