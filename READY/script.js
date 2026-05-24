@@ -303,12 +303,21 @@
     }
     persistAnswers();
     const email = getLeadEmail();
-    if (email && window.location.protocol !== 'file:') {
+    // Client-side guard: never POST a malformed body (root cause of 24.5 Carmit 400).
+    // If answers is missing/empty/non-object, skip the save instead of triggering server 400.
+    const answersOk = answers && typeof answers === 'object' && !Array.isArray(answers) && Object.keys(answers).length > 0;
+    if (email && answersOk && window.location.protocol !== 'file:') {
       fetch('https://vuvavjmbvdqnwtleudqh.supabase.co/functions/v1/save-pretest-answers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, answers }),
       }).catch((e) => console.warn('[FHINK] pretest save failed:', e));
+    } else if (email && !answersOk) {
+      console.warn('[FHINK] pretest save skipped: answers invalid', {
+        type: typeof answers,
+        isArray: Array.isArray(answers),
+        keys: answers && typeof answers === 'object' ? Object.keys(answers).length : 'n/a',
+      });
     }
     showScreen(SCREENS.indexOf("done"));
   }
