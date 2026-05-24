@@ -310,8 +310,8 @@
         <input type="email" id="f_email" placeholder="name@email.com">
       </div>
       <div class="field">
-        <label>טלפון (לקבלת הניתוח)</label>
-        <input type="tel" id="f_phone" placeholder="050-1234567" inputmode="tel">
+        <label>טלפון (חובה - לקבלת תזכורות יומיות באתגר)</label>
+        <input type="tel" id="f_phone" placeholder="050-1234567" inputmode="tel" required>
       </div>
 
       <div class="error-msg" id="errorMsg"></div>
@@ -905,6 +905,18 @@ async function submitForm() {
   btn.textContent = 'שולח...';
   err.style.display = 'none';
 
+  // Validate phone (required for daily WhatsApp reminders)
+  const phoneVal = document.getElementById('f_phone').value.trim();
+  const phoneDigits = phoneVal.replace(/[^0-9]/g, '');
+  if (phoneDigits.length < 9) {
+    err.textContent = 'נדרש טלפון תקין (לפחות 9 ספרות) כדי לקבל תזכורות יומיות.';
+    err.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'שלח וסכם ←';
+    document.getElementById('f_phone').focus();
+    return;
+  }
+
   // Persist Day-2 bridge keys before the network call (localStorage = source of truth for pilot)
   saveAsafSchema();
 
@@ -1045,11 +1057,48 @@ document.addEventListener('DOMContentLoaded', function() {
   buildCategories();
   checkLock();
 
+  // Prefill name/email/phone/age/job from previous funnel steps:
+  //   - landing/script.js stored 'fhink_lead_v1' { name, email, phone }
+  //   - READY/script.js stored 'fhink:opening-questionnaire' with questionnaire answers
+  //   - URL param ?lead=email is fallback for direct entry
+  try {
+    const params = new URLSearchParams(location.search);
+    const leadEmail = params.get('lead');
+    const lead  = JSON.parse(localStorage.getItem('fhink_lead_v1') || 'null');
+    const ready = JSON.parse(localStorage.getItem('fhink:opening-questionnaire') || 'null');
+    const emailEl = document.getElementById('f_email');
+    const phoneEl = document.getElementById('f_phone');
+    const nameEl  = document.getElementById('f_name');
+    const ageEl   = document.getElementById('f_age');
+    const jobEl   = document.getElementById('f_job');
+    // Name+email+phone come from landing first; fall back to READY answers
+    const name  = (lead && lead.name)  || (ready && ready.fullName) || '';
+    const email = (lead && lead.email) || (ready && ready.email)    || '';
+    const phone = (lead && lead.phone) || (ready && ready.phone)    || '';
+    const age   = (ready && ready.age) || '';
+    if (nameEl  && !nameEl.value  && name)  nameEl.value  = name;
+    if (emailEl && !emailEl.value && email) emailEl.value = email;
+    if (phoneEl && !phoneEl.value && phone) phoneEl.value = phone;
+    if (ageEl   && !ageEl.value   && age)   ageEl.value   = age;
+    if (leadEmail && emailEl && !emailEl.value) emailEl.value = leadEmail;
+    // Map READY's employment + gender to day1's job dropdown (שכיר/שכירה/עצמאי)
+    if (jobEl && !jobEl.value && ready && ready.employment) {
+      const g   = (ready.gender || '').trim();
+      const emp = (ready.employment || '').trim();
+      let jv = '';
+      if (emp.indexOf('עצמא') !== -1)            jv = 'עצמאי';
+      else if (emp.indexOf('שכיר') !== -1)       jv = (g === 'נקבה') ? 'שכירה' : 'שכיר';
+      if (jv) jobEl.value = jv;
+    }
+  } catch (_) { /* ignore */ }
+
   // Autosave Day-2 bridge keys on personal/contact field changes
   ['f_name','f_income','f_job','f_email','f_phone'].forEach(function(id) {
     const el = document.getElementById(id);
     if (el) { el.addEventListener('input', saveAsafSchema); el.addEventListener('change', saveAsafSchema); }
   });
+  // Persist prefilled values so Day-2 bridge keys reflect them even without user edits
+  try { saveAsafSchema(); } catch (_) {}
 
   // Show progress bar with page 0 active
   document.getElementById('mainProgress').style.display = 'flex';

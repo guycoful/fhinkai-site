@@ -139,11 +139,29 @@
       localStorage.setItem(CONFIG.storageKey, JSON.stringify(payload));
     } catch (_) {}
 
-    // Send to backend
+    // Send to backend — retry once before giving up so a flaky network doesn't
+    // silently drop a lead (root cause we hit in 18.5 rehearsal).
+    let leadSaved = false;
     try {
       await sendLead(payload);
+      leadSaved = true;
     } catch (err) {
-      console.warn('[FHINK] lead submit failed (continuing to success):', err);
+      console.warn('[FHINK] lead submit failed, retrying once:', err);
+      try {
+        await new Promise((r) => setTimeout(r, 600));
+        await sendLead(payload);
+        leadSaved = true;
+      } catch (err2) {
+        console.error('[FHINK] lead submit failed after retry:', err2);
+      }
+    }
+
+    if (!leadSaved && window.location.protocol !== 'file:') {
+      // Surface failure to user instead of redirecting silently into the funnel
+      submitBtn.disabled = false;
+      submitBtn.querySelector('span').textContent = 'נסה שוב';
+      alert('שגיאה בשמירת ההרשמה. בדקי חיבור אינטרנט ונסי שוב.');
+      return;
     }
 
     // Show success

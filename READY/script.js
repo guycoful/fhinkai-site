@@ -46,7 +46,14 @@
   function loadAnswers() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : {};
+      const stored = raw ? JSON.parse(raw) : {};
+      // Hydrate from landing's lead form so user doesn't re-type their name.
+      // landing/script.js stores 'fhink_lead_v1' = { name, email, phone }.
+      try {
+        const lead = JSON.parse(localStorage.getItem('fhink_lead_v1') || 'null');
+        if (lead && !stored.fullName && lead.name) stored.fullName = lead.name;
+      } catch (_) { /* ignore */ }
+      return stored;
     } catch (_) {
       return {};
     }
@@ -141,16 +148,63 @@
     return first.length > 18 ? first.slice(0, 18) : first;
   }
 
+  // Gender-aware text: swap "X/Y" placeholders to a single form once the user
+  // tells us their gender in step 1. Keeps the dual form for "אחר" / "מעדיף לא".
+  const GENDER_MAP_M = {
+    'את/ה': 'אתה', 'מחויב/ת': 'מחויב', 'מאמין/ה': 'מאמין', 'תוכל/י': 'תוכל',
+    'חושב/ת': 'חושב', 'מתנהל/ת': 'מתנהל', 'בטוח/ה': 'בטוח', 'עוקב/ת': 'עוקב',
+    'ניצב/ת': 'ניצב', 'מוכן/ה': 'מוכן', 'מוכן חלקית': 'מוכן חלקית',
+    'פרט/י': 'פרט', 'כתוב/י': 'כתוב', 'בחר/י': 'בחר',
+  };
+  const GENDER_MAP_F = {
+    'את/ה': 'את', 'מחויב/ת': 'מחויבת', 'מאמין/ה': 'מאמינה', 'תוכל/י': 'תוכלי',
+    'חושב/ת': 'חושבת', 'מתנהל/ת': 'מתנהלת', 'בטוח/ה': 'בטוחה', 'עוקב/ת': 'עוקבת',
+    'ניצב/ת': 'ניצבת', 'מוכן/ה': 'מוכנה', 'מוכן חלקית': 'מוכנה חלקית',
+    'פרט/י': 'פרטי', 'כתוב/י': 'כתבי', 'בחר/י': 'בחרי',
+  };
+
+  function genderize(text, gender) {
+    if (!text) return text;
+    if (gender !== 'זכר' && gender !== 'נקבה') return text;
+    const map = gender === 'נקבה' ? GENDER_MAP_F : GENDER_MAP_M;
+    let result = text;
+    Object.keys(map).forEach((from) => {
+      if (result.indexOf(from) !== -1) result = result.split(from).join(map[from]);
+    });
+    return result;
+  }
+
+  // Selectors swept for gender swap. Deliberately exclude step1 (where gender
+  // is being collected) and the answer cards in step1's gender select itself.
+  const GENDER_SCAN_SELECTORS = [
+    '.screen[data-screen="step2"] .q-title',
+    '.screen[data-screen="step2"] .answer-card__text',
+    '.screen[data-screen="step3"] .q-title',
+    '.screen[data-screen="step3"] .answer-card__text',
+    '.screen[data-screen="step3"] .field-label',
+    '.screen[data-screen="step3"] .q-hint',
+    '.screen[data-screen="step4"] .q-title',
+    '.screen[data-screen="step4"] .answer-card__text',
+    '.screen[data-screen="step4"] .q-hint',
+    '.screen[data-screen="step4"] .field-label',
+  ].join(',');
+
   function applyPersonalization() {
     const name = firstName(answers.fullName);
+    const gender = answers.gender;
     document.querySelectorAll("[data-greet]").forEach((el) => {
       if (!el.dataset.originalText) el.dataset.originalText = el.textContent;
-      const orig = el.dataset.originalText;
-      el.textContent = name ? `${name}, ${orig}` : orig;
+      const baseGendered = genderize(el.dataset.originalText, gender);
+      el.textContent = name ? `${name}, ${baseGendered}` : baseGendered;
     });
     if (doneGreeting) {
       doneGreeting.textContent = name ? `מעולה ${name}` : "מעולה";
     }
+    // Gender swap on question titles, answer card labels, field labels, hints.
+    document.querySelectorAll(GENDER_SCAN_SELECTORS).forEach((el) => {
+      if (!el.dataset.originalTextG) el.dataset.originalTextG = el.textContent;
+      el.textContent = genderize(el.dataset.originalTextG, gender);
+    });
   }
 
   function buildRecap() {

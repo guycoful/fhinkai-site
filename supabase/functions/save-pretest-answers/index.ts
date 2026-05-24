@@ -41,10 +41,32 @@ Deno.serve(async (req: Request) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const { error } = await supabase
+    const emailNorm = String(body.email).trim().toLowerCase();
+
+    // Try exact match first, then case-insensitive fallback.
+    let { data: matched, error } = await supabase
       .from('challenge_leads')
-      .update({ pre_test_data: body.answers })
-      .eq('email', String(body.email).trim());
+      .update({
+        pre_test_data: body.answers,
+        questionnaire_sent: true,
+        questionnaire_sent_at: new Date().toISOString(),
+      })
+      .eq('email', emailNorm)
+      .select('id');
+
+    if (!error && (!matched || matched.length === 0)) {
+      const ci = await supabase
+        .from('challenge_leads')
+        .update({
+          pre_test_data: body.answers,
+          questionnaire_sent: true,
+          questionnaire_sent_at: new Date().toISOString(),
+        })
+        .ilike('email', emailNorm)
+        .select('id');
+      matched = ci.data ?? [];
+      error = ci.error ?? null;
+    }
 
     if (error) {
       console.error('Update error:', error);
@@ -54,7 +76,15 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    return new Response(JSON.stringify({ ok: true }), {
+    if (!matched || matched.length === 0) {
+      console.warn('save-pretest-answers: no lead matched email', emailNorm);
+      return new Response(JSON.stringify({ ok: false, matched: 0, email: emailNorm }), {
+        status: 404,
+        headers: { ...CORS, 'Content-Type': 'application/json' },
+      });
+    }
+
+    return new Response(JSON.stringify({ ok: true, matched: matched.length }), {
       status: 200,
       headers: { ...CORS, 'Content-Type': 'application/json' },
     });
