@@ -44,19 +44,24 @@
    * ---------------------------------------------------------------------- */
 
   function loadAnswers() {
+    // Always return a plain object. localStorage may contain "null" / "[]" / garbage
+    // from previous broken sessions; never let `answers` be null or non-object.
+    let stored = {};
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      const stored = raw ? JSON.parse(raw) : {};
-      // Hydrate from landing's lead form so user doesn't re-type their name.
-      // landing/script.js stores 'fhink_lead_v1' = { name, email, phone }.
-      try {
-        const lead = JSON.parse(localStorage.getItem('fhink_lead_v1') || 'null');
-        if (lead && !stored.fullName && lead.name) stored.fullName = lead.name;
-      } catch (_) { /* ignore */ }
-      return stored;
-    } catch (_) {
-      return {};
-    }
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+          stored = parsed;
+        }
+      }
+    } catch (_) { /* ignore corrupt storage */ }
+    // Hydrate from landing's lead form so user doesn't re-type their name.
+    try {
+      const lead = JSON.parse(localStorage.getItem('fhink_lead_v1') || 'null');
+      if (lead && !stored.fullName && lead.name) stored.fullName = lead.name;
+    } catch (_) { /* ignore */ }
+    return stored;
   }
 
   function persistAnswers() {
