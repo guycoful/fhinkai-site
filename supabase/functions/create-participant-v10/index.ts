@@ -20,13 +20,43 @@ const COHORT_REG_CLOSE: Record<string, string> = {
   'lms': '2099-12-31T00:00:00+03:00',
 };
 
+function valueShape(value: unknown) {
+  if (value === null) return { type: 'null' };
+  if (Array.isArray(value)) return { type: 'array', length: value.length };
+
+  const type = typeof value;
+  if (type === 'string') return { type, length: value.length };
+  if (type === 'object') return { type, keyCount: Object.keys(value as Record<string, unknown>).length };
+  return { type };
+}
+
+function bodyShape(body: unknown) {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return valueShape(body);
+  }
+
+  const record = body as Record<string, unknown>;
+  return {
+    type: 'object',
+    keyCount: Object.keys(record).length,
+    fields: Object.fromEntries(
+      Object.keys(record)
+        .sort()
+        .map((key) => [key, valueShape(record[key])])
+    ),
+  };
+}
+
 Deno.serve(async (req: Request) => {
+  const reqId = crypto.randomUUID();
+  const userAgent = req.headers.get('user-agent') ?? '';
+
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: CORS });
   }
 
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+    return new Response(JSON.stringify({ error: 'Method not allowed', reqId, userAgent }), {
       status: 405,
       headers: { ...CORS, 'Content-Type': 'application/json' },
     });
@@ -34,15 +64,34 @@ Deno.serve(async (req: Request) => {
 
   try {
     const body = await req.json();
+    const shape = bodyShape(body);
+
+    console.log('create-participant-v10:v17 request_shape', JSON.stringify({
+      reqId,
+      userAgent,
+      shape,
+    }));
 
     if (!body.name || typeof body.name !== 'string' || body.name.trim().length < 2) {
-      return new Response(JSON.stringify({ error: 'name required (min 2 chars)' }), {
+      console.warn('create-participant-v10:v17 validation_failed', JSON.stringify({
+        reqId,
+        userAgent,
+        reason: 'name',
+        shape,
+      }));
+      return new Response(JSON.stringify({ error: 'name required (min 2 chars)', reqId, userAgent }), {
         status: 400,
         headers: { ...CORS, 'Content-Type': 'application/json' },
       });
     }
     if (typeof body.income !== 'number' || body.income < 0) {
-      return new Response(JSON.stringify({ error: 'income required (number >= 0)' }), {
+      console.warn('create-participant-v10:v17 validation_failed', JSON.stringify({
+        reqId,
+        userAgent,
+        reason: 'income',
+        shape,
+      }));
+      return new Response(JSON.stringify({ error: 'income required (number >= 0)', reqId, userAgent }), {
         status: 400,
         headers: { ...CORS, 'Content-Type': 'application/json' },
       });
@@ -61,6 +110,8 @@ Deno.serve(async (req: Request) => {
         message: 'הרישום לקוהורט הזה נסגר. הקוהורט הבא יוכרז בקרוב.',
         cohort,
         started_at: challenge_start_at,
+        reqId,
+        userAgent,
       }), {
         status: 403,
         headers: { ...CORS, 'Content-Type': 'application/json' },
@@ -96,20 +147,36 @@ Deno.serve(async (req: Request) => {
       .single();
 
     if (error) {
-      console.error('Insert error:', error);
-      return new Response(JSON.stringify({ error: error.message }), {
+      console.error('create-participant-v10:v17 insert_error', JSON.stringify({
+        reqId,
+        userAgent,
+        message: error.message,
+        code: error.code,
+      }));
+      return new Response(JSON.stringify({ error: error.message, reqId, userAgent }), {
         status: 500,
         headers: { ...CORS, 'Content-Type': 'application/json' },
       });
     }
 
-    return new Response(JSON.stringify({ id: data.id, row: data }), {
+    console.log('create-participant-v10:v17 created', JSON.stringify({
+      reqId,
+      userAgent,
+      participantId: data.id,
+      cohort,
+    }));
+
+    return new Response(JSON.stringify({ id: data.id, row: data, reqId, userAgent }), {
       status: 200,
       headers: { ...CORS, 'Content-Type': 'application/json' },
     });
   } catch (e) {
-    console.error('Unexpected error:', e);
-    return new Response(JSON.stringify({ error: String(e?.message || e) }), {
+    console.error('create-participant-v10:v17 unexpected_error', JSON.stringify({
+      reqId,
+      userAgent,
+      message: String(e?.message || e),
+    }));
+    return new Response(JSON.stringify({ error: String(e?.message || e), reqId, userAgent }), {
       status: 500,
       headers: { ...CORS, 'Content-Type': 'application/json' },
     });
