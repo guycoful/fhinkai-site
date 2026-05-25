@@ -145,7 +145,7 @@
     const name = firstName(answers.fullName);
     document.querySelectorAll("[data-greet]").forEach((el) => {
       if (!el.dataset.originalText) el.dataset.originalText = el.textContent;
-      const orig = el.dataset.originalText;
+      const orig = genderizeText(el.dataset.originalText, currentGender);
       el.textContent = name ? `${name}, ${orig}` : orig;
     });
     if (doneGreeting) {
@@ -456,13 +456,74 @@
   }
 
   /* ---------------------------------------------------------------------- *
+   * Gender-aware text (resolves slash patterns like "מחויב/ת" or "את/ה")
+   * ---------------------------------------------------------------------- */
+
+  const genderTextNodes = [];
+  const originalTextByNode = new WeakMap();
+  let currentGender = null;
+  // Irregular slash patterns where base+suffix is not the female form.
+  const IRREGULAR_GENDER = {
+    'נשוי/אה': { 'זכר': 'נשוי',  'נקבה': 'נשואה' },
+    'את/ה':    { 'זכר': 'אתה',   'נקבה': 'את'    },
+    'שאת/ה':   { 'זכר': 'שאתה',  'נקבה': 'שאת'   },
+  };
+  const HEB = '֐-׿';
+  const SLASH_TEST = new RegExp(`[${HEB}]+\\/[${HEB}]+`);
+  const SLASH_REPLACE = new RegExp(`[${HEB}]+\\/[${HEB}]+`, 'g');
+
+  function snapshotGenderedNodes(root) {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        // Skip [data-greet] subtrees; applyPersonalization owns those.
+        if (node.parentElement?.closest('[data-greet]')) return NodeFilter.FILTER_REJECT;
+        return node.nodeValue && SLASH_TEST.test(node.nodeValue)
+          ? NodeFilter.FILTER_ACCEPT
+          : NodeFilter.FILTER_REJECT;
+      },
+    });
+    let node;
+    while ((node = walker.nextNode())) {
+      originalTextByNode.set(node, node.nodeValue);
+      genderTextNodes.push(node);
+    }
+  }
+
+  function genderizeText(text, gender) {
+    if (gender !== 'זכר' && gender !== 'נקבה') return text;
+    return text.replace(SLASH_REPLACE, (match) => {
+      const irregular = IRREGULAR_GENDER[match];
+      if (irregular) return irregular[gender];
+      const [base, suffix] = match.split('/');
+      return gender === 'נקבה' ? base + suffix : base;
+    });
+  }
+
+  function applyGender(gender) {
+    currentGender = gender || null;
+    for (const node of genderTextNodes) {
+      const original = originalTextByNode.get(node);
+      if (original == null) continue;
+      const resolved = genderizeText(original, currentGender);
+      if (node.nodeValue !== resolved) node.nodeValue = resolved;
+    }
+    applyPersonalization();
+  }
+
+  /* ---------------------------------------------------------------------- *
    * Init
    * ---------------------------------------------------------------------- */
 
   function init() {
+    snapshotGenderedNodes(document.body);
     bindEvents();
     restoreFormValues();
     markAnswered();
+    if (answers.gender) applyGender(answers.gender);
+    const genderSelect = document.getElementById('gender');
+    if (genderSelect) {
+      genderSelect.addEventListener('change', () => applyGender(genderSelect.value));
+    }
     // Always start at intro on load (don't auto-skip; the brief positions
     // the intro as a moment of context-setting).
     showScreen(0, { silent: true });
