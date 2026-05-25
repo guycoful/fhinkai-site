@@ -11,10 +11,20 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="styles.css?v=20260519" />
+  <link rel="stylesheet" href="styles.css?v=20260524c" />
   <link rel="icon" type="image/png" href="assets/logo-mark.png">
 </head>
 <body>
+
+  <div class="browser-banner" id="browserBanner" hidden>
+    <div class="browser-banner__body">
+      <strong>אם WhatsApp סוגר את השאלון</strong>
+      <span>תפתחי את הקישור ב-Safari ותמשיכי מאותה נקודה.</span>
+    </div>
+    <button type="button" class="browser-banner__copy" id="copyBrowserLink">
+      העתקת קישור
+    </button>
+  </div>
 
   <div class="bg-decoration" aria-hidden="true">
     <div class="bg-grid"></div>
@@ -711,6 +721,6 @@
     <span class="toast__text"></span>
   </div>
 
-  <script src="script.js?v=20260519"></script>
+  <script src="script.js?v=20260524d"></script>
 </body>
 </html>

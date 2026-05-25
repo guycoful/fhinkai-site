@@ -185,6 +185,24 @@
     <div class="prog-step"><div class="prog-dot" id="pd-4">4</div><div class="prog-label">סיכום</div></div>
   </div>
 
+  <!-- ═══ PAGE LOCKED: Challenge not yet open (early-access gate) ═══ -->
+  <div class="page" id="page-locked">
+    <div class="commit-card" style="text-align:center;">
+      <div class="commit-quote" style="font-size:18px;">
+        האתגר עוד לא נפתח לציבור.
+      </div>
+      <div class="commit-question" style="margin-top:18px;">
+        הפיילוט הציבורי ייפתח<br><strong id="lockedOpenDate">בקרוב</strong><br>בשעה 06:00 בבוקר.
+      </div>
+      <p style="margin-top:20px;color:var(--dark-mid);font-size:14px;line-height:1.7;">
+        שמרנו את ההרשמה שלך. נשלח לך תזכורת לפני הפתיחה עם הקישור האישי שלך ליום 1.
+      </p>
+      <p style="margin-top:16px;color:var(--dark-mid);font-size:13px;">
+        אם כבר הגשת את המידע שלך, פתח את האתר במכשיר שבו מילאת ותגיע ישר לדף הסיכום שלך.
+      </p>
+    </div>
+  </div>
+
   <!-- ═══ PAGE 0: Commitment ═══ -->
   <div class="page active" id="page-0">
     <div class="commit-card">
@@ -310,8 +328,8 @@
         <input type="email" id="f_email" placeholder="name@email.com">
       </div>
       <div class="field">
-        <label>טלפון (לקבלת הניתוח)</label>
-        <input type="tel" id="f_phone" placeholder="050-1234567" inputmode="tel">
+        <label>טלפון (חובה - לקבלת תזכורות יומיות באתגר)</label>
+        <input type="tel" id="f_phone" placeholder="050-1234567" inputmode="tel" required>
       </div>
 
       <div class="error-msg" id="errorMsg"></div>
@@ -551,6 +569,9 @@ function onExpenseInput(catId, itemId, isOther) {
 
   // Update running total
   updateExpenseTotal();
+
+  // Persist to Day-2 bridge keys
+  saveAsafSchema();
 }
 
 function updateCategoryIndicator(catId) {
@@ -604,6 +625,102 @@ function getAllExpenseData() {
     });
   });
   return detail;
+}
+
+// ════════════════════════════════════════════════════════════
+// Asaf Day-2 bridge: write fhink_day1_v1 + fhink_lead_v1
+// Day 2 (V11) reads these keys. Item ids must match data.js groupMap.
+// ════════════════════════════════════════════════════════════
+
+// day1 category id → Day-2 (Asaf) category id
+const ASAF_CAT = {
+  household:'household', insurance:'insurance', health:'health',
+  hobbies:'classes', education:'education', transport:'transport',
+  telecom:'comms', food:'food', leisure:'leisure',
+  investments:'investments', loans:'loans'
+};
+
+// day1 item id → Day-2 (Asaf) item id
+const ASAF_ITEM = {
+  rent:'rent_mortgage', arnona:'arnona', electricity:'electricity', water:'water',
+  gas:'gas', vaad_bayit:'house_committee', household_other:'other',
+  car_insurance:'car_insurance', home_insurance:'home_insurance',
+  life_insurance:'life_insurance', health_insurance:'health_insurance', insurance_other:'other',
+  kupat_holim:'health_fund', medication:'medicine', dental:'dental', glasses:'optics', health_other:'other',
+  kids_hobbies:'kids_classes', fitness:'fitness', hobbies_other:'other',
+  daycare:'kindergarten', afternoon:'afternoon', tuition:'tuition', education_other:'other',
+  fuel:'fuel', parking:'parking', public_transit:'public', leasing:'leasing', transport_other:'other',
+  phone_bill:'phone', internet:'internet', tv:'tv', streaming:'streaming', telecom_other:'other',
+  groceries:'supermarket', dining:'restaurants', delivery:'delivery', coffee:'coffee', food_other:'other',
+  entertainment:'entertainment', vacations:'vacations', shopping:'shopping', personal_hobbies:'hobbies', leisure_other:'other',
+  keren_hishtalmut:'training_fund', extra_pension:'extra_pension', gemel_invest:'investments',
+  child_savings:'kids_savings', general_savings:'general_savings', investments_other:'other',
+  bank_loans:'bank_loans', credit_card:'credit_cards', external_loans:'private_loans', loans_other:'other'
+};
+
+// day1 has no real gender field; infer from job type, else '' (Day 2 defaults to male)
+function deriveGender() {
+  const job = (document.getElementById('f_job') || {}).value || '';
+  if (job === 'שכירה') return 'נקבה';
+  if (job === 'שכיר')  return 'זכר';
+  return '';
+}
+
+function buildAsafExpenses() {
+  const expenses = {};
+  CATEGORIES.forEach(cat => {
+    const asafCat = ASAF_CAT[cat.id] || cat.id;
+    cat.items.forEach(item => {
+      const el = document.getElementById('exp_' + item.id);
+      const val = parseFloat(el && el.value) || 0;
+      if (val > 0) {
+        const asafItem = ASAF_ITEM[item.id] || item.id;
+        if (!expenses[asafCat]) expenses[asafCat] = {};
+        const entry = { amount: String(val) };
+        if (item.isOther) {
+          const t = document.getElementById('detail_text_' + item.id);
+          if (t && t.value.trim()) entry.desc = t.value.trim();
+        }
+        expenses[asafCat][asafItem] = entry;
+      }
+    });
+  });
+  return expenses;
+}
+
+function buildAdditionalIncomes() {
+  const list = [];
+  document.querySelectorAll('#extraIncomeList .income-row').forEach(row => {
+    const typeEl = row.querySelector('select');
+    const amtEl  = row.querySelector('input[type=number]');
+    const amount = parseFloat(amtEl && amtEl.value) || 0;
+    if (amount > 0) list.push({ type: typeEl ? typeEl.value : 'אחר', amount: amount });
+  });
+  return list;
+}
+
+// Writes both keys Day 2 expects. localStorage is the source of truth for the
+// internal pilot (DB sync planned 31.5). Called on every input + on submit.
+function saveAsafSchema() {
+  try {
+    const nameEl  = document.getElementById('f_name');
+    const emailEl = document.getElementById('f_email');
+    const phoneEl = document.getElementById('f_phone');
+    const incEl   = document.getElementById('f_income');
+    const name   = (nameEl  && nameEl.value  || '').trim();
+    const email  = (emailEl && emailEl.value || '').trim();
+    const phone  = (phoneEl && phoneEl.value || '').trim();
+    const salary = parseFloat(incEl && incEl.value) || 0;
+    const gender = deriveGender();
+
+    const day1 = {
+      user: { firstName: name, fullName: name, gender: gender },
+      basics: { salary: salary, additionalIncomes: buildAdditionalIncomes() },
+      expenses: buildAsafExpenses()
+    };
+    localStorage.setItem('fhink_day1_v1', JSON.stringify(day1));
+    localStorage.setItem('fhink_lead_v1', JSON.stringify({ fullName: name, gender: gender, email: email, phone: phone }));
+  } catch (_) {}
 }
 
 // ── Validate "other" fields ──
@@ -727,6 +844,7 @@ function calcExtraIncome() {
     total += parseFloat(inp.value) || 0;
   });
   document.getElementById('f_income2').value = total;
+  saveAsafSchema();
 }
 
 // ── Navigation ──
@@ -805,6 +923,21 @@ async function submitForm() {
   btn.textContent = 'שולח...';
   err.style.display = 'none';
 
+  // Validate phone (required for daily WhatsApp reminders)
+  const phoneVal = document.getElementById('f_phone').value.trim();
+  const phoneDigits = phoneVal.replace(/[^0-9]/g, '');
+  if (phoneDigits.length < 9) {
+    err.textContent = 'נדרש טלפון תקין (לפחות 9 ספרות) כדי לקבל תזכורות יומיות.';
+    err.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'שלח וסכם ←';
+    document.getElementById('f_phone').focus();
+    return;
+  }
+
+  // Persist Day-2 bridge keys before the network call (localStorage = source of truth for pilot)
+  saveAsafSchema();
+
   const legacyCols = mapExpensesToLegacyColumns();
   const expensesDetail = JSON.stringify(getAllExpenseData());
 
@@ -845,19 +978,33 @@ async function submitForm() {
     annual_subs: 0,
     // Detailed expense JSON
     expenses_detail: expensesDetail,
-    // Cohort from URL (?cohort=pilot|lms), default pilot
-    cohort: (new URLSearchParams(location.search).get('cohort') || 'pilot').toLowerCase()
+    // Cohort/source from URL (?cohort=pilot|lms&src=...)
+    cohort: (new URLSearchParams(location.search).get('cohort') || 'pilot').toLowerCase(),
+    source: new URLSearchParams(location.search).get('src') || ''
   };
 
   try {
     const res = await fetch(SUPA_URL + '/functions/v1/create-participant-v10', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'apikey': SUPA_KEY,
+        'Authorization': 'Bearer ' + SUPA_KEY,
+      },
       body: JSON.stringify(row),
     });
 
     if (res.status === 403) {
       const errData = await res.json();
+      if (errData.error === 'too_early') {
+        const startsAt = errData.starts_at ? new Date(errData.starts_at) : null;
+        const dateStr = startsAt ? startsAt.toLocaleDateString('he-IL', { day: 'numeric', month: 'long' }) : 'בקרוב';
+        err.innerHTML = '<strong>האתגר עוד לא נפתח.</strong><br>נפתחים ב-' + dateStr + ' בבוקר. שמרנו את ההרשמה שלך, נשלח תזכורת לפני הפתיחה.';
+        err.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'שלח וסכם ←';
+        return;
+      }
       if (errData.error === 'late_registration') {
         err.innerHTML = '<strong>הרישום סגור.</strong><br>הקוהורט הזה כבר התחיל. הקוהורט הבא ייפתח בקרוב.';
         err.style.display = 'block';
@@ -939,8 +1086,73 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
 
+  // Early-access gate: block new visitors before the cohort officially opens.
+  // Mirrors create-participant-v10 COHORT_START. Existing participants are
+  // not affected (their existingPid hits the branch above and skips this).
+  const COHORT_START_DAY1 = {
+    'pilot': '2026-06-07T06:00:00+03:00',
+    'rehearsal': '2026-05-20T06:00:00+03:00',
+    'lms': '2026-05-20T11:30:00+03:00',
+  };
+  const urlCohort = (new URLSearchParams(location.search).get('cohort') || 'pilot').toLowerCase();
+  const cohortKey = COHORT_START_DAY1[urlCohort] ? urlCohort : 'pilot';
+  const startIso = COHORT_START_DAY1[cohortKey];
+  const startTs = new Date(startIso).getTime();
+  if (Date.now() < startTs && !location.search.includes('bypass=1')) {
+    const d = new Date(startIso);
+    const dateStr = d.toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' });
+    const labelEl = document.getElementById('lockedOpenDate');
+    if (labelEl) labelEl.textContent = dateStr;
+    document.getElementById('page-0').classList.remove('active');
+    document.getElementById('page-locked').classList.add('active');
+    return;
+  }
+
   buildCategories();
   checkLock();
+
+  // Prefill name/email/phone/age/job from previous funnel steps:
+  //   - landing/script.js stored 'fhink_lead_v1' { name, email, phone }
+  //   - READY/script.js stored 'fhink:opening-questionnaire' with questionnaire answers
+  //   - URL param ?lead=email is fallback for direct entry
+  try {
+    const params = new URLSearchParams(location.search);
+    const leadEmail = params.get('lead');
+    const lead  = JSON.parse(localStorage.getItem('fhink_lead_v1') || 'null');
+    const ready = JSON.parse(localStorage.getItem('fhink:opening-questionnaire') || 'null');
+    const emailEl = document.getElementById('f_email');
+    const phoneEl = document.getElementById('f_phone');
+    const nameEl  = document.getElementById('f_name');
+    const ageEl   = document.getElementById('f_age');
+    const jobEl   = document.getElementById('f_job');
+    // Name+email+phone come from landing first; fall back to READY answers
+    const name  = (lead && lead.name)  || (ready && ready.fullName) || '';
+    const email = (lead && lead.email) || (ready && ready.email)    || '';
+    const phone = (lead && lead.phone) || (ready && ready.phone)    || '';
+    const age   = (ready && ready.age) || '';
+    if (nameEl  && !nameEl.value  && name)  nameEl.value  = name;
+    if (emailEl && !emailEl.value && email) emailEl.value = email;
+    if (phoneEl && !phoneEl.value && phone) phoneEl.value = phone;
+    if (ageEl   && !ageEl.value   && age)   ageEl.value   = age;
+    if (leadEmail && emailEl && !emailEl.value) emailEl.value = leadEmail;
+    // Map READY's employment + gender to day1's job dropdown (שכיר/שכירה/עצמאי)
+    if (jobEl && !jobEl.value && ready && ready.employment) {
+      const g   = (ready.gender || '').trim();
+      const emp = (ready.employment || '').trim();
+      let jv = '';
+      if (emp.indexOf('עצמא') !== -1)            jv = 'עצמאי';
+      else if (emp.indexOf('שכיר') !== -1)       jv = (g === 'נקבה') ? 'שכירה' : 'שכיר';
+      if (jv) jobEl.value = jv;
+    }
+  } catch (_) { /* ignore */ }
+
+  // Autosave Day-2 bridge keys on personal/contact field changes
+  ['f_name','f_income','f_job','f_email','f_phone'].forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el) { el.addEventListener('input', saveAsafSchema); el.addEventListener('change', saveAsafSchema); }
+  });
+  // Persist prefilled values so Day-2 bridge keys reflect them even without user edits
+  try { saveAsafSchema(); } catch (_) {}
 
   // Show progress bar with page 0 active
   document.getElementById('mainProgress').style.display = 'flex';

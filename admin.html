@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>אדמין - המקפצה הפיננסית</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -59,9 +62,37 @@
   .day-btn { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; border: 2px solid var(--cream-dark); background: var(--white); cursor: pointer; transition: all .2s; font-family: 'Heebo'; }
   .day-btn.active { background: var(--gold); border-color: var(--gold-dark); color: white; }
   .day-btn:hover { border-color: var(--gold); }
+
+  /* Login overlay (replaces native prompt, reliable on all browsers/mobile) */
+  .login-overlay { position: fixed; inset: 0; z-index: 2000; background: var(--navy); display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .login-card { background: var(--white); border-radius: 16px; padding: 32px 24px; width: 100%; max-width: 360px; text-align: center; box-shadow: 0 8px 30px rgba(0,0,0,.3); }
+  .login-card h2 { font-size: 18px; font-weight: 800; color: var(--navy); margin-bottom: 6px; }
+  .login-card p { font-size: 13px; color: var(--dark-mid); margin-bottom: 18px; }
+  .login-card input { width: 100%; padding: 13px 14px; border: 1.5px solid var(--cream-dark); border-radius: 10px; font-family: 'Heebo'; font-size: 15px; margin-bottom: 12px; text-align: center; }
+  .login-card input:focus { outline: none; border-color: var(--gold); }
+  .login-card .btn-login { width: 100%; padding: 13px; border: none; border-radius: 50px; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--navy); font-family: 'Heebo'; font-size: 15px; font-weight: 700; cursor: pointer; }
+  .login-err { color: var(--red); font-size: 13px; margin-bottom: 10px; display: none; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tab-btn { padding: 10px 20px; border: 1px solid var(--cream-dark); border-radius: 50px; font-family: 'Heebo'; font-size: 14px; font-weight: 700; cursor: pointer; background: var(--white); color: var(--dark-mid); }
+  .tab-btn.active { background: var(--navy); color: var(--gold); border-color: var(--navy); }
+  .badge-test { background: var(--cream); color: var(--dark-mid); }
 </style>
 </head>
 <body>
+
+<!-- Login overlay -->
+<div class="login-overlay" id="loginOverlay" style="display:none">
+  <div class="login-card">
+    <h2>אדמין - המקפצה הפיננסית</h2>
+    <p>הזן סיסמת אדמין כדי להיכנס</p>
+    <div class="login-err" id="loginErr"></div>
+    <input type="password" id="adminPass" placeholder="סיסמת אדמין" autocomplete="current-password"
+           onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn-login" onclick="doLogin()">כניסה</button>
+  </div>
+</div>
 
 <div class="header">
   <h1>אדמין - המקפצה הפיננסית</h1>
@@ -72,6 +103,12 @@
 </div>
 
 <div class="container">
+  <div class="tabs">
+    <button class="tab-btn active" id="tabbtn-participants" onclick="showTab('participants')">משתתפים (יום 1)</button>
+    <button class="tab-btn" id="tabbtn-leads" onclick="showTab('leads')">נרשמים (לידים)</button>
+  </div>
+
+  <section id="tab-participants">
   <!-- Unlock control -->
   <div class="unlock-bar">
     <div class="label">שחרור ימים למשתתפים:</div>
@@ -81,6 +118,12 @@
       <button class="day-btn" id="ubtn-3" onclick="setUnlock(3)">3</button>
       <button class="day-btn" id="ubtn-4" onclick="setUnlock(4)">4</button>
     </div>
+  </div>
+
+  <div class="unlock-bar" style="justify-content:flex-start">
+    <label style="font-size:13px;display:flex;align-items:center;gap:6px;cursor:pointer">
+      <input type="checkbox" id="hidePartTests" checked onchange="renderParticipants()"> הסתר טסטים
+    </label>
   </div>
 
   <!-- Stats -->
@@ -105,6 +148,7 @@
           <th>יתרה</th>
           <th>ניתוח</th>
           <th>תאריך</th>
+          <th>מקור</th>
           <th>פעולות</th>
         </tr>
       </thead>
@@ -115,6 +159,30 @@
       <div>אין משתתפים עדיין. ברגע שמישהו ימלא את השאלון ב-Fillout, הוא יופיע כאן.</div>
     </div>
   </div>
+  </section>
+
+  <section id="tab-leads" style="display:none">
+    <div class="unlock-bar" style="justify-content:flex-start;gap:18px;flex-wrap:wrap">
+      <div class="label">נרשמים</div>
+      <label style="font-size:13px;display:flex;align-items:center;gap:6px;cursor:pointer">
+        <input type="checkbox" id="hideTests" checked onchange="renderLeads()"> הסתר טסטים והרצות מערכת
+      </label>
+      <button class="btn-sm" onclick="exportLeadsCSV()">ייצוא CSV</button>
+    </div>
+    <div class="stats-bar">
+      <div class="stat-box"><div class="num" id="l-total">-</div><div class="lbl">סה"כ נרשמים</div></div>
+      <div class="stat-box"><div class="num" id="l-real" style="color:var(--green)">-</div><div class="lbl">אמיתיים</div></div>
+      <div class="stat-box"><div class="num" id="l-today" style="color:var(--gold-dark)">-</div><div class="lbl">היום</div></div>
+      <div class="stat-box"><div class="num" id="l-sources" style="font-size:13px;font-weight:700">-</div><div class="lbl">מקורות</div></div>
+    </div>
+    <div class="table-wrap">
+      <div class="loading" id="leadsLoading">טוען נרשמים...</div>
+      <table id="leadsTable" style="display:none">
+        <thead><tr><th>שם</th><th>טלפון</th><th>מייל</th><th>מקור</th><th>קוהורט</th><th>תאריך</th><th>סטטוס</th></tr></thead>
+        <tbody id="leadsBody"></tbody>
+      </table>
+    </div>
+  </section>
 </div>
 
 <script>
@@ -123,16 +191,28 @@ const ADMIN_FN = `${SUPA_URL}/functions/v1/admin-list-participants`;
 const TOKEN_STORAGE_KEY = 'fhinkai_admin_token';
 
 function getAdminToken() {
-  let t = sessionStorage.getItem(TOKEN_STORAGE_KEY);
-  if (!t) {
-    t = prompt('הזן סיסמת אדמין:');
-    if (t) sessionStorage.setItem(TOKEN_STORAGE_KEY, t);
-  }
-  return t || '';
+  return sessionStorage.getItem(TOKEN_STORAGE_KEY) || '';
 }
 
 function clearAdminToken() {
   sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+}
+
+function showLogin(msg) {
+  const err = document.getElementById('loginErr');
+  if (msg) { err.textContent = msg; err.style.display = 'block'; } else { err.style.display = 'none'; }
+  document.getElementById('loginOverlay').style.display = 'flex';
+  const inp = document.getElementById('adminPass');
+  inp.value = '';
+  setTimeout(() => inp.focus(), 50);
+}
+
+function doLogin() {
+  const t = document.getElementById('adminPass').value.trim();
+  if (!t) return;
+  sessionStorage.setItem(TOKEN_STORAGE_KEY, t);
+  document.getElementById('loginOverlay').style.display = 'none';
+  loadParticipants();
 }
 
 function fmt(n) { return '₪' + Math.round(n || 0).toLocaleString('he-IL'); }
@@ -148,16 +228,14 @@ function setUnlock(level) {
 }
 setUnlock(currentUnlock);
 
+let ALL_PARTICIPANTS = null;
 async function loadParticipants() {
   document.getElementById('loadingMsg').style.display = 'block';
   document.getElementById('participantsTable').style.display = 'none';
   document.getElementById('emptyState').style.display = 'none';
 
   const token = getAdminToken();
-  if (!token) {
-    document.getElementById('loadingMsg').textContent = 'דרושה סיסמה לטעינת הנתונים. רענן את הדף.';
-    return;
-  }
+  if (!token) { showLogin(); return; }
 
   const res = await fetch(ADMIN_FN, {
     headers: { 'Authorization': `Bearer ${token}` }
@@ -165,30 +243,49 @@ async function loadParticipants() {
 
   if (res.status === 401) {
     clearAdminToken();
-    document.getElementById('loadingMsg').textContent = 'סיסמה שגויה. רענן את הדף ונסה שוב.';
+    showLogin('סיסמה שגויה, נסה שוב.');
     return;
   }
 
   const body = await res.json();
-  const rows = body.rows || [];
-
+  ALL_PARTICIPANTS = body.rows || [];
   document.getElementById('loadingMsg').style.display = 'none';
+  renderParticipants();
+}
 
-  if (!rows.length) {
+// Self / test detection. System rows are named __...__ (e.g. __QA_TEST__, __validate_fix__).
+// Guy and Omri's own entries are not real prospects either — match by name and by phone.
+function normPhone(p) { let d = String(p || '').replace(/\D/g, ''); if (d.startsWith('972')) d = '0' + d.slice(3); return d; }
+const SELF_PHONES = ['0546232063', '0546232066', '0522955505'];
+const SELF_NAMES = ['גיא', 'גיא כהן', 'עמרי', 'עמרי חן', 'עומרי', 'עומרי חן'];
+function isTestParticipant(r) {
+  const n = String((r && r.name) || '').trim();
+  if (n.startsWith('__') || /test|בדיק|דמו|demo|healthcheck/i.test(n)) return true;
+  if (SELF_NAMES.includes(n)) return true;
+  if (SELF_PHONES.includes(normPhone(r && r.phone))) return true;
+  return false;
+}
+
+function renderParticipants() {
+  if (ALL_PARTICIPANTS === null) return;
+  const hide = document.getElementById('hidePartTests').checked;
+  const rows = hide ? ALL_PARTICIPANTS.filter(r => !isTestParticipant(r)) : ALL_PARTICIPANTS;
+
+  if (!ALL_PARTICIPANTS.length) {
     document.getElementById('emptyState').style.display = 'block';
+    document.getElementById('participantsTable').style.display = 'none';
     return;
   }
+  document.getElementById('emptyState').style.display = 'none';
 
-  // Stats
+  // Stats (reflect the filtered view)
   document.getElementById('s-total').textContent = rows.length;
   document.getElementById('s-surplus').textContent = rows.filter(r => r.balance >= 0).length;
   document.getElementById('s-deficit').textContent = rows.filter(r => r.balance < 0).length;
   document.getElementById('s-nosave').textContent = rows.filter(r => r.total_savings === 0).length;
 
-  // Table
   const tbody = document.getElementById('tableBody');
   tbody.innerHTML = '';
-
   rows.forEach(r => {
     const totalExp = (r.total_fixed || 0) + (r.total_variable || 0) + (r.total_annual || 0);
     const balClass = r.balance >= 0 ? 'balance-pos' : 'balance-neg';
@@ -206,8 +303,9 @@ async function loadParticipants() {
       <td class="${balClass}">${fmt(r.balance)}</td>
       <td>${sentBadge}</td>
       <td>${fmtDate(r.created_at)}</td>
+      <td>${r.lead_source || '-'}</td>
       <td>
-        <button class="btn-sm" onclick="window.open('challenge_day2.html?pid=${r.id}')">צפה</button>
+        <button class="btn-sm" onclick="window.open('day2.html?pid=${r.id}')">צפה</button>
         <button class="btn-sm" onclick="copyLink('${r.id}')">העתק לינק</button>
       </td>`;
     tbody.appendChild(tr);
@@ -217,7 +315,7 @@ async function loadParticipants() {
 }
 
 function copyLink(pid) {
-  const url = window.location.origin + '/outputs/challenge_day2.html?pid=' + pid;
+  const url = window.location.origin + '/day2.html?pid=' + pid;
   navigator.clipboard.writeText(url).then(() => alert('הלינק הועתק!')).catch(() => {
     prompt('העתק:', url);
   });
@@ -225,7 +323,7 @@ function copyLink(pid) {
 
 async function exportCSV() {
   const token = getAdminToken();
-  if (!token) return;
+  if (!token) { showLogin(); return; }
   const res = await fetch(`${ADMIN_FN}?format=csv`, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
@@ -242,7 +340,81 @@ async function exportCSV() {
   a.click();
 }
 
-loadParticipants();
+// ── Leads tab ──
+const LEADS_FN = `${SUPA_URL}/functions/v1/admin-list-leads`;
+let LEADS = null;
+
+function showTab(t) {
+  document.getElementById('tab-participants').style.display = t === 'participants' ? 'block' : 'none';
+  document.getElementById('tab-leads').style.display = t === 'leads' ? 'block' : 'none';
+  document.getElementById('tabbtn-participants').classList.toggle('active', t === 'participants');
+  document.getElementById('tabbtn-leads').classList.toggle('active', t === 'leads');
+  if (t === 'leads' && LEADS === null) loadLeads();
+}
+
+async function loadLeads() {
+  const token = getAdminToken();
+  if (!token) { showLogin(); return; }
+  document.getElementById('leadsLoading').style.display = 'block';
+  document.getElementById('leadsTable').style.display = 'none';
+  const res = await fetch(LEADS_FN, { headers: { 'Authorization': `Bearer ${token}` } });
+  if (res.status === 401) { clearAdminToken(); showLogin('סיסמה שגויה, נסה שוב.'); return; }
+  const body = await res.json();
+  LEADS = body.rows || [];
+  renderLeads();
+}
+
+function renderLeads() {
+  if (LEADS === null) return;
+  const hideTests = document.getElementById('hideTests').checked;
+  const rows = hideTests ? LEADS.filter(r => !r.is_test) : LEADS;
+  document.getElementById('leadsLoading').style.display = 'none';
+
+  const real = LEADS.filter(r => !r.is_test);
+  document.getElementById('l-total').textContent = LEADS.length;
+  document.getElementById('l-real').textContent = real.length;
+  const todayIL = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jerusalem' });
+  document.getElementById('l-today').textContent = real.filter(r =>
+    new Date(r.created_at).toLocaleDateString('en-CA', { timeZone: 'Asia/Jerusalem' }) === todayIL).length;
+  const srcMap = {};
+  real.forEach(r => { const s = r.source || '-'; srcMap[s] = (srcMap[s] || 0) + 1; });
+  document.getElementById('l-sources').textContent =
+    Object.entries(srcMap).map(([k, v]) => `${k}: ${v}`).join(' · ') || '-';
+
+  const tb = document.getElementById('leadsBody');
+  tb.innerHTML = '';
+  rows.forEach(r => {
+    const badge = r.is_test
+      ? '<span class="badge badge-test">טסט</span>'
+      : '<span class="badge badge-sent">נרשם</span>';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${r.name || '-'}</strong></td>
+      <td>${r.phone || '-'}</td>
+      <td>${r.email || '-'}</td>
+      <td>${r.source || '-'}</td>
+      <td>${r.cohort || '-'}</td>
+      <td>${fmtDate(r.created_at)}</td>
+      <td>${badge}</td>`;
+    tb.appendChild(tr);
+  });
+  document.getElementById('leadsTable').style.display = 'table';
+}
+
+async function exportLeadsCSV() {
+  const token = getAdminToken();
+  if (!token) { showLogin(); return; }
+  const res = await fetch(`${LEADS_FN}?format=csv`, { headers: { 'Authorization': `Bearer ${token}` } });
+  if (res.status === 401) { clearAdminToken(); showLogin('סיסמה שגויה, נסה שוב.'); return; }
+  const csv = await res.text();
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'challenge_leads.csv';
+  a.click();
+}
+
+if (getAdminToken()) { loadParticipants(); } else { showLogin(); }
 </script>
 </body>
 </html>

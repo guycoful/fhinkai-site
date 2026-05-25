@@ -82,28 +82,14 @@ jobs:
               FAILED=1
               FAILED_NAMES="${FAILED_NAMES}${name} (HTTP ${STATUS})\n"
               TITLE="[health-check] ${name} failing - ${NOW}"
-              ISSUE_BODY="**Endpoint:** \`${name}\`
-**Expected status:** \`${expected_status}\`
-**Actual status:** \`${STATUS}\`
-**Response body (first 500 chars):**
-\`\`\`
-${BODY}
-\`\`\`
-**Best guess at cause:** $(guess_cause "$STATUS" "$BODY")"
+              ISSUE_BODY=$(printf '**Endpoint:** `%s`\n**Expected status:** `%s`\n**Actual status:** `%s`\n**Response body (first 500 chars):**\n```\n%s\n```\n**Best guess at cause:** %s' "$name" "$expected_status" "$STATUS" "$BODY" "$(guess_cause "$STATUS" "$BODY")")
               open_or_comment "$TITLE" "$ISSUE_BODY"
             elif [[ -n "$body_must_contain" ]] && ! echo "$BODY" | grep -q "$body_must_contain"; then
               echo "FAIL [$name]: body missing '${body_must_contain}'"
               FAILED=1
               FAILED_NAMES="${FAILED_NAMES}${name} (body mismatch)\n"
               TITLE="[health-check] ${name} failing - ${NOW}"
-              ISSUE_BODY="**Endpoint:** \`${name}\`
-**Expected status:** \`${expected_status}\` (received OK)
-**Body check:** expected body to contain \`${body_must_contain}\` — not found
-**Response body (first 500 chars):**
-\`\`\`
-${BODY}
-\`\`\`
-**Best guess at cause:** Schema mismatch — response format changed"
+              ISSUE_BODY=$(printf '**Endpoint:** `%s`\n**Expected status:** `%s` (received OK)\n**Body check:** expected body to contain `%s` — not found\n**Response body (first 500 chars):**\n```\n%s\n```\n**Best guess at cause:** Schema mismatch — response format changed' "$name" "$expected_status" "$body_must_contain" "$BODY")
               open_or_comment "$TITLE" "$ISSUE_BODY"
             else
               echo "PASS [$name]"

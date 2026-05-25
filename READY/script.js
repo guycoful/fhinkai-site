@@ -29,6 +29,8 @@
   const dayLabel = document.getElementById("dayLabel");
   const doneGreeting = document.getElementById("doneGreeting");
   const recap = document.getElementById("recap");
+  const browserBanner = document.getElementById("browserBanner");
+  const copyBrowserLink = document.getElementById("copyBrowserLink");
 
   /* ---------------------------------------------------------------------- *
    * State
@@ -38,18 +40,32 @@
   let answers = loadAnswers();
   let toastTimer = null;
   let saveTimer = null;
+  let lastPersonalizationKey = "";
+  const isWhatsAppBrowser = /WhatsApp/i.test(navigator.userAgent || "");
 
   /* ---------------------------------------------------------------------- *
    * Storage
    * ---------------------------------------------------------------------- */
 
   function loadAnswers() {
+    // Always return a plain object. localStorage may contain "null" / "[]" / garbage
+    // from previous broken sessions; never let `answers` be null or non-object.
+    let stored = {};
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : {};
-    } catch (_) {
-      return {};
-    }
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+          stored = parsed;
+        }
+      }
+    } catch (_) { /* ignore corrupt storage */ }
+    // Hydrate from landing's lead form so user doesn't re-type their name.
+    try {
+      const lead = JSON.parse(localStorage.getItem('fhink_lead_v1') || 'null');
+      if (lead && !stored.fullName && lead.name) stored.fullName = lead.name;
+    } catch (_) { /* ignore */ }
+    return stored;
   }
 
   function persistAnswers() {
@@ -103,7 +119,7 @@
 
     // Sync header pill + personalized subtitles to match this screen
     updateDayLabel(target);
-    applyPersonalization();
+    applyPersonalization(Boolean(opts.forcePersonalization));
 
     if (target === "done") buildRecap();
 
@@ -141,16 +157,66 @@
     return first.length > 18 ? first.slice(0, 18) : first;
   }
 
-  function applyPersonalization() {
+  // Gender-aware text: swap "X/Y" placeholders to a single form once the user
+  // tells us their gender in step 1. Keeps the dual form for "אחר" / "מעדיף לא".
+  const GENDER_MAP_M = {
+    'את/ה': 'אתה', 'מחויב/ת': 'מחויב', 'מאמין/ה': 'מאמין', 'תוכל/י': 'תוכל',
+    'חושב/ת': 'חושב', 'מתנהל/ת': 'מתנהל', 'בטוח/ה': 'בטוח', 'עוקב/ת': 'עוקב',
+    'ניצב/ת': 'ניצב', 'מוכן/ה': 'מוכן', 'מוכן חלקית': 'מוכן חלקית',
+    'פרט/י': 'פרט', 'כתוב/י': 'כתוב', 'בחר/י': 'בחר',
+  };
+  const GENDER_MAP_F = {
+    'את/ה': 'את', 'מחויב/ת': 'מחויבת', 'מאמין/ה': 'מאמינה', 'תוכל/י': 'תוכלי',
+    'חושב/ת': 'חושבת', 'מתנהל/ת': 'מתנהלת', 'בטוח/ה': 'בטוחה', 'עוקב/ת': 'עוקבת',
+    'ניצב/ת': 'ניצבת', 'מוכן/ה': 'מוכנה', 'מוכן חלקית': 'מוכנה חלקית',
+    'פרט/י': 'פרטי', 'כתוב/י': 'כתבי', 'בחר/י': 'בחרי',
+  };
+
+  function genderize(text, gender) {
+    if (!text) return text;
+    if (gender !== 'זכר' && gender !== 'נקבה') return text;
+    const map = gender === 'נקבה' ? GENDER_MAP_F : GENDER_MAP_M;
+    let result = text;
+    Object.keys(map).forEach((from) => {
+      if (result.indexOf(from) !== -1) result = result.split(from).join(map[from]);
+    });
+    return result;
+  }
+
+  // Selectors swept for gender swap. Deliberately exclude step1 (where gender
+  // is being collected) and the answer cards in step1's gender select itself.
+  const GENDER_SCAN_SELECTORS = [
+    '.screen[data-screen="step2"] .q-title',
+    '.screen[data-screen="step2"] .answer-card__text',
+    '.screen[data-screen="step3"] .q-title',
+    '.screen[data-screen="step3"] .answer-card__text',
+    '.screen[data-screen="step3"] .field-label',
+    '.screen[data-screen="step3"] .q-hint',
+    '.screen[data-screen="step4"] .q-title',
+    '.screen[data-screen="step4"] .answer-card__text',
+    '.screen[data-screen="step4"] .q-hint',
+    '.screen[data-screen="step4"] .field-label',
+  ].join(',');
+
+  function applyPersonalization(force = false) {
     const name = firstName(answers.fullName);
+    const gender = answers.gender;
+    const key = `${name}|${gender || ''}`;
+    if (!force && key === lastPersonalizationKey) return;
+    lastPersonalizationKey = key;
     document.querySelectorAll("[data-greet]").forEach((el) => {
       if (!el.dataset.originalText) el.dataset.originalText = el.textContent;
-      const orig = el.dataset.originalText;
-      el.textContent = name ? `${name}, ${orig}` : orig;
+      const baseGendered = genderize(el.dataset.originalText, gender);
+      el.textContent = name ? `${name}, ${baseGendered}` : baseGendered;
     });
     if (doneGreeting) {
       doneGreeting.textContent = name ? `מעולה ${name}` : "מעולה";
     }
+    // Gender swap on question titles, answer card labels, field labels, hints.
+    document.querySelectorAll(GENDER_SCAN_SELECTORS).forEach((el) => {
+      if (!el.dataset.originalTextG) el.dataset.originalTextG = el.textContent;
+      el.textContent = genderize(el.dataset.originalTextG, gender);
+    });
   }
 
   function buildRecap() {
@@ -249,12 +315,21 @@
     }
     persistAnswers();
     const email = getLeadEmail();
-    if (email && window.location.protocol !== 'file:') {
+    // Client-side guard: never POST a malformed body (root cause of 24.5 Carmit 400).
+    // If answers is missing/empty/non-object, skip the save instead of triggering server 400.
+    const answersOk = answers && typeof answers === 'object' && !Array.isArray(answers) && Object.keys(answers).length > 0;
+    if (email && answersOk && window.location.protocol !== 'file:') {
       fetch('https://vuvavjmbvdqnwtleudqh.supabase.co/functions/v1/save-pretest-answers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, answers }),
       }).catch((e) => console.warn('[FHINK] pretest save failed:', e));
+    } else if (email && !answersOk) {
+      console.warn('[FHINK] pretest save skipped: answers invalid', {
+        type: typeof answers,
+        isArray: Array.isArray(answers),
+        keys: answers && typeof answers === 'object' ? Object.keys(answers).length : 'n/a',
+      });
     }
     showScreen(SCREENS.indexOf("done"));
   }
@@ -398,6 +473,35 @@
    * Event wiring
    * ---------------------------------------------------------------------- */
 
+  function setupBrowserBanner() {
+    if (!browserBanner || !isWhatsAppBrowser) return;
+    browserBanner.hidden = false;
+
+    copyBrowserLink?.addEventListener("click", async () => {
+      const link = window.location.href;
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(link);
+          showToast("הקישור הועתק");
+          return;
+        }
+      } catch (_) { /* fall through */ }
+
+      try {
+        const helper = document.createElement("textarea");
+        helper.value = link;
+        helper.setAttribute("readonly", "");
+        helper.style.position = "fixed";
+        helper.style.opacity = "0";
+        document.body.appendChild(helper);
+        helper.select();
+        document.execCommand("copy");
+        helper.remove();
+        showToast("הקישור הועתק");
+      } catch (_) { showToast("אפשר להעתיק את הכתובת משורת הכתובת"); }
+    });
+  }
+
   function bindEvents() {
     // Next / Back / Finish / Day1
     document.addEventListener("click", (e) => {
@@ -409,9 +513,40 @@
       else if (action === "back") goBack();
       else if (action === "finish") finish();
       else if (action === "day1") {
+        // Carry cohort + source attribution to day1 so participants keep their lead context.
+        const p = new URLSearchParams(window.location.search);
+        let cohort = p.get('cohort');
+        let src = p.get('src');
+        if (!cohort) {
+          try { cohort = (JSON.parse(localStorage.getItem('fhink_lead_v1') || 'null') || {}).cohort || ''; } catch (_) {}
+        }
+        if (!src) {
+          try { src = (JSON.parse(localStorage.getItem('fhink_lead_v1') || 'null') || {}).source || ''; } catch (_) {}
+        }
+        cohort = (cohort || 'pilot').toLowerCase();
+
+        // Early-access gate: block before official cohort start (mirrors create-participant-v10 COHORT_START)
+        const COHORT_START = {
+          'pilot': '2026-06-07T06:00:00+03:00',
+          'rehearsal': '2026-05-20T06:00:00+03:00',
+          'lms': '2026-05-20T11:30:00+03:00',
+        };
+        const startIso = COHORT_START[cohort] || COHORT_START['pilot'];
+        const startTs = new Date(startIso).getTime();
+        if (Date.now() < startTs) {
+          const d = new Date(startIso);
+          const dateStr = d.toLocaleDateString('he-IL', { day: 'numeric', month: 'long' });
+          showToast('האתגר ייפתח ב-' + dateStr + ' בבוקר. שמרנו את ההרשמה שלך ונשלח תזכורת.');
+          return;
+        }
+
         showToast("מעבר ליום 1 של האתגר…");
         setTimeout(() => {
-          window.location.href = '/day1.html';
+          const params = new URLSearchParams();
+          if (cohort) params.set('cohort', cohort);
+          if (src) params.set('src', src);
+          const qs = params.toString();
+          window.location.href = '/day1.html' + (qs ? '?' + qs : '');
         }, 1400);
       }
     });
@@ -461,11 +596,12 @@
 
   function init() {
     bindEvents();
+    setupBrowserBanner();
     restoreFormValues();
     markAnswered();
     // Always start at intro on load (don't auto-skip; the brief positions
     // the intro as a moment of context-setting).
-    showScreen(0, { silent: true });
+    showScreen(0, { silent: true, forcePersonalization: true });
   }
 
   if (document.readyState === "loading") {
