@@ -477,14 +477,31 @@
       else if (action === "back") goBack();
       else if (action === "finish") finish();
       else if (action === "day1") {
+        // Carry cohort to day1 so participants are tagged correctly (not defaulted to pilot)
+        const p = new URLSearchParams(window.location.search);
+        let cohort = p.get('cohort');
+        if (!cohort) {
+          try { cohort = (JSON.parse(localStorage.getItem('fhink_lead_v1') || 'null') || {}).cohort || ''; } catch (_) {}
+        }
+        cohort = (cohort || 'pilot').toLowerCase();
+
+        // Early-access gate: block before official cohort start (mirrors create-participant-v10 COHORT_START)
+        const COHORT_START = {
+          'pilot': '2026-06-07T06:00:00+03:00',
+          'rehearsal': '2026-05-20T06:00:00+03:00',
+          'lms': '2026-05-20T11:30:00+03:00',
+        };
+        const startIso = COHORT_START[cohort] || COHORT_START['pilot'];
+        const startTs = new Date(startIso).getTime();
+        if (Date.now() < startTs) {
+          const d = new Date(startIso);
+          const dateStr = d.toLocaleDateString('he-IL', { day: 'numeric', month: 'long' });
+          showToast('האתגר ייפתח ב-' + dateStr + ' בבוקר. שמרנו את ההרשמה שלך ונשלח תזכורת.');
+          return;
+        }
+
         showToast("מעבר ליום 1 של האתגר…");
         setTimeout(() => {
-          // Carry cohort to day1 so participants are tagged correctly (not defaulted to pilot)
-          const p = new URLSearchParams(window.location.search);
-          let cohort = p.get('cohort');
-          if (!cohort) {
-            try { cohort = (JSON.parse(localStorage.getItem('fhink_lead_v1') || 'null') || {}).cohort || ''; } catch (_) {}
-          }
           window.location.href = '/day1.html' + (cohort ? '?cohort=' + encodeURIComponent(cohort) : '');
         }, 1400);
       }

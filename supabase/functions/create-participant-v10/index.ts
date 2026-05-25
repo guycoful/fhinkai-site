@@ -8,16 +8,21 @@ const CORS = {
 };
 
 // Day-1 unlock time (stored as challenge_start_at)
+// pilot postponed from 2026-05-31 → 2026-06-07 (Omri decision 25.5: warmup
+// messages flow + Twilio number not yet validated).
 const COHORT_START: Record<string, string> = {
-  'pilot': '2026-05-31T06:00:00+03:00',
+  'pilot': '2026-06-07T06:00:00+03:00',
   'rehearsal': '2026-05-20T06:00:00+03:00',
   'lms': '2026-05-20T11:30:00+03:00',
 };
 
 // Registration cutoff; defaults to COHORT_START when not overridden.
-// lms has no cutoff — registration stays open indefinitely.
+// lms + pilot have no cutoff — registration stays open from cohort_start onwards.
+// (Without this override, cutoff would equal cohort_start and the early-access
+// gate below would leave a zero-length valid window.)
 const COHORT_REG_CLOSE: Record<string, string> = {
   'lms': '2099-12-31T00:00:00+03:00',
+  'pilot': '2099-12-31T00:00:00+03:00',
 };
 
 Deno.serve(async (req: Request) => {
@@ -52,9 +57,25 @@ Deno.serve(async (req: Request) => {
     const cohort = COHORT_START[cohortInput] ? cohortInput : 'pilot';
     const challenge_start_at = COHORT_START[cohort];
 
+    const now = Date.now();
+    const startTs = new Date(challenge_start_at).getTime();
+
+    // Early-access gate: reject submissions before official cohort start.
+    // Mirrors the frontend gate in /READY/script.js and /day1.html.
+    if (now < startTs) {
+      return new Response(JSON.stringify({
+        error: 'too_early',
+        message: 'האתגר ייפתח ב-' + challenge_start_at + '. שמרנו את ההרשמה שלך, נשלח תזכורת לפני הפתיחה.',
+        cohort,
+        starts_at: challenge_start_at,
+      }), {
+        status: 403,
+        headers: { ...CORS, 'Content-Type': 'application/json' },
+      });
+    }
+
     const regClose = COHORT_REG_CLOSE[cohort] ?? challenge_start_at;
     const cutoff = new Date(regClose).getTime();
-    const now = Date.now();
     if (now > cutoff) {
       return new Response(JSON.stringify({
         error: 'late_registration',

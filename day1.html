@@ -185,6 +185,24 @@
     <div class="prog-step"><div class="prog-dot" id="pd-4">4</div><div class="prog-label">סיכום</div></div>
   </div>
 
+  <!-- ═══ PAGE LOCKED: Challenge not yet open (early-access gate) ═══ -->
+  <div class="page" id="page-locked">
+    <div class="commit-card" style="text-align:center;">
+      <div class="commit-quote" style="font-size:18px;">
+        האתגר עוד לא נפתח לציבור.
+      </div>
+      <div class="commit-question" style="margin-top:18px;">
+        הפיילוט הציבורי ייפתח<br><strong id="lockedOpenDate">בקרוב</strong><br>בשעה 06:00 בבוקר.
+      </div>
+      <p style="margin-top:20px;color:var(--dark-mid);font-size:14px;line-height:1.7;">
+        שמרנו את ההרשמה שלך. נשלח לך תזכורת לפני הפתיחה עם הקישור האישי שלך ליום 1.
+      </p>
+      <p style="margin-top:16px;color:var(--dark-mid);font-size:13px;">
+        אם כבר הגשת את המידע שלך, פתח את האתר במכשיר שבו מילאת ותגיע ישר לדף הסיכום שלך.
+      </p>
+    </div>
+  </div>
+
   <!-- ═══ PAGE 0: Commitment ═══ -->
   <div class="page active" id="page-0">
     <div class="commit-card">
@@ -973,6 +991,15 @@ async function submitForm() {
 
     if (res.status === 403) {
       const errData = await res.json();
+      if (errData.error === 'too_early') {
+        const startsAt = errData.starts_at ? new Date(errData.starts_at) : null;
+        const dateStr = startsAt ? startsAt.toLocaleDateString('he-IL', { day: 'numeric', month: 'long' }) : 'בקרוב';
+        err.innerHTML = '<strong>האתגר עוד לא נפתח.</strong><br>נפתחים ב-' + dateStr + ' בבוקר. שמרנו את ההרשמה שלך, נשלח תזכורת לפני הפתיחה.';
+        err.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'שלח וסכם ←';
+        return;
+      }
       if (errData.error === 'late_registration') {
         err.innerHTML = '<strong>הרישום סגור.</strong><br>הקוהורט הזה כבר התחיל. הקוהורט הבא ייפתח בקרוב.';
         err.style.display = 'block';
@@ -1051,6 +1078,28 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     document.getElementById('pd-4').classList.add('active');
     showAlreadyDoneScreen(existingPid);
+    return;
+  }
+
+  // Early-access gate: block new visitors before the cohort officially opens.
+  // Mirrors create-participant-v10 COHORT_START. Existing participants are
+  // not affected (their existingPid hits the branch above and skips this).
+  const COHORT_START_DAY1 = {
+    'pilot': '2026-06-07T06:00:00+03:00',
+    'rehearsal': '2026-05-20T06:00:00+03:00',
+    'lms': '2026-05-20T11:30:00+03:00',
+  };
+  const urlCohort = (new URLSearchParams(location.search).get('cohort') || 'pilot').toLowerCase();
+  const cohortKey = COHORT_START_DAY1[urlCohort] ? urlCohort : 'pilot';
+  const startIso = COHORT_START_DAY1[cohortKey];
+  const startTs = new Date(startIso).getTime();
+  if (Date.now() < startTs && !location.search.includes('bypass=1')) {
+    const d = new Date(startIso);
+    const dateStr = d.toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' });
+    const labelEl = document.getElementById('lockedOpenDate');
+    if (labelEl) labelEl.textContent = dateStr;
+    document.getElementById('page-0').classList.remove('active');
+    document.getElementById('page-locked').classList.add('active');
     return;
   }
 
