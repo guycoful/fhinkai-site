@@ -29,6 +29,8 @@
   const dayLabel = document.getElementById("dayLabel");
   const doneGreeting = document.getElementById("doneGreeting");
   const recap = document.getElementById("recap");
+  const browserBanner = document.getElementById("browserBanner");
+  const copyBrowserLink = document.getElementById("copyBrowserLink");
 
   /* ---------------------------------------------------------------------- *
    * State
@@ -38,6 +40,8 @@
   let answers = loadAnswers();
   let toastTimer = null;
   let saveTimer = null;
+  let lastPersonalizationKey = "";
+  const isWhatsAppBrowser = /WhatsApp/i.test(navigator.userAgent || "");
 
   /* ---------------------------------------------------------------------- *
    * Storage
@@ -115,7 +119,7 @@
 
     // Sync header pill + personalized subtitles to match this screen
     updateDayLabel(target);
-    applyPersonalization();
+    applyPersonalization(Boolean(opts.forcePersonalization));
 
     if (target === "done") buildRecap();
 
@@ -194,9 +198,12 @@
     '.screen[data-screen="step4"] .field-label',
   ].join(',');
 
-  function applyPersonalization() {
+  function applyPersonalization(force = false) {
     const name = firstName(answers.fullName);
     const gender = answers.gender;
+    const key = `${name}|${gender || ''}`;
+    if (!force && key === lastPersonalizationKey) return;
+    lastPersonalizationKey = key;
     document.querySelectorAll("[data-greet]").forEach((el) => {
       if (!el.dataset.originalText) el.dataset.originalText = el.textContent;
       const baseGendered = genderize(el.dataset.originalText, gender);
@@ -466,6 +473,35 @@
    * Event wiring
    * ---------------------------------------------------------------------- */
 
+  function setupBrowserBanner() {
+    if (!browserBanner || !isWhatsAppBrowser) return;
+    browserBanner.hidden = false;
+
+    copyBrowserLink?.addEventListener("click", async () => {
+      const link = window.location.href;
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(link);
+          showToast("הקישור הועתק");
+          return;
+        }
+      } catch (_) { /* fall through */ }
+
+      try {
+        const helper = document.createElement("textarea");
+        helper.value = link;
+        helper.setAttribute("readonly", "");
+        helper.style.position = "fixed";
+        helper.style.opacity = "0";
+        document.body.appendChild(helper);
+        helper.select();
+        document.execCommand("copy");
+        helper.remove();
+        showToast("הקישור הועתק");
+      } catch (_) { showToast("אפשר להעתיק את הכתובת משורת הכתובת"); }
+    });
+  }
+
   function bindEvents() {
     // Next / Back / Finish / Day1
     document.addEventListener("click", (e) => {
@@ -477,11 +513,15 @@
       else if (action === "back") goBack();
       else if (action === "finish") finish();
       else if (action === "day1") {
-        // Carry cohort to day1 so participants are tagged correctly (not defaulted to pilot)
+        // Carry cohort + source attribution to day1 so participants keep their lead context.
         const p = new URLSearchParams(window.location.search);
         let cohort = p.get('cohort');
+        let src = p.get('src');
         if (!cohort) {
           try { cohort = (JSON.parse(localStorage.getItem('fhink_lead_v1') || 'null') || {}).cohort || ''; } catch (_) {}
+        }
+        if (!src) {
+          try { src = (JSON.parse(localStorage.getItem('fhink_lead_v1') || 'null') || {}).source || ''; } catch (_) {}
         }
         cohort = (cohort || 'pilot').toLowerCase();
 
@@ -502,7 +542,11 @@
 
         showToast("מעבר ליום 1 של האתגר…");
         setTimeout(() => {
-          window.location.href = '/day1.html' + (cohort ? '?cohort=' + encodeURIComponent(cohort) : '');
+          const params = new URLSearchParams();
+          if (cohort) params.set('cohort', cohort);
+          if (src) params.set('src', src);
+          const qs = params.toString();
+          window.location.href = '/day1.html' + (qs ? '?' + qs : '');
         }, 1400);
       }
     });
@@ -552,11 +596,12 @@
 
   function init() {
     bindEvents();
+    setupBrowserBanner();
     restoreFormValues();
     markAnswered();
     // Always start at intro on load (don't auto-skip; the brief positions
     // the intro as a moment of context-setting).
-    showScreen(0, { silent: true });
+    showScreen(0, { silent: true, forcePersonalization: true });
   }
 
   if (document.readyState === "loading") {

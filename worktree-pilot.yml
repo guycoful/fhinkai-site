@@ -1,0 +1,47 @@
+# WorktreePilot configuration
+# https://github.com/WorktreePilot/worktree-pilot
+#
+# Each AI coding task runs in its own isolated environment:
+#   - one Git worktree
+#   - one branch
+#   - one agent session
+#   - one (optional) set of dev services
+#
+# {{task}} is replaced with the task name passed to `wtp start <task>`.
+# {{port}} is replaced with the actual port the service was assigned.
+
+agent:
+  command: claude
+  cwd: worktree
+  interactive: true
+  captureOutput: false
+
+worktree:
+  path: .worktree-pilot/worktrees/{{task}}
+  create: true
+  branch: worktree-{{task}}
+  base: HEAD
+
+install:
+  # fhinkai-site is currently a static site + Supabase Functions repo.
+  # There is no package.json / lockfile, so install is intentionally disabled.
+  command: ""
+
+terminal:
+  provider: fallback   # auto | windows-terminal | fallback
+
+services:
+  web:
+    command: python -m http.server {{port}}
+    port: 3000
+    interactive: false
+    captureOutput: true
+
+  # Supabase local functions are started manually when needed because
+  # `supabase functions serve` does not expose a simple port flag.
+  # Manual command from a task worktree:
+  #   cmd /c npx supabase functions serve --env-file .env.local
+
+cleanup:
+  # Runtime cleanup only. Use `wtp finish <task>` for post-review cleanup.
+  stopServicesWhenAgentExits: true
