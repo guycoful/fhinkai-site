@@ -495,6 +495,8 @@
   let currentGender = null;
   // Irregular slash patterns where base+suffix is not the female form.
   const IRREGULAR_GENDER = {
+    'מוכן/ה':  { 'זכר': 'מוכן',   'נקבה': 'מוכנה'  },
+    'מאמין/ה': { 'זכר': 'מאמין',  'נקבה': 'מאמינה' },
     'נשוי/אה': { 'זכר': 'נשוי',  'נקבה': 'נשואה' },
     'את/ה':    { 'זכר': 'אתה',   'נקבה': 'את'    },
     'שאת/ה':   { 'זכר': 'שאתה',  'נקבה': 'שאת'   },
