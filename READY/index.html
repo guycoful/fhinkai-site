@@ -11,20 +11,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="styles.css?v=20260524c" />
+  <link rel="stylesheet" href="styles.css?v=20260519" />
   <link rel="icon" type="image/png" href="assets/logo-mark.png">
 </head>
 <body>
-
-  <div class="browser-banner" id="browserBanner" hidden>
-    <div class="browser-banner__body">
-      <strong>אם WhatsApp סוגר את השאלון</strong>
-      <span>תפתחי את הקישור ב-Safari ותמשיכי מאותה נקודה.</span>
-    </div>
-    <button type="button" class="browser-banner__copy" id="copyBrowserLink">
-      העתקת קישור
-    </button>
-  </div>
 
   <div class="bg-decoration" aria-hidden="true">
     <div class="bg-grid"></div>
@@ -273,7 +263,7 @@
         <form class="form" data-step="2" novalidate>
 
           <fieldset class="q-block">
-            <legend class="q-title">עד כמה אתה עוקב כיום אחרי ההוצאות שלך?</legend>
+            <legend class="q-title">עד כמה את/ה עוקב/ת כיום אחרי ההוצאות שלך?</legend>
             <div class="cards-stack" role="radiogroup" aria-label="מעקב הוצאות">
               <input type="radio" id="q1-a" name="q1" value="בכלל לא" />
               <label for="q1-a" class="answer-card answer-card--lg">
@@ -299,7 +289,7 @@
           </fieldset>
 
           <fieldset class="q-block">
-            <legend class="q-title">האם יש לך תקציב חודשי שאתה פועל לפיו?</legend>
+            <legend class="q-title">האם יש לך תקציב חודשי שאת/ה פועל/ת לפיו?</legend>
             <div class="cards-stack" role="radiogroup" aria-label="תקציב חודשי">
               <input type="radio" id="q2-a" name="q2" value="לא" />
               <label for="q2-a" class="answer-card answer-card--lg">
@@ -314,12 +304,12 @@
               <input type="radio" id="q2-c" name="q2" value="יש תקציב אבל לא תמיד עומד בו" />
               <label for="q2-c" class="answer-card answer-card--lg">
                 <span class="answer-card__check" aria-hidden="true"></span>
-                <span class="answer-card__text">יש לי תקציב, אבל לא תמיד עומד בו</span>
+                <span class="answer-card__text">יש לי תקציב, אבל לא תמיד עומד/ת בו</span>
               </label>
               <input type="radio" id="q2-d" name="q2" value="כן ועוקב אחריו" />
               <label for="q2-d" class="answer-card answer-card--lg">
                 <span class="answer-card__check" aria-hidden="true"></span>
-                <span class="answer-card__text">כן, יש תקציב ואני עוקב אחריו בפועל</span>
+                <span class="answer-card__text">כן, יש תקציב ואני עוקב/ת אחריו בפועל</span>
               </label>
             </div>
           </fieldset>
@@ -351,27 +341,27 @@
           </fieldset>
 
           <fieldset class="q-block">
-            <legend class="q-title">עד כמה אתה מרגיש בטוח בקבלת החלטות פיננסיות?</legend>
+            <legend class="q-title">עד כמה את/ה מרגיש/ה בטוח/ה בקבלת החלטות פיננסיות?</legend>
             <div class="cards-stack" role="radiogroup" aria-label="ביטחון בהחלטות">
               <input type="radio" id="q4-a" name="q4" value="בכלל לא בטוח" />
               <label for="q4-a" class="answer-card answer-card--lg">
                 <span class="answer-card__check" aria-hidden="true"></span>
-                <span class="answer-card__text">בכלל לא בטוח</span>
+                <span class="answer-card__text">בכלל לא בטוח/ה</span>
               </label>
               <input type="radio" id="q4-b" name="q4" value="לא מספיק בטוח" />
               <label for="q4-b" class="answer-card answer-card--lg">
                 <span class="answer-card__check" aria-hidden="true"></span>
-                <span class="answer-card__text">לא מספיק בטוח</span>
+                <span class="answer-card__text">לא מספיק בטוח/ה</span>
               </label>
               <input type="radio" id="q4-c" name="q4" value="די בטוח" />
               <label for="q4-c" class="answer-card answer-card--lg">
                 <span class="answer-card__check" aria-hidden="true"></span>
-                <span class="answer-card__text">די בטוח</span>
+                <span class="answer-card__text">די בטוח/ה</span>
               </label>
               <input type="radio" id="q4-d" name="q4" value="בטוח מאוד" />
               <label for="q4-d" class="answer-card answer-card--lg">
                 <span class="answer-card__check" aria-hidden="true"></span>
-                <span class="answer-card__text">בטוח מאוד</span>
+                <span class="answer-card__text">בטוח/ה מאוד</span>
               </label>
             </div>
           </fieldset>
@@ -456,7 +446,7 @@
             <input type="checkbox" id="p8" name="painPoints" value="אני לא יודע מאיפה להתחיל" />
             <label for="p8" class="answer-card">
               <span class="answer-card__check answer-card__check--box" aria-hidden="true"></span>
-              <span class="answer-card__text">אני לא יודע מאיפה להתחיל</span>
+              <span class="answer-card__text">אני לא יודע/ת מאיפה להתחיל</span>
             </label>
 
             <input type="checkbox" id="p9" name="painPoints" value="אחר" data-other="painOther" />
@@ -515,22 +505,22 @@
               <input type="radio" id="g1-a" name="commitment" value="לא בטוח שאצליח" />
               <label for="g1-a" class="answer-card answer-card--lg">
                 <span class="answer-card__check" aria-hidden="true"></span>
-                <span class="answer-card__text">לא בטוח שאצליח להקדיש זמן</span>
+                <span class="answer-card__text">לא בטוח/ה שאצליח להקדיש זמן</span>
               </label>
               <input type="radio" id="g1-b" name="commitment" value="מוכן חלקית" />
               <label for="g1-b" class="answer-card answer-card--lg">
                 <span class="answer-card__check" aria-hidden="true"></span>
-                <span class="answer-card__text">מוכן חלקית</span>
+                <span class="answer-card__text">מוכן/ה חלקית</span>
               </label>
               <input type="radio" id="g1-c" name="commitment" value="מוכן ומחויב" />
               <label for="g1-c" class="answer-card answer-card--lg">
                 <span class="answer-card__check" aria-hidden="true"></span>
-                <span class="answer-card__text">מוכן ומחויב</span>
+                <span class="answer-card__text">מוכן/ה ומחויב/ת</span>
               </label>
               <input type="radio" id="g1-d" name="commitment" value="מחויב מאוד" />
               <label for="g1-d" class="answer-card answer-card--lg">
                 <span class="answer-card__check" aria-hidden="true"></span>
-                <span class="answer-card__text">מחויב מאוד</span>
+                <span class="answer-card__text">מחויב/ת מאוד</span>
               </label>
             </div>
           </fieldset>
@@ -541,22 +531,22 @@
               <input type="radio" id="g2-a" name="belief" value="בכלל לא מאמין" />
               <label for="g2-a" class="answer-card answer-card--lg">
                 <span class="answer-card__check" aria-hidden="true"></span>
-                <span class="answer-card__text">בכלל לא מאמין שזה אפשרי עבורי</span>
+                <span class="answer-card__text">בכלל לא מאמין/ה שזה אפשרי עבורי</span>
               </label>
               <input type="radio" id="g2-b" name="belief" value="אולי לא בטוח" />
               <label for="g2-b" class="answer-card answer-card--lg">
                 <span class="answer-card__check" aria-hidden="true"></span>
-                <span class="answer-card__text">אולי, אבל אני לא בטוח</span>
+                <span class="answer-card__text">אולי, אבל אני לא בטוח/ה</span>
               </label>
               <input type="radio" id="g2-c" name="belief" value="מאמין שאפשרי" />
               <label for="g2-c" class="answer-card answer-card--lg">
                 <span class="answer-card__check" aria-hidden="true"></span>
-                <span class="answer-card__text">מאמין שזה אפשרי</span>
+                <span class="answer-card__text">מאמין/ה שזה אפשרי</span>
               </label>
               <input type="radio" id="g2-d" name="belief" value="מאמין מאוד" />
               <label for="g2-d" class="answer-card answer-card--lg">
                 <span class="answer-card__check" aria-hidden="true"></span>
-                <span class="answer-card__text">מאמין מאוד שזה אפשרי</span>
+                <span class="answer-card__text">מאמין/ה מאוד שזה אפשרי</span>
               </label>
             </div>
           </fieldset>
@@ -721,6 +711,6 @@
     <span class="toast__text"></span>
   </div>
 
-  <script src="script.js?v=20260524d"></script>
+  <script src="script.js?v=20260519"></script>
 </body>
 </html>
