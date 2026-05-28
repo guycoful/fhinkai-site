@@ -7,140 +7,190 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>לוח סנכרון - פיילוט עומרי</title>
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #f6f2ea;
-      --panel: #fffdf9;
-      --ink: #2c2419;
-      --muted: #6c6256;
-      --line: #e3d7c4;
-      --navy: #1a2744;
-      --navy-soft: #eef3fb;
-      --gold: #caa14b;
-      --gold-soft: #fbf2de;
-      --green: #2e7d52;
-      --green-soft: #eaf6ef;
-      --red: #b64b42;
-      --red-soft: #fdeceb;
-      --shadow: 0 14px 34px rgba(26, 39, 68, 0.08);
+      --page: #f4f7f6;
+      --surface: #ffffff;
+      --surface-2: #f8faf9;
+      --text: #18201c;
+      --muted: #60706a;
+      --line: #dce5e1;
+      --teal: #1f7a6d;
+      --teal-soft: #e6f4f1;
+      --amber: #9f6b16;
+      --amber-soft: #fff4dc;
+      --blue: #255b8d;
+      --blue-soft: #e8f1fb;
+      --green: #28734f;
+      --green-soft: #e7f5ed;
+      --red: #a9413a;
+      --red-soft: #fae9e7;
+      --shadow: 0 10px 24px rgba(24, 32, 28, 0.06);
     }
 
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: "Heebo", sans-serif;
-      color: var(--ink);
-      background:
-        radial-gradient(circle at top left, rgba(202, 161, 75, 0.14), transparent 26%),
-        linear-gradient(180deg, #fcf8f1 0%, var(--bg) 100%);
+      background: var(--page);
+      color: var(--text);
     }
 
-    .shell {
-      max-width: 1440px;
+    button, input, textarea { font: inherit; }
+
+    .app {
+      max-width: 1480px;
       margin: 0 auto;
-      padding: 24px 18px 36px;
+      padding: 18px;
     }
 
-    .hero {
-      background: linear-gradient(135deg, var(--navy), #28406a);
-      color: #fff;
-      border-radius: 24px;
-      padding: 26px;
+    .top {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: stretch;
+      margin-bottom: 14px;
+    }
+
+    .headline {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px 20px;
       box-shadow: var(--shadow);
-      margin-bottom: 18px;
     }
 
-    .hero-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 18px;
-      flex-wrap: wrap;
-      align-items: flex-start;
+    h1 {
+      margin: 0 0 6px;
+      font-size: 28px;
+      line-height: 1.2;
     }
 
-    .hero h1 {
-      margin: 0 0 10px;
-      font-size: clamp(28px, 4vw, 42px);
-      line-height: 1.1;
-    }
-
-    .hero p {
+    .headline p {
       margin: 0;
-      max-width: 780px;
-      color: rgba(255,255,255,0.9);
-      line-height: 1.6;
-      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.55;
+      max-width: 880px;
     }
 
-    .hero-meta {
-      min-width: 260px;
-      background: rgba(255,255,255,0.11);
-      border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 18px;
-      padding: 12px 14px;
+    .meta {
+      min-width: 280px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 8px;
+      align-content: center;
     }
 
-    .hero-meta strong, .hero-meta span {
-      display: block;
-    }
-
-    .hero-meta strong { font-size: 12px; margin-bottom: 4px; }
-    .hero-meta span { font-size: 14px; color: rgba(255,255,255,0.92); }
-
-    .topbar {
+    .meta-row {
       display: flex;
       justify-content: space-between;
       gap: 14px;
-      flex-wrap: wrap;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-
-    .status-line {
       color: var(--muted);
       font-size: 14px;
-      line-height: 1.5;
     }
 
-    .status-line strong { color: var(--ink); }
+    .meta-row strong { color: var(--text); }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      min-height: 40px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--amber);
+      flex: 0 0 auto;
+    }
+
+    .dot.ok { background: var(--green); }
+    .dot.bad { background: var(--red); }
 
     .actions {
       display: flex;
-      gap: 10px;
+      gap: 8px;
+      align-items: center;
       flex-wrap: wrap;
     }
 
-    .btn {
-      border: none;
-      border-radius: 14px;
-      padding: 12px 16px;
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.15s ease, opacity 0.15s ease;
+    .field {
+      min-height: 40px;
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+      padding: 9px 10px;
+      outline: none;
     }
 
-    .btn:hover { transform: translateY(-1px); }
-    .btn:disabled { opacity: 0.55; cursor: wait; transform: none; }
-    .btn-primary { background: var(--navy); color: #fff; }
-    .btn-secondary { background: #fff; color: var(--ink); border: 1px solid var(--line); }
-    .btn-danger { background: var(--red-soft); color: var(--red); border: 1px solid #f3c7c2; }
+    .field:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(31, 122, 109, 0.14);
+    }
 
-    .grid {
+    .updated-by { width: 160px; }
+
+    .btn {
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+    }
+
+    .btn:hover { border-color: #b8c7c1; }
+    .btn:disabled { opacity: 0.55; cursor: wait; }
+    .btn.primary { background: var(--teal); color: #fff; border-color: var(--teal); }
+    .btn.danger { background: var(--red-soft); color: var(--red); border-color: #efc7c2; }
+
+    .board {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
-      gap: 16px;
-      margin-bottom: 18px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+      align-items: start;
     }
 
     .column {
-      background: var(--panel);
+      background: var(--surface);
       border: 1px solid var(--line);
-      border-radius: 20px;
-      box-shadow: var(--shadow);
-      padding: 16px;
+      border-radius: 8px;
       min-height: 420px;
+      box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
     }
@@ -150,303 +200,273 @@
       justify-content: space-between;
       align-items: center;
       gap: 10px;
-      margin-bottom: 14px;
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-2);
+      border-radius: 8px 8px 0 0;
     }
 
     .column h2 {
       margin: 0;
-      font-size: 20px;
+      font-size: 18px;
+      line-height: 1.2;
     }
 
     .count {
       min-width: 32px;
-      height: 32px;
-      padding: 0 10px;
+      height: 28px;
       border-radius: 999px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      padding: 0 10px;
       font-size: 13px;
       font-weight: 800;
     }
 
-    .count-amber { background: var(--gold-soft); color: #946c1e; }
-    .count-blue { background: var(--navy-soft); color: var(--navy); }
-    .count-green { background: var(--green-soft); color: var(--green); }
+    .count.amber { background: var(--amber-soft); color: var(--amber); }
+    .count.blue { background: var(--blue-soft); color: var(--blue); }
+    .count.green { background: var(--green-soft); color: var(--green); }
 
     .items {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+      display: grid;
+      gap: 10px;
+      padding: 12px;
       flex: 1;
-      min-height: 80px;
+      align-content: start;
     }
 
     .card {
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 14px;
       background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      display: grid;
+      gap: 8px;
     }
 
-    .card-top {
+    .card-tools {
       display: flex;
-      gap: 10px;
-      align-items: flex-start;
       justify-content: space-between;
-      margin-bottom: 8px;
+      gap: 8px;
+      align-items: center;
     }
 
-    .icon-actions {
+    .card-tools strong {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .icon-row {
       display: flex;
-      gap: 6px;
+      gap: 5px;
       flex-wrap: wrap;
     }
 
     .icon-btn {
       width: 30px;
       height: 30px;
+      border-radius: 6px;
       border: 1px solid var(--line);
-      border-radius: 10px;
       background: #fff;
       color: var(--muted);
-      font: inherit;
-      font-weight: 800;
       cursor: pointer;
+      font-weight: 800;
+      line-height: 1;
     }
 
-    .field {
-      display: block;
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background: #fffdfa;
-      padding: 10px 12px;
-      font: inherit;
-      color: var(--ink);
-    }
+    .icon-btn:hover { border-color: var(--teal); color: var(--teal); }
 
-    .field + .field,
-    .field + .field-row,
-    .field-row + .field {
-      margin-top: 8px;
-    }
-
-    .field.title {
-      font-size: 15px;
-      font-weight: 700;
-    }
-
-    textarea.field {
-      min-height: 84px;
-      resize: vertical;
-      line-height: 1.5;
-    }
-
-    .field-row {
+    .card-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(120px, 160px);
+      grid-template-columns: minmax(0, 1fr) 138px;
       gap: 8px;
     }
 
-    .add-btn {
-      margin-top: 12px;
-      width: 100%;
-      background: #fff;
-      border: 1px dashed var(--line);
-      color: var(--muted);
-    }
-
-    .notes-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
-      gap: 16px;
-    }
-
-    .note-panel {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      box-shadow: var(--shadow);
-      padding: 16px;
-    }
-
-    .note-panel h3 {
-      margin: 0 0 10px;
-      font-size: 18px;
-    }
-
-    .note-panel textarea {
-      width: 100%;
-      min-height: 180px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 12px 14px;
-      font: inherit;
+    textarea.field {
+      min-height: 74px;
       resize: vertical;
-      background: #fffdfa;
-      line-height: 1.6;
-      color: var(--ink);
+      line-height: 1.45;
     }
 
-    .footer-note {
-      margin-top: 12px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.6;
-    }
-
-    .login-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 1000;
-      background: rgba(26, 39, 68, 0.88);
-      display: flex;
-      align-items: center;
+    .add-card {
+      margin: 0 12px 12px;
       justify-content: center;
-      padding: 20px;
-    }
-
-    .login-card {
-      width: 100%;
-      max-width: 420px;
-      background: #fff;
-      border-radius: 22px;
-      padding: 28px 24px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.25);
-      text-align: center;
-    }
-
-    .login-card h2 {
-      margin: 0 0 8px;
-      font-size: 24px;
-      color: var(--navy);
-    }
-
-    .login-card p {
-      margin: 0 0 14px;
+      border-style: dashed;
       color: var(--muted);
-      line-height: 1.55;
-      font-size: 14px;
     }
 
-    .login-card input {
-      width: 100%;
+    .notes {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .note {
+      background: var(--surface);
       border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 13px 14px;
-      font: inherit;
-      text-align: center;
-      margin-bottom: 12px;
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: var(--shadow);
     }
 
-    .login-error {
-      min-height: 20px;
-      margin-bottom: 8px;
-      color: var(--red);
-      font-size: 13px;
+    .note h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
     }
 
-    @media (max-width: 1100px) {
-      .grid, .notes-grid { grid-template-columns: 1fr; }
-      .column { min-height: auto; }
+    .note textarea { min-height: 150px; }
+
+    .share {
+      width: min(720px, calc(100vw - 24px));
+      position: fixed;
+      right: 50%;
+      bottom: 18px;
+      transform: translateX(50%) translateY(140%);
+      background: #17231f;
+      color: #fff;
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.22);
+      display: grid;
+      gap: 8px;
+      transition: transform 0.2s ease;
+      z-index: 20;
+    }
+
+    .share.open { transform: translateX(50%) translateY(0); }
+
+    .share-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+    }
+
+    .share input {
+      direction: ltr;
+      text-align: left;
+    }
+
+    .toast {
+      position: fixed;
+      left: 18px;
+      bottom: 18px;
+      background: #17231f;
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: 8px;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      pointer-events: none;
+      z-index: 30;
+    }
+
+    .toast.open {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 980px) {
+      .top, .board, .notes { grid-template-columns: 1fr; }
+      .meta { min-width: 0; }
+    }
+
+    @media (max-width: 620px) {
+      .app { padding: 10px; }
+      .toolbar { align-items: stretch; }
+      .actions { width: 100%; }
+      .btn, .updated-by { flex: 1 1 auto; }
+      .card-grid { grid-template-columns: 1fr; }
+      .share-row { grid-template-columns: 1fr; }
+      h1 { font-size: 24px; }
     }
   </style>
 </head>
 <body>
-  <div class="login-overlay" id="loginOverlay">
-    <div class="login-card">
-      <h2>לוח סנכרון - פיילוט עומרי</h2>
-      <p>הזן טוקן גישה כדי לצפות ולעדכן את הלוח המשותף.</p>
-      <div class="login-error" id="loginError"></div>
-      <input type="password" id="tokenInput" placeholder="טוקן גישה" autocomplete="current-password">
-      <button class="btn btn-primary" id="loginBtn" type="button">כניסה</button>
-    </div>
-  </div>
-
-  <div class="shell">
-    <section class="hero">
-      <div class="hero-top">
-        <div>
-          <h1 id="boardTitle">לוח סנכרון</h1>
-          <p id="boardDescription">טוען...</p>
-        </div>
-        <div class="hero-meta">
-          <strong>עדכון אחרון</strong>
-          <span id="lastUpdated">-</span>
-          <strong style="margin-top:10px">עודכן על ידי</strong>
-          <span id="lastUpdatedBy">-</span>
-        </div>
+  <main class="app">
+    <section class="top">
+      <div class="headline">
+        <h1 id="boardTitle">לוח סנכרון - פיילוט עומרי</h1>
+        <p id="boardDescription">טוען לוח עבודה משותף...</p>
       </div>
+      <aside class="meta">
+        <div class="meta-row"><strong>עדכון אחרון</strong><span id="lastUpdated">-</span></div>
+        <div class="meta-row"><strong>עודכן על ידי</strong><span id="lastUpdatedBy">-</span></div>
+      </aside>
     </section>
 
-    <div class="topbar">
-      <div class="status-line">
-        <strong>סטטוס:</strong>
-        <span id="statusText">טוען לוח...</span>
-      </div>
+    <section class="toolbar">
+      <div class="status"><span class="dot" id="statusDot"></span><span id="statusText">מכין לוח...</span></div>
       <div class="actions">
-        <input class="field" id="updatedByInput" style="width:180px" placeholder="מי מעדכן עכשיו">
-        <button class="btn btn-secondary" id="reloadBtn" type="button">רענון</button>
-        <button class="btn btn-danger" id="resetBtn" type="button">שחזר ברירת מחדל מקומית</button>
-        <button class="btn btn-primary" id="saveBtn" type="button">שמור שינויים</button>
+        <input class="field updated-by" id="updatedByInput" placeholder="מי מעדכן עכשיו">
+        <button class="btn" id="reloadBtn" type="button">↻ רענון</button>
+        <button class="btn" id="shareBtn" type="button">⛓ קישור שיתוף</button>
+        <button class="btn danger" id="resetBtn" type="button">איפוס מקומי</button>
+        <button class="btn primary" id="saveBtn" type="button">✓ שמירה</button>
       </div>
-    </div>
-
-    <section class="grid" id="boardColumns"></section>
-
-    <section class="notes-grid">
-      <article class="note-panel">
-        <h3>הערה כללית</h3>
-        <textarea id="noteGeneral"></textarea>
-      </article>
-      <article class="note-panel">
-        <h3>הערות מעומרי</h3>
-        <textarea id="noteOmri"></textarea>
-      </article>
-      <article class="note-panel">
-        <h3>הערות מגיא</h3>
-        <textarea id="noteGuy"></textarea>
-      </article>
     </section>
 
-    <p class="footer-note">
-      הגישה ללוח נעשית דרך פונקציות Supabase עם טוקן ייעודי. עדיף להגדיר `SYNC_BOARD_TOKEN`
-      נפרד לפני שיתוף רחב. אם הוא לא מוגדר, הפונקציות ייפלו חזרה ל־`ADMIN_TOKEN`.
-    </p>
-  </div>
+    <section class="board" id="boardColumns"></section>
+
+    <section class="notes">
+      <article class="note">
+        <h3>הערה כללית</h3>
+        <textarea class="field" id="noteGeneral"></textarea>
+      </article>
+      <article class="note">
+        <h3>הערות מעומרי</h3>
+        <textarea class="field" id="noteOmri"></textarea>
+      </article>
+      <article class="note">
+        <h3>הערות מגיא</h3>
+        <textarea class="field" id="noteGuy"></textarea>
+      </article>
+    </section>
+  </main>
+
+  <section class="share" id="sharePanel" aria-live="polite">
+    <strong>קישור לשיתוף עם עומרי והצוות</strong>
+    <div class="share-row">
+      <input class="field" id="shareLink" readonly>
+      <button class="btn primary" id="copyShareBtn" type="button">העתקה</button>
+    </div>
+  </section>
+  <div class="toast" id="toast"></div>
 
   <script>
-    const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
     const BOARD_SLUG = 'omri-pilot';
-    const GET_URL = `${SUPA_URL}/functions/v1/sync-board-get?slug=${encodeURIComponent(BOARD_SLUG)}`;
-    const SAVE_URL = `${SUPA_URL}/functions/v1/sync-board-save`;
-    const TOKEN_KEY = 'fhinkai_sync_board_token';
+    const API_URL = 'sync-board-api.php';
+    const KEY_STORAGE = 'fhinkai_sync_board_key';
+    const UPDATED_BY_STORAGE = 'fhinkai_sync_board_updated_by';
 
-    const loginOverlay = document.getElementById('loginOverlay');
-    const tokenInput = document.getElementById('tokenInput');
-    const loginBtn = document.getElementById('loginBtn');
-    const loginError = document.getElementById('loginError');
-    const statusText = document.getElementById('statusText');
-    const boardColumns = document.getElementById('boardColumns');
     const boardTitle = document.getElementById('boardTitle');
     const boardDescription = document.getElementById('boardDescription');
     const lastUpdated = document.getElementById('lastUpdated');
     const lastUpdatedBy = document.getElementById('lastUpdatedBy');
+    const statusText = document.getElementById('statusText');
+    const statusDot = document.getElementById('statusDot');
+    const boardColumns = document.getElementById('boardColumns');
     const updatedByInput = document.getElementById('updatedByInput');
+    const reloadBtn = document.getElementById('reloadBtn');
+    const shareBtn = document.getElementById('shareBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const saveBtn = document.getElementById('saveBtn');
     const noteGeneral = document.getElementById('noteGeneral');
     const noteOmri = document.getElementById('noteOmri');
     const noteGuy = document.getElementById('noteGuy');
-    const reloadBtn = document.getElementById('reloadBtn');
-    const saveBtn = document.getElementById('saveBtn');
-    const resetBtn = document.getElementById('resetBtn');
+    const sharePanel = document.getElementById('sharePanel');
+    const shareLink = document.getElementById('shareLink');
+    const copyShareBtn = document.getElementById('copyShareBtn');
+    const toast = document.getElementById('toast');
 
     let boardRow = null;
     let boardState = null;
+    let boardKey = '';
 
     const defaultBoard = {
       title: 'לוח סנכרון - פיילוט עומרי',
-      description: 'לוח עבודה משותף לצוות הפיילוט. לעדכן רק את מה שצריך כדי שלא נאבד החלטות וחסימות.',
+      description: 'לוח עבודה משותף לצוות הפיילוט. מעדכנים רק את מה שצריך כדי שהחלטות, חסימות ואחריות לא ייפלו בין הכיסאות.',
       columns: [
         { id: 'todo', title: 'לבדיקה', color: 'amber', items: [] },
         { id: 'doing', title: 'בתהליך', color: 'blue', items: [] },
@@ -455,36 +475,53 @@
       notes: { general: '', omri: '', guy: '' }
     };
 
-    function getToken() {
-      return sessionStorage.getItem(TOKEN_KEY) || '';
-    }
-
-    function setToken(token) {
-      sessionStorage.setItem(TOKEN_KEY, token);
-    }
-
-    function clearToken() {
-      sessionStorage.removeItem(TOKEN_KEY);
-    }
-
-    function setStatus(text) {
+    function setStatus(text, mode = 'wait') {
       statusText.textContent = text;
+      statusDot.className = `dot ${mode === 'ok' ? 'ok' : mode === 'bad' ? 'bad' : ''}`;
     }
 
-    function showLogin(message = '') {
-      loginError.textContent = message;
-      loginOverlay.style.display = 'flex';
-      tokenInput.value = '';
-      setTimeout(() => tokenInput.focus(), 60);
-    }
-
-    function hideLogin() {
-      loginOverlay.style.display = 'none';
-      loginError.textContent = '';
+    function showToast(text) {
+      toast.textContent = text;
+      toast.classList.add('open');
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove('open'), 2200);
     }
 
     function uid() {
-      return `id-${Math.random().toString(36).slice(2, 10)}-${Date.now().toString(36)}`;
+      return `id-${crypto.getRandomValues(new Uint32Array(2)).join('-')}`;
+    }
+
+    function randomKey() {
+      const bytes = new Uint8Array(24);
+      crypto.getRandomValues(bytes);
+      return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
+    }
+
+    function getInitialKey() {
+      const params = new URLSearchParams(location.search);
+      const keyFromUrl = params.get('key') || '';
+      if (keyFromUrl.length >= 24) {
+        sessionStorage.setItem(KEY_STORAGE, keyFromUrl);
+        return keyFromUrl;
+      }
+
+      const stored = sessionStorage.getItem(KEY_STORAGE) || localStorage.getItem(KEY_STORAGE) || '';
+      if (stored.length >= 24) return stored;
+
+      const created = randomKey();
+      localStorage.setItem(KEY_STORAGE, created);
+      const nextUrl = new URL(location.href);
+      nextUrl.searchParams.set('board', BOARD_SLUG);
+      nextUrl.searchParams.set('key', created);
+      history.replaceState(null, '', nextUrl.toString());
+      return created;
+    }
+
+    function currentShareUrl() {
+      const url = new URL(location.href);
+      url.searchParams.set('board', BOARD_SLUG);
+      url.searchParams.set('key', boardKey);
+      return url.toString();
     }
 
     function safeBoard(payload) {
@@ -498,11 +535,11 @@
         next.notes.guy = String(payload.notes.guy || '');
       }
       if (Array.isArray(payload.columns)) {
-        next.columns = payload.columns.map((col, idx) => ({
-          id: String(col.id || `col-${idx + 1}`),
-          title: String(col.title || `עמודה ${idx + 1}`),
-          color: ['amber', 'blue', 'green'].includes(col.color) ? col.color : 'blue',
-          items: Array.isArray(col.items) ? col.items.map((item) => ({
+        next.columns = payload.columns.map((column, index) => ({
+          id: String(column.id || `col-${index + 1}`),
+          title: String(column.title || `עמודה ${index + 1}`),
+          color: ['amber', 'blue', 'green'].includes(column.color) ? column.color : 'blue',
+          items: Array.isArray(column.items) ? column.items.map((item) => ({
             id: String(item.id || uid()),
             title: String(item.title || ''),
             owner: String(item.owner || ''),
@@ -515,43 +552,67 @@
       return next;
     }
 
-    async function fetchBoard() {
-      const token = getToken();
-      if (!token) {
-        showLogin();
-        return;
-      }
-
-      setStatus('טוען את הלוח...');
-      const res = await fetch(GET_URL, {
-        headers: { Authorization: `Bearer ${token}` }
+    async function loadBoard() {
+      setStatus('טוען לוח...');
+      const response = await fetch(`${API_URL}?slug=${encodeURIComponent(BOARD_SLUG)}&key=${encodeURIComponent(boardKey)}`, {
+        cache: 'no-store'
       });
 
-      if (res.status === 401) {
-        clearToken();
-        showLogin('טוקן שגוי. נסה שוב.');
-        return;
+      if (response.status === 401) {
+        setStatus('אין הרשאה לקישור הזה.', 'bad');
+        throw new Error('unauthorized');
       }
 
-      if (!res.ok) {
-        const body = await res.text();
-        throw new Error(body || 'failed to load board');
+      if (!response.ok) {
+        setStatus('טעינת הלוח נכשלה.', 'bad');
+        throw new Error(await response.text());
       }
 
-      boardRow = await res.json();
+      boardRow = await response.json();
       boardState = safeBoard(boardRow.payload);
       renderBoard();
-      hideLogin();
-      setStatus('הלוח נטען בהצלחה.');
+      setStatus('הלוח מסונכרן.', 'ok');
+    }
+
+    async function saveBoard() {
+      if (!boardState) return;
+      collectNotes();
+      saveBtn.disabled = true;
+      setStatus('שומר שינויים...');
+
+      const updatedBy = updatedByInput.value.trim();
+      if (updatedBy) localStorage.setItem(UPDATED_BY_STORAGE, updatedBy);
+
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          slug: BOARD_SLUG,
+          key: boardKey,
+          updatedBy,
+          payload: boardState
+        })
+      });
+
+      saveBtn.disabled = false;
+
+      if (!response.ok) {
+        setStatus('שמירה נכשלה.', 'bad');
+        throw new Error(await response.text());
+      }
+
+      boardRow = await response.json();
+      boardState = safeBoard(boardRow.payload);
+      renderBoard();
+      setStatus('השינויים נשמרו.', 'ok');
+      showToast('נשמר');
     }
 
     function renderBoard() {
-      if (!boardState) return;
       boardTitle.textContent = boardState.title;
       boardDescription.textContent = boardState.description;
       lastUpdated.textContent = boardRow?.updated_at ? new Date(boardRow.updated_at).toLocaleString('he-IL') : '-';
       lastUpdatedBy.textContent = boardRow?.updated_by || '-';
-
       noteGeneral.value = boardState.notes.general || '';
       noteOmri.value = boardState.notes.omri || '';
       noteGuy.value = boardState.notes.guy || '';
@@ -563,16 +624,16 @@
         wrapper.innerHTML = `
           <div class="column-head">
             <h2>${escapeHtml(column.title)}</h2>
-            <span class="count count-${column.color}">${column.items.length}</span>
+            <span class="count ${column.color}">${column.items.length}</span>
           </div>
-          <div class="items" id="items-${column.id}"></div>
-          <button class="btn add-btn" type="button" data-add="${columnIndex}">+ כרטיס חדש</button>
+          <div class="items"></div>
+          <button class="btn add-card" type="button" data-add="${columnIndex}">+ כרטיס חדש</button>
         `;
-        boardColumns.appendChild(wrapper);
         const itemsRoot = wrapper.querySelector('.items');
         column.items.forEach((item, itemIndex) => {
           itemsRoot.appendChild(renderCard(item, columnIndex, itemIndex));
         });
+        boardColumns.appendChild(wrapper);
       });
     }
 
@@ -580,18 +641,18 @@
       const card = document.createElement('div');
       card.className = 'card';
       card.innerHTML = `
-        <div class="card-top">
+        <div class="card-tools">
           <strong>כרטיס עבודה</strong>
-          <div class="icon-actions">
-            <button class="icon-btn" type="button" data-move-left="${columnIndex}:${itemIndex}" title="העבר שמאלה">←</button>
+          <div class="icon-row">
             <button class="icon-btn" type="button" data-move-right="${columnIndex}:${itemIndex}" title="העבר ימינה">→</button>
+            <button class="icon-btn" type="button" data-move-left="${columnIndex}:${itemIndex}" title="העבר שמאלה">←</button>
             <button class="icon-btn" type="button" data-move-up="${columnIndex}:${itemIndex}" title="למעלה">↑</button>
             <button class="icon-btn" type="button" data-move-down="${columnIndex}:${itemIndex}" title="למטה">↓</button>
-            <button class="icon-btn" type="button" data-delete="${columnIndex}:${itemIndex}" title="מחק">×</button>
+            <button class="icon-btn" type="button" data-delete="${columnIndex}:${itemIndex}" title="מחיקה">×</button>
           </div>
         </div>
-        <input class="field title" data-bind="title" placeholder="כותרת" value="${escapeAttr(item.title)}">
-        <div class="field-row">
+        <input class="field" data-bind="title" placeholder="כותרת" value="${escapeAttr(item.title)}">
+        <div class="card-grid">
           <input class="field" data-bind="owner" placeholder="אחראי" value="${escapeAttr(item.owner)}">
           <input class="field" data-bind="due" type="date" value="${escapeAttr(item.due)}">
         </div>
@@ -600,8 +661,7 @@
 
       card.querySelectorAll('[data-bind]').forEach((field) => {
         field.addEventListener('input', () => {
-          const key = field.dataset.bind;
-          boardState.columns[columnIndex].items[itemIndex][key] = field.value;
+          boardState.columns[columnIndex].items[itemIndex][field.dataset.bind] = field.value;
           boardState.columns[columnIndex].items[itemIndex].updatedAt = new Date().toISOString();
         });
       });
@@ -643,18 +703,22 @@
       if (direction === 'left' && columnIndex > 0) {
         column.items.splice(itemIndex, 1);
         columns[columnIndex - 1].items.push(item);
-      } else if (direction === 'right' && columnIndex < columns.length - 1) {
+      }
+      if (direction === 'right' && columnIndex < columns.length - 1) {
         column.items.splice(itemIndex, 1);
         columns[columnIndex + 1].items.push(item);
-      } else if (direction === 'up' && itemIndex > 0) {
+      }
+      if (direction === 'up' && itemIndex > 0) {
         [column.items[itemIndex - 1], column.items[itemIndex]] = [column.items[itemIndex], column.items[itemIndex - 1]];
-      } else if (direction === 'down' && itemIndex < column.items.length - 1) {
+      }
+      if (direction === 'down' && itemIndex < column.items.length - 1) {
         [column.items[itemIndex + 1], column.items[itemIndex]] = [column.items[itemIndex], column.items[itemIndex + 1]];
       }
       renderBoard();
     }
 
     function deleteItem(columnIndex, itemIndex) {
+      if (!confirm('למחוק את הכרטיס הזה ?')) return;
       boardState.columns[columnIndex].items.splice(itemIndex, 1);
       renderBoard();
     }
@@ -665,139 +729,55 @@
       boardState.notes.guy = noteGuy.value;
     }
 
-    async function saveBoard() {
-      if (!boardState) return;
-      const token = getToken();
-      if (!token) {
-        showLogin();
-        return;
-      }
-
-      collectNotes();
-      const updatedBy = updatedByInput.value.trim();
-      saveBtn.disabled = true;
-      setStatus('שומר שינויים...');
-
-      const res = await fetch(SAVE_URL, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          slug: BOARD_SLUG,
-          updatedBy,
-          payload: boardState
-        })
-      });
-
-      saveBtn.disabled = false;
-
-      if (res.status === 401) {
-        clearToken();
-        showLogin('הטוקן פג או שגוי. התחבר מחדש.');
-        return;
-      }
-
-      if (!res.ok) {
-        const body = await res.text();
-        setStatus('שמירה נכשלה.');
-        throw new Error(body || 'failed to save board');
-      }
-
-      boardRow = await res.json();
-      boardState = safeBoard(boardRow.payload);
-      renderBoard();
-      setStatus('השינויים נשמרו.');
-    }
-
     function resetLocalBoard() {
-      if (!window.confirm('לשחזר את הלוח למבנה ברירת המחדל המקומי לפני שמירה?')) return;
+      if (!confirm('לאפס את הלוח המקומי לפני שמירה ?')) return;
       boardState = structuredClone(defaultBoard);
+      boardRow = { updated_at: new Date().toISOString(), updated_by: 'local' };
       renderBoard();
-      setStatus('שוחזר מקומית. לא נשמר עדיין בשרת.');
+      setStatus('אופס מקומית. צריך לשמור כדי לעדכן את כולם.');
     }
 
     boardColumns.addEventListener('click', (event) => {
-      const target = event.target;
-      const add = target.closest('[data-add]');
-      if (add) {
-        addCard(Number(add.dataset.add));
-        return;
-      }
-
-      const actions = [
-        ['move-left', 'left'],
-        ['move-right', 'right'],
-        ['move-up', 'up'],
-        ['move-down', 'down'],
-      ];
-
-      for (const [attr, dir] of actions) {
-        const btn = target.closest(`[data-${attr}]`);
-        if (btn) {
-          const [columnIndex, itemIndex] = btn.dataset[attr].split(':').map(Number);
-          moveItem(columnIndex, itemIndex, dir);
-          return;
-        }
-      }
-
-      const del = target.closest('[data-delete]');
-      if (del) {
-        const [columnIndex, itemIndex] = del.dataset.delete.split(':').map(Number);
+      const target = event.target.closest('button');
+      if (!target || !boardState) return;
+      if (target.dataset.add) addCard(Number(target.dataset.add));
+      ['left', 'right', 'up', 'down'].forEach((direction) => {
+        const value = target.dataset[`move${direction[0].toUpperCase()}${direction.slice(1)}`];
+        if (!value) return;
+        const [columnIndex, itemIndex] = value.split(':').map(Number);
+        moveItem(columnIndex, itemIndex, direction);
+      });
+      if (target.dataset.delete) {
+        const [columnIndex, itemIndex] = target.dataset.delete.split(':').map(Number);
         deleteItem(columnIndex, itemIndex);
       }
     });
 
-    loginBtn.addEventListener('click', async () => {
-      const token = tokenInput.value.trim();
-      if (!token) {
-        loginError.textContent = 'נדרש טוקן.';
-        return;
-      }
-      setToken(token);
-      try {
-        await fetchBoard();
-      } catch (error) {
-        loginError.textContent = error.message || 'כניסה נכשלה';
-      }
-    });
-
-    tokenInput.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') loginBtn.click();
-    });
-
-    reloadBtn.addEventListener('click', async () => {
-      try {
-        await fetchBoard();
-      } catch (error) {
-        setStatus('רענון נכשל.');
-        alert(error.message || 'רענון נכשל');
-      }
-    });
-
-    saveBtn.addEventListener('click', async () => {
-      try {
-        await saveBoard();
-      } catch (error) {
-        alert(error.message || 'שמירה נכשלה');
-      }
-    });
-
+    reloadBtn.addEventListener('click', () => loadBoard().catch(console.error));
+    saveBtn.addEventListener('click', () => saveBoard().catch(console.error));
     resetBtn.addEventListener('click', resetLocalBoard);
+    shareBtn.addEventListener('click', () => {
+      shareLink.value = currentShareUrl();
+      sharePanel.classList.toggle('open');
+    });
+    copyShareBtn.addEventListener('click', async () => {
+      shareLink.value = currentShareUrl();
+      await navigator.clipboard.writeText(shareLink.value);
+      showToast('קישור הועתק');
+    });
 
-    (async function boot() {
-      if (!getToken()) {
-        showLogin();
-        return;
+    updatedByInput.value = localStorage.getItem(UPDATED_BY_STORAGE) || '';
+    boardKey = getInitialKey();
+    localStorage.setItem(KEY_STORAGE, boardKey);
+    shareLink.value = currentShareUrl();
+    loadBoard().catch((error) => {
+      console.error(error);
+      if (!boardState) {
+        boardState = structuredClone(defaultBoard);
+        boardRow = null;
+        renderBoard();
       }
-      try {
-        await fetchBoard();
-      } catch (error) {
-        setStatus('טעינה נכשלה.');
-        alert(error.message || 'טעינה נכשלה');
-      }
-    }());
+    });
   </script>
 </body>
 </html>
