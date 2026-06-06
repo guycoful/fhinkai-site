@@ -64,9 +64,9 @@ function defaultPayload(): array
                 'items' => [
                     [
                         'id' => 'seed-2',
-                        'title' => 'איסוף לידים וחימום לקראת 7/6',
+                        'title' => 'איסוף לידים וחימום לקראת 14/6',
                         'owner' => 'עומרי',
-                        'due' => '2026-06-07',
+                        'due' => '2026-06-14',
                         'notes' => 'הנעילה של pilot מכוונת ולא באג.',
                         'updatedAt' => gmdate('c'),
                     ],

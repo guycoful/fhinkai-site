@@ -423,7 +423,7 @@
 
         // Early-access gate: block before official cohort start (mirrors create-participant-v10 COHORT_START)
         const COHORT_START = {
-          'pilot': '2026-06-07T06:00:00+03:00',
+          'pilot': '2026-06-14T06:00:00+03:00',
           'rehearsal': '2026-05-20T06:00:00+03:00',
           'lms': '2026-05-20T11:30:00+03:00',
         };
