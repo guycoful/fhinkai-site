@@ -19,6 +19,7 @@
     --dark: #2C2419;
     --dark-mid: #5C4E3C;
     --navy: #1A2744;
+    --navy-light: #2A3D6E;
     --green: #2E7D52;
     --green-light: #E8F5EE;
     --green-text: #1B5E3B;
@@ -34,6 +35,22 @@
     --radius: 16px;
     --shadow: 0 2px 12px rgba(44,36,25,.06);
     --shadow-hover: 0 6px 24px rgba(44,36,25,.1);
+
+    /* Accordion styles variables */
+    --teal: #26A59A;
+    --teal-soft: #E0F2F1;
+    --teal-light: #B2DFDB;
+    --ice: #FDF8F0;
+    --silver-50: #E6D5C3;
+    --silver-45: #EAD9C4;
+    --charcoal: #2C2419;
+    --charcoal-75: #4A3C2E;
+    --charcoal-60: #5C4E3C;
+    --field-radius-lg: 14px;
+    --t-fast: 0.2s;
+    --t-med: 0.35s;
+    --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -65,23 +82,6 @@
     font-weight: 600;
   }
 
-  /* ── Progress dots ── */
-  .progress { display: flex; align-items: center; gap: 0; margin-bottom: 24px; padding: 0 4px; }
-  .prog-step { display: flex; flex-direction: column; align-items: center; flex: 1; }
-  .prog-dot {
-    width: 28px; height: 28px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 800;
-    border: 2px solid var(--cream-dark);
-    background: var(--white); color: var(--dark-mid);
-    transition: all .3s;
-  }
-  .prog-dot.active { background: var(--gold); border-color: var(--gold-dark); color: white; box-shadow: 0 0 0 4px rgba(212,168,83,.2); }
-  .prog-dot.done { background: var(--green); border-color: var(--green); color: white; }
-  .prog-label { font-size: 9px; color: var(--dark-mid); margin-top: 4px; font-weight: 500; white-space: nowrap; }
-  .prog-line { height: 2px; flex: 1; background: var(--cream-dark); max-width: 40px; margin-top: -16px; transition: background .3s; }
-  .prog-line.done { background: var(--green); }
-
   /* ── Container ── */
   .container { max-width: 600px; margin: 0 auto; padding: 20px 16px 40px; }
 
@@ -109,76 +109,118 @@
     padding: 28px 16px 24px;
     background: linear-gradient(180deg, var(--cream) 0%, var(--warm-white) 100%);
     margin: -20px -16px 20px;
+    border-bottom: 1px solid var(--cream-dark);
   }
   .hero-msg h1 { font-size: clamp(20px, 5vw, 26px); font-weight: 800; margin-bottom: 8px; }
   .hero-msg h1 span { color: var(--gold-dark); }
   .hero-msg p { font-size: 14px; color: var(--dark-mid); max-width: 420px; margin: 0 auto; line-height: 1.7; }
 
-  /* ── Expense group cards ── */
-  .group-header {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 12px 16px; border-radius: 12px;
-    margin-bottom: 10px; font-weight: 700; font-size: 15px;
-  }
-  .group-header.rigid { background: var(--blue-light); color: var(--blue); }
-  .group-header.flexible { background: var(--orange-light); color: var(--orange); }
-  .group-header .group-total { font-size: 18px; font-weight: 900; direction: ltr; }
+  /* ── Thin Progress Bar ── */
+  .progress-bar-thin-container { margin-bottom: 24px; }
+  .progress-bar-thin-bg { background: rgba(205, 205, 205, 0.45); height: 5px; border-radius: 999px; overflow: hidden; }
+  .progress-bar-thin-fill { background: #26A59A; width: 50%; height: 100%; border-radius: 999px; }
 
-  .expense-card {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 12px 14px; margin-bottom: 6px;
-    border-radius: 10px; border: 1px solid var(--cream-dark);
-    background: var(--white); font-size: 14px;
+  /* ── Flow Timeline ── */
+  .flow-timeline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin: 24px 0;
+    padding: 0 4px;
   }
-  .expense-card .exp-name { font-weight: 600; }
-  .expense-card .exp-amount { font-weight: 800; direction: ltr; white-space: nowrap; }
-  .expense-card.rigid { border-right: 3px solid var(--blue); }
-  .expense-card.flexible { border-right: 3px solid var(--orange); }
-
-  /* ── Rating items (page 1) ── */
-  .rate-item {
-    background: var(--white);
-    border: 1.5px solid var(--cream-dark);
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 10px;
-    transition: all .2s;
+  .flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+    max-width: 80px;
   }
-  .rate-item.rated { opacity: 1; }
-  .rate-item .rate-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .rate-item .rate-name { font-size: 15px; font-weight: 700; }
-  .rate-item .rate-amount { font-size: 16px; font-weight: 800; direction: ltr; color: var(--dark); }
-  .rate-item .rate-btns { display: flex; gap: 8px; }
-  .rate-btn {
-    flex: 1; padding: 10px 12px; border-radius: 10px;
-    font-family: 'Heebo'; font-size: 13px; font-weight: 600;
-    cursor: pointer; transition: all .2s; border: 2px solid var(--cream-dark);
-    background: var(--white); color: var(--dark-mid);
+  .flow-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 800;
+    background: var(--cream-dark);
+    color: var(--dark-mid);
+    transition: all .3s;
   }
-  .rate-btn:hover { transform: translateY(-1px); }
-  .rate-btn.keep { }
-  .rate-btn.can-drop { }
-  .rate-btn.keep.selected { background: var(--green-light); border-color: var(--green); color: var(--green-text); }
-  .rate-btn.can-drop.selected { background: var(--orange-light); border-color: var(--orange); color: var(--orange); }
-  .rate-item.rated-keep { border-color: var(--green); background: var(--green-light); }
-  .rate-item.rated-drop { border-color: var(--orange); background: var(--orange-light); }
-
-  .rate-counter {
-    background: var(--orange-light);
-    border: 2px solid var(--orange);
-    border-radius: 12px;
-    padding: 14px 18px;
+  .flow-dot.done {
+    background: var(--green);
+    color: #fff;
+  }
+  .flow-dot.current {
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: #fff;
+    box-shadow: 0 0 0 4px rgba(212,168,83,.2);
+    animation: flowPulse 2s ease-in-out infinite;
+  }
+  @keyframes flowPulse {
+    0%,100% { box-shadow: 0 0 0 4px rgba(212,168,83,.2); }
+    50% { box-shadow: 0 0 0 8px rgba(212,168,83,.08); }
+  }
+  .flow-label {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--dark-mid);
     text-align: center;
-    margin-top: 16px;
-    position: sticky;
-    bottom: 16px;
-    z-index: 10;
+    line-height: 1.2;
   }
-  .rate-counter .counter-label { font-size: 13px; color: var(--orange); font-weight: 600; }
-  .rate-counter .counter-amount { font-size: 28px; font-weight: 900; color: var(--orange); direction: ltr; }
-  .rate-counter .counter-sub { font-size: 11px; color: var(--dark-mid); margin-top: 2px; }
+  .flow-line {
+    height: 2px;
+    flex: 1;
+    max-width: 40px;
+    background: var(--cream-dark);
+    margin-top: -16px;
+  }
+  .flow-line.done {
+    background: var(--green);
+  }
 
-  /* ── 3% Law (page 2) ── */
+  /* ── Video elements ── */
+  .video-thumbnail {
+    background: linear-gradient(135deg, var(--navy-light), var(--navy));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    height: 180px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  .play-btn {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--navy);
+    font-size: 20px;
+    box-shadow: 0 4px 10px rgba(212,168,83,0.3);
+    transition: transform 0.2s ease;
+  }
+  .play-btn:hover { transform: scale(1.08); }
+  .video-duration {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  /* ── CBS ── */
   .target-bar-wrap {
     background: var(--cream);
     border-radius: 50px;
@@ -196,6 +238,116 @@
   }
   .target-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--dark-mid); margin-bottom: 16px; }
 
+  /* ── Accordion ── */
+  .category {
+    background: var(--white);
+    border: 1px solid var(--silver-50);
+    border-radius: var(--field-radius-lg);
+    overflow: hidden;
+    margin-bottom: 12px;
+    transition: border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+  }
+  .category.is-touched {
+    border-color: var(--teal);
+    border-width: 1.5px;
+    background: linear-gradient(135deg, var(--white) 0%, var(--teal-soft) 200%);
+  }
+  .category.is-open {
+    box-shadow: 0 6px 20px rgba(21, 25, 36, 0.06);
+  }
+  .category__header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: right;
+    transition: background var(--t-fast) var(--ease);
+  }
+  .category__header:hover { background: var(--ice); }
+  .category__icon {
+    flex-shrink: 0;
+    width: 38px; height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ice);
+    color: var(--charcoal-75);
+    border-radius: 10px;
+    transition: all var(--t-fast) var(--ease);
+  }
+  .category.is-touched .category__icon {
+    background: var(--teal-soft);
+    color: var(--teal);
+  }
+  .category__icon svg { width: 18px; height: 18px; }
+  .category__title {
+    flex: 1;
+    font-size: 15.5px;
+    font-weight: 700;
+    color: var(--charcoal);
+  }
+  .category__meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .category__check {
+    width: 22px; height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--teal);
+    color: var(--white);
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(0);
+    transition: all var(--t-med) var(--ease-spring);
+  }
+  .category.is-touched .category__check {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .category__check svg { width: 12px; height: 12px; }
+  .category__sum {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--teal);
+    letter-spacing: -0.01em;
+  }
+  .category__chev {
+    width: 24px; height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--charcoal-60);
+    transition: transform var(--t-med) var(--ease);
+  }
+  .category.is-open .category__chev {
+    transform: rotate(180deg);
+  }
+  .category__chev svg { width: 16px; height: 16px; }
+  .category__body {
+    padding: 8px 18px 20px;
+    background: var(--ice);
+    border-top: 1px solid var(--silver-50);
+    animation: accordionOpen var(--t-med) var(--ease);
+  }
+  @keyframes accordionOpen {
+    from { opacity: 0; max-height: 0; }
+    to   { opacity: 1; max-height: 1200px; }
+  }
+  .category__items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  /* ── Checkbox items ── */
   .drop-select-item {
     display: flex; align-items: center; gap: 12px;
     padding: 14px; margin-bottom: 8px;
@@ -218,6 +370,7 @@
   .drop-name { font-size: 14px; font-weight: 700; }
   .drop-amount { font-size: 16px; font-weight: 800; color: var(--orange); direction: ltr; }
 
+  /* ── Commit section ── */
   .commit-section {
     text-align: center;
     padding: 20px;
@@ -254,7 +407,20 @@
   .commit-done-anim h3 { font-size: 18px; font-weight: 800; color: var(--green-text); margin-bottom: 8px; }
   .commit-done-anim p { font-size: 14px; color: var(--dark-mid); line-height: 1.6; }
 
-  /* ── Impact cards (page 3) ── */
+  /* ── Buttons ── */
+  .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+  .btn {
+    flex: 1; padding: 14px; border: none; border-radius: 50px;
+    font-family: 'Heebo'; font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: transform .15s; min-height: 48px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+  .btn-next { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--navy); box-shadow: 0 4px 16px rgba(212,168,83,.3); }
+  .btn-back { background: var(--cream); color: var(--dark-mid); }
+
+  /* ── Impact cards ── */
   .impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
   .impact-card {
     background: var(--white);
@@ -286,19 +452,6 @@
   .readiness-ring .ring-fill { fill: none; stroke: var(--gold); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 408; stroke-dashoffset: 408; transition: stroke-dashoffset 1.5s ease; }
   .readiness-pct { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 900; color: var(--gold-dark); }
   .readiness-label { font-size: 14px; font-weight: 600; color: var(--dark-mid); margin-top: 8px; }
-
-  /* ── Buttons ── */
-  .btn-row { display: flex; gap: 10px; margin-top: 20px; }
-  .btn {
-    flex: 1; padding: 14px; border: none; border-radius: 50px;
-    font-family: 'Heebo'; font-size: 15px; font-weight: 700;
-    cursor: pointer; transition: transform .15s; min-height: 48px;
-  }
-  .btn:hover { transform: translateY(-1px); }
-  .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
-  .btn-next { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--navy); box-shadow: 0 4px 16px rgba(212,168,83,.3); }
-  .btn-back { background: var(--cream); color: var(--dark-mid); }
-  .btn-submit { background: linear-gradient(135deg, var(--green), #1B7A42); color: white; box-shadow: 0 4px 16px rgba(46,125,82,.3); }
 
   /* ── CTA ── */
   .cta-card {
@@ -349,13 +502,6 @@
   .error-screen .err-icon { font-size: 48px; margin-bottom: 12px; }
   .error-screen h2 { font-size: 18px; margin-bottom: 8px; }
   .error-screen p { font-size: 14px; color: var(--dark-mid); }
-
-  /* ── Misc ── */
-  .summary-msg {
-    font-size: 15px; line-height: 1.7; color: var(--dark-mid);
-    margin: 20px 0; padding: 0 8px; text-align: center;
-  }
-  .divider { height: 1px; background: var(--cream-dark); margin: 18px 0; }
 </style>
 </head>
 <body>
@@ -366,17 +512,6 @@
 </div>
 
 <div class="container">
-
-  <!-- Progress dots: 4 pages -->
-  <div class="progress" id="progressBar">
-    <div class="prog-step"><div class="prog-dot active" id="pd-0">1</div><div class="prog-label">הפרדה</div></div>
-    <div class="prog-line" id="pl-0"></div>
-    <div class="prog-step"><div class="prog-dot" id="pd-1">2</div><div class="prog-label">דירוג</div></div>
-    <div class="prog-line" id="pl-1"></div>
-    <div class="prog-step"><div class="prog-dot" id="pd-2">3</div><div class="prog-label">חוק 3%</div></div>
-    <div class="prog-line" id="pl-2"></div>
-    <div class="prog-step"><div class="prog-dot" id="pd-3">4</div><div class="prog-label">השפעה</div></div>
-  </div>
 
   <!-- Loading screen -->
   <div class="loading-screen" id="loadingScreen">
@@ -391,74 +526,121 @@
     <p id="errorMsg">לא נמצאו נתונים. תוודא שהקישור תקין.</p>
   </div>
 
-  <!-- ═══ PAGE 0: Force Separation ═══ -->
+  <!-- ═══ PAGE 0: Start Screen ═══ -->
   <div class="page" id="page-0">
-    <div class="hero-msg">
-      <h1>שלום <span id="userName">משתתף</span></h1>
-      <p>כדי להחזיר את השליטה, אנחנו חייבים להפריד בין מה שקונה לנו שקט לבין מה שקונה לנו הנאה רגעית.</p>
-    </div>
-
-    <!-- Rigid expenses -->
-    <div class="card" id="rigidCard">
-      <div class="group-header rigid">
-        <span>🔒 הוצאות קשיחות</span>
-        <span class="group-total" id="rigidTotal">₪0</span>
+    <div class="progress-bar-thin-container">
+      <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--dark-mid); margin-bottom: 6px;">
+        <span>התקדמות האתגר</span>
+        <span>יום 2 מתוך 4</span>
       </div>
-      <div style="font-size:12px;color:var(--dark-mid);margin-bottom:12px">הוצאות שחייבים לשלם. לא ניתן לוותר עליהן.</div>
-      <div id="rigidList"></div>
-    </div>
-
-    <!-- Flexible expenses -->
-    <div class="card" id="flexCard">
-      <div class="group-header flexible">
-        <span>🎯 הוצאות גמישות</span>
-        <span class="group-total" id="flexTotal">₪0</span>
+      <div class="progress-bar-thin-bg">
+        <div class="progress-bar-thin-fill" style="width: 50%;"></div>
       </div>
-      <div style="font-size:12px;color:var(--dark-mid);margin-bottom:12px">הוצאות שאפשר לשלוט בהן. כאן נמצא הכסף.</div>
-      <div id="flexList"></div>
     </div>
 
-    <!-- Totals summary -->
-    <div style="background:var(--navy);border-radius:12px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <div style="color:var(--cream);font-size:14px;font-weight:600">סך הוצאות חודשי</div>
-      <div style="color:var(--gold-light);font-size:22px;font-weight:900;direction:ltr" id="grandTotal">₪0</div>
+    <div class="hero-msg" style="border-radius: var(--radius); margin: 0 0 24px;">
+      <h1 style="font-size: 28px; font-weight: 900; margin-bottom: 4px;">מתחילים לחסוך</h1>
+      <p style="font-weight: 600; color: var(--gold-dark); margin-bottom: 16px;">שינוי של 3% = חיסכון של שנים לעבר עצמאות כלכלית</p>
+      <p style="font-size: 15px; color: var(--dark-mid);" id="startGreeting">
+        שלום <span id="welcomeName">משתתף</span>, האם אתה מוכן להתחיל לחסוך בהוצאות שלך ?
+      </p>
     </div>
 
-    <div class="btn-row">
-      <button class="btn btn-next" onclick="goPage(1)">בוא נדרג &#8592;</button>
+    <!-- 4 stations horizontal map -->
+    <div class="flow-timeline">
+      <div class="flow-step done">
+        <div class="flow-dot done">✓</div>
+        <div class="flow-label">מיפוי פיננסי</div>
+      </div>
+      <div class="flow-line done"></div>
+      <div class="flow-step current">
+        <div class="flow-dot current">2</div>
+        <div class="flow-label" style="font-weight: 700;">הקטנת הוצאות</div>
+      </div>
+      <div class="flow-line"></div>
+      <div class="flow-step">
+        <div class="flow-dot">3</div>
+        <div class="flow-label">הגדלת הכנסה</div>
+      </div>
+      <div class="flow-line"></div>
+      <div class="flow-step">
+        <div class="flow-dot">4</div>
+        <div class="flow-label">השקעות ופנסיה</div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 32px;">
+      <button class="btn btn-next" onclick="goPage(1)" style="width: 100%; max-width: 320px; margin: 0 auto;">
+        התחל את יום 2 ←
+      </button>
+      <span style="display: block; font-size: 11px; color: var(--dark-mid); margin-top: 8px;">לחץ להתחלת הסימולציה</span>
     </div>
   </div>
 
-  <!-- ═══ PAGE 1: Luxury Rating ═══ -->
+  <!-- ═══ PAGE 1: Readiness Screen ═══ -->
   <div class="page" id="page-1">
-    <div class="card">
-      <h2>מה באמת חייבים ?</h2>
-      <div class="subtitle">עכשיו תדרג כל הוצאה גמישה. האם אתה מוכן לוותר עליה או לא ?</div>
-      <div id="rateList"></div>
+    <div class="card" style="border-right: 4px solid var(--gold); background: var(--gold-bg); padding: 20px; text-align: center; font-style: italic; font-weight: 600; margin-bottom: 24px;">
+      "המשקיע האגדי וורן באפט אמר: לא חייבים לעשות דברים מופלאים כדי להגיע לתוצאות מופלאות!"
     </div>
 
-    <!-- Sticky running total -->
-    <div class="rate-counter" id="rateCounter">
-      <div class="counter-label">סך הפריטים שאפשר בלעדיהן</div>
-      <div class="counter-amount" id="dropTotal">₪0</div>
-      <div class="counter-sub" id="dropCount">0 פריטים נבחרו</div>
-    </div>
+    <div class="card" style="text-align: center; padding: 28px 18px;">
+      <h3 style="justify-content: center; font-size: 16.5px; margin-bottom: 24px; line-height: 1.6;" id="readinessQuestion">
+        האם אתה מוכן להקדיש היום 25 דקות כדי לשפר את המצב הכלכלי שלך ?
+      </h3>
 
-    <div class="btn-row">
-      <button class="btn btn-back" onclick="goPage(0)">&#8594; חזרה</button>
-      <button class="btn btn-next" id="toPage2Btn" onclick="goPage(2)" disabled>להמשיך לחוק ה-3% &#8592;</button>
+      <div class="btn-row" style="flex-direction: column; gap: 12px;">
+        <button class="btn btn-next" onclick="goPage(2)" style="width: 100%; max-width: 320px; margin: 0 auto;" id="readinessYesBtn">
+          כן, אני מוכן
+        </button>
+        <button class="btn btn-back" onclick="deferDay()" style="width: 100%; max-width: 320px; margin: 0 auto; background: transparent; border: 1.5px solid var(--cream-dark); color: var(--dark-mid);">
+          אעשה את זה בהמשך היום
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- ═══ PAGE 2: The 3% Law ═══ -->
+  <!-- ═══ PAGE 2: Explanation Videos ═══ -->
   <div class="page" id="page-2">
-    <div class="card">
-      <h2>חוק ה-3%</h2>
-      <div class="subtitle">3% מההוצאות שלך זה <strong id="threePercentDisplay">₪0</strong> לחודש.<br>תבחר מהפריטים שסימנת כ"אפשר בלעדיהן" עד שמגיעים ליעד.</div>
+    <div class="card" style="margin-bottom: 24px;">
+      <h2>סרטוני הסבר קצרים</h2>
+      <p class="subtitle" style="margin-bottom: 0;">צפה בסרטונים של עומרי וגיא כדי להבין את המשימה ואת השימוש במערכת.</p>
+    </div>
 
-      <!-- Progress bar toward 3% -->
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:4px">
-        <span style="font-size:12px;color:var(--dark-mid)">נבחר:</span>
+    <div class="card" style="margin-bottom: 24px;">
+      <!-- Omri video slot -->
+      <div class="video-thumbnail">
+        <div class="play-btn">▶</div>
+        <span class="video-duration">3:45</span>
+      </div>
+      <h3 style="font-size: 15.5px; font-weight: 700; color: var(--dark); margin-bottom: 4px;">הסבר מקצועי עם עומרי - למה 3% ?</h3>
+      <p style="font-size: 13px; color: var(--dark-mid); line-height: 1.5;">בסרטון עומרי מסביר למה יעד צמצום קטן של 3% בהוצאות משנה דרמטית את עתידך.</p>
+    </div>
+
+    <div class="card" style="margin-bottom: 24px;">
+      <!-- Guy video slot -->
+      <div class="video-thumbnail">
+        <div class="play-btn">▶</div>
+        <span class="video-duration">2:15</span>
+      </div>
+      <h3 style="font-size: 15.5px; font-weight: 700; color: var(--dark); margin-bottom: 4px;">הסבר טכני עם גיא - איך המערכת עובדת ?</h3>
+      <p style="font-size: 13px; color: var(--dark-mid); line-height: 1.5;">בסרטון גיא יראה לך איך לעבוד עם דף צמצום ההוצאות ואיך לבצע את הסימולציה.</p>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goPage(1)">&#8594; חזרה</button>
+      <button class="btn btn-next" onclick="goPage(3)">להמשך לצמצום הוצאות &#8592;</button>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE 3: Accordion / 3% Reduction ═══ -->
+  <div class="page" id="page-3">
+    <div class="card" style="margin-bottom: 16px;">
+      <h2>צמצום הוצאות</h2>
+      <div class="subtitle" style="margin-bottom: 0;">חוק ה-3%: ההוצאות שלך מול יעד הקיצוץ. תפתח את הקטגוריות ותסמן מה [אפשר לוותר].</div>
+
+      <!-- Live progress toward 3% target -->
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:20px;">
+        <span style="font-size:12.5px;font-weight:600;color:var(--dark-mid)">נבחר לצמצום:</span>
         <span style="font-size:16px;font-weight:800;color:var(--green)" id="selectedVsTarget">₪0 / ₪0</span>
       </div>
       <div class="target-bar-wrap">
@@ -466,37 +648,111 @@
       </div>
       <div class="target-labels">
         <span>₪0</span>
-        <span>יעד 3%</span>
-      </div>
-
-      <div id="dropSelectList"></div>
-
-      <!-- Commitment section (appears when 3% reached) -->
-      <div class="commit-section" id="commitSection">
-        <h3>הגעת ליעד</h3>
-        <p>החלטת לוותר על הוצאות שלא מוסיפות לך ערך אמיתי. ההחלטה הזו תשנה את המציאות הכלכלית שלך.</p>
-        <button class="commit-btn" onclick="commitSavings()">אני מוותר על זה לטובת החופש שלי</button>
-      </div>
-
-      <!-- After commit animation -->
-      <div class="commit-done-anim" id="commitDone">
-        <div class="checkmark">✓</div>
-        <h3>ההתחייבות נרשמה</h3>
-        <p>עכשיו נראה מה ההשפעה של ההחלטה הזו על העתיד שלך.</p>
+        <span style="font-weight: 700; color: var(--gold-dark);">יעד 3% (<span id="threePercentDisplay">₪0</span>)</span>
       </div>
     </div>
 
-    <div class="btn-row">
-      <button class="btn btn-back" onclick="goPage(1)">&#8594; חזרה</button>
-      <button class="btn btn-next" id="toPage3Btn" onclick="goPage(3)" disabled>ראה את ההשפעה &#8592;</button>
+    <!-- Accordion Category 1: Need -->
+    <div class="category" id="accordion-need">
+      <button type="button" class="category__header" aria-expanded="false">
+        <span class="category__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </span>
+        <span class="category__title">🔒 הוצאות קבועות (צורך)</span>
+        <span class="category__meta">
+          <span class="category__sum" id="sum-need">₪0</span>
+          <span class="category__chev">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </span>
+        </span>
+      </button>
+      <div class="category__body" hidden>
+        <div style="font-size:12px;color:var(--dark-mid);margin-top:4px;">הוצאות שחייבים לשלם. לא ניתן לוותר עליהן.</div>
+        <div class="category__items" id="list-need"></div>
+      </div>
+    </div>
+
+    <!-- Accordion Category 2: Want -->
+    <div class="category" id="accordion-want">
+      <button type="button" class="category__header" aria-expanded="false">
+        <span class="category__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <circle cx="12" cy="12" r="6"></circle>
+            <circle cx="12" cy="12" r="2"></circle>
+          </svg>
+        </span>
+        <span class="category__title">🎯 הוצאות גמישות (רצון)</span>
+        <span class="category__meta">
+          <span class="category__sum" id="sum-want">₪0</span>
+          <span class="category__chev">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </span>
+        </span>
+      </button>
+      <div class="category__body" hidden>
+        <div style="font-size:12px;color:var(--dark-mid);margin-top:4px;">הוצאות שאפשר לשלוט בהן. סמן אילו מהן אפשר לצמצם או לבטל.</div>
+        <div class="category__items" id="list-want"></div>
+      </div>
+    </div>
+
+    <!-- Accordion Category 3: Savings -->
+    <div class="category" id="accordion-savings">
+      <button type="button" class="category__header" aria-expanded="false">
+        <span class="category__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23"></line>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+        </span>
+        <span class="category__title">💰 חסכונות והשקעות (חיסכון)</span>
+        <span class="category__meta">
+          <span class="category__sum" id="sum-savings">₪0</span>
+          <span class="category__chev">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </span>
+        </span>
+      </button>
+      <div class="category__body" hidden>
+        <div style="font-size:12px;color:var(--dark-mid);margin-top:4px;">חיסכון שוטף והפקדות מחוץ לפנסיה החובה.</div>
+        <div class="category__items" id="list-savings"></div>
+      </div>
+    </div>
+
+    <!-- Commitment section (appears when 3% reached) -->
+    <div class="commit-section" id="commitSection">
+      <h3>הגעת ליעד</h3>
+      <p>החלטת לוותר על הוצאות שלא מוסיפות ערך אמיתי לחייך. ההחלטה הזו תשנה את המציאות הכלכלית שלך.</p>
+      <button class="commit-btn" onclick="commitSavings()">אני מוותר על זה לטובת החופש הכלכלי שלי</button>
+    </div>
+
+    <!-- After commit status -->
+    <div class="commit-done-anim" id="commitDone">
+      <div class="checkmark">✓</div>
+      <h3>ההתחייבות נרשמה בהצלחה</h3>
+      <p>עכשיו בוא נראה את ההשפעה של ההחלטה הזו על העתיד שלך.</p>
+    </div>
+
+    <div class="btn-row" style="margin-top: 24px;">
+      <button class="btn btn-back" onclick="goPage(2)">&#8594; חזרה</button>
+      <button class="btn btn-next" id="toPage4Btn" onclick="goPage(4)" disabled>ראה את ההשפעה &#8592;</button>
     </div>
   </div>
 
-  <!-- ═══ PAGE 3: Impact Summary ═══ -->
-  <div class="page" id="page-3">
-    <div class="card" style="text-align:center">
+  <!-- ═══ PAGE 4: Impact Summary ═══ -->
+  <div class="page" id="page-4">
+    <div class="card" style="text-align:center; padding: 28px 16px;">
       <h2>ההשפעה של ההחלטה שלך</h2>
-      <div class="subtitle">ביטלת הוצאות קטנות. הנה מה שזה שווה לאורך זמן.</div>
+      <div class="subtitle">ביטלת הוצאות גמישות קטנות. הנה מה שזה שווה לאורך זמן.</div>
 
       <div class="impact-grid">
         <div class="impact-card green" id="impactMonthly">
@@ -531,7 +787,7 @@
         <div class="readiness-label">מוכנות פיננסית</div>
       </div>
 
-      <div class="summary-msg">
+      <div class="summary-msg" style="background: var(--gold-bg); border-radius: 12px; padding: 16px; font-weight: 600; color: var(--gold-dark);">
         החזרת לעצמך את השליטה על ה-3% הראשונים.<br>
         מחר נלמד איך להגדיל את הערך שלך כדי להכניס עוד כסף למערכת.
       </div>
@@ -641,46 +897,52 @@ const CATEGORIES = [
   }
 ];
 
-// Legacy field mapping (flat DB columns → category items)
-const LEGACY_MAP = {
-  rent: 'rent', arnona: 'arnona',
-  utilities: ['electricity','water','gas'], // will split evenly
-  telecom: ['phone_bill','internet'],
-  car_insurance: 'car_insurance',
-  loans: 'bank_loans',
-  education: 'daycare',
-  leasing: 'leasing',
-  test_annual: null,
-  groceries: 'groceries', dining: 'dining', coffee: 'coffee',
-  transport: 'fuel',
-  health: 'kupat_holim',
-  shopping: 'shopping',
-  leisure: 'entertainment',
-  kids: 'kids_hobbies',
-  // Savings mapped to investments
-  pension_extra: 'extra_pension',
-  keren_hishtalmut: 'keren_hishtalmut',
-  gemel_invest: 'gemel_invest',
-  child_savings: 'child_savings',
-  general_savings: 'general_savings'
-};
+// ── State ──
+let participantData = null;
+let expenseItems = []; // [{id, label, amount, catId, catName, type:'rigid'|'flexible'}]
+let dropSelections = {}; // {itemId: true/false} for accordion selections
+let committed = false;
+let userAge = 35;
+let totalExpenses = 0;
+let pid = null;
+let userGender = 'male';
 
 // ── Helpers ──
 function fmt(n) { return '₪' + Math.round(n).toLocaleString('he-IL'); }
 function pct(n, t) { return t > 0 ? Math.round(n / t * 100) : 0; }
 
-// ── State ──
-let participantData = null;
-let expenseItems = []; // [{id, label, amount, catId, catName, type:'rigid'|'flexible'}]
-let flexibleItems = []; // subset of expenseItems where type=flexible and amount>0
-let ratings = {}; // {itemId: 'keep'|'drop'}
-let dropSelections = {}; // {itemId: true/false} for page 2
-let committed = false;
-let userAge = 35;
-let totalExpenses = 0;
-let pid = null;
+function normalizeGender(raw) {
+  if (!raw) return 'male';
+  const clean = String(raw).trim().toLowerCase();
+  if (clean === 'זכר' || clean === 'male') return 'male';
+  if (clean === 'נקבה' || clean === 'female') return 'female';
+  return 'male'; // default
+}
 
-// ── Load from Supabase (via Edge Function due to RLS) ──
+function applyGender(g) {
+  document.querySelectorAll('[data-male], [data-female]').forEach(el => {
+    const target = g === 'female' ? el.dataset.female : el.dataset.male;
+    if (target) {
+      if (el.tagName === 'INPUT' && el.type === 'button') {
+        el.value = target;
+      } else {
+        el.textContent = target;
+      }
+    }
+  });
+
+  // Specifically adjust Page 0 greeting text
+  const nameSpan = document.getElementById('welcomeName');
+  const name = nameSpan ? nameSpan.textContent : 'משתתף';
+  const startGreeting = document.getElementById('startGreeting');
+  if (startGreeting) {
+    startGreeting.innerHTML = g === 'female'
+      ? `שלום ${name}, האם את מוכנה להתחיל לחסוך בהוצאות שלך ?`
+      : `שלום ${name}, האם אתה מוכן להתחיל לחסוך בהוצאות שלך ?`;
+  }
+}
+
+// ── Load from Supabase ──
 async function loadFromSupabase(pid) {
   const res = await fetch(`${SUPA_URL}/functions/v1/get-participant-v10?pid=${encodeURIComponent(pid)}`, {
     headers: { 'Content-Type': 'application/json' }
@@ -695,7 +957,6 @@ function parseExpenses(row) {
   const items = [];
   let detail = null;
 
-  // Try to parse expenses_detail JSON
   if (row.expenses_detail) {
     try {
       detail = typeof row.expenses_detail === 'string' ? JSON.parse(row.expenses_detail) : row.expenses_detail;
@@ -703,7 +964,6 @@ function parseExpenses(row) {
   }
 
   if (detail && Object.keys(detail).length > 0) {
-    // New format: read from expenses_detail JSON
     CATEGORIES.forEach(cat => {
       cat.items.forEach(item => {
         const val = detail[item.id] || 0;
@@ -720,7 +980,7 @@ function parseExpenses(row) {
       });
     });
   } else {
-    // Legacy format: read from flat columns
+    // Legacy format
     const legacyFields = {
       rent: {label:'שכ"ד / משכנתא', cat:'household', type:'rigid'},
       arnona: {label:'ארנונה', cat:'household', type:'rigid'},
@@ -764,136 +1024,81 @@ function parseExpenses(row) {
   return items;
 }
 
-// ── Build Page 0: Force Separation ──
-function buildPage0() {
-  const rigidItems = expenseItems.filter(e => e.type === 'rigid');
-  const flexItems = expenseItems.filter(e => e.type === 'flexible');
-  const rigidSum = rigidItems.reduce((s, e) => s + e.amount, 0);
-  const flexSum = flexItems.reduce((s, e) => s + e.amount, 0);
-  totalExpenses = rigidSum + flexSum;
-
-  // Build rigid list
-  let rigidHTML = '';
-  rigidItems.forEach(item => {
-    rigidHTML += `<div class="expense-card rigid">
-      <div><span class="exp-name">${item.label}</span><div style="font-size:11px;color:var(--dark-mid)">${item.catName}</div></div>
-      <span class="exp-amount">${fmt(item.amount)}</span>
-    </div>`;
+// ── Bind Accordion toggle handlers ──
+function initAccordions() {
+  document.querySelectorAll('.category__header').forEach(header => {
+    header.addEventListener('click', () => {
+      const block = header.parentElement;
+      const body = block.querySelector('.category__body');
+      const isOpen = !body.hidden;
+      body.hidden = isOpen;
+      header.setAttribute('aria-expanded', String(!isOpen));
+      block.classList.toggle('is-open', !isOpen);
+    });
   });
-  if (rigidItems.length === 0) {
-    rigidHTML = '<div style="text-align:center;padding:16px;color:var(--dark-mid);font-size:13px">לא נמצאו הוצאות קשיחות</div>';
-  }
-  document.getElementById('rigidList').innerHTML = rigidHTML;
-  document.getElementById('rigidTotal').textContent = fmt(rigidSum);
-
-  // Build flexible list
-  let flexHTML = '';
-  flexItems.forEach(item => {
-    flexHTML += `<div class="expense-card flexible">
-      <div><span class="exp-name">${item.label}</span><div style="font-size:11px;color:var(--dark-mid)">${item.catName}</div></div>
-      <span class="exp-amount">${fmt(item.amount)}</span>
-    </div>`;
-  });
-  if (flexItems.length === 0) {
-    flexHTML = '<div style="text-align:center;padding:16px;color:var(--dark-mid);font-size:13px">לא נמצאו הוצאות גמישות</div>';
-  }
-  document.getElementById('flexList').innerHTML = flexHTML;
-  document.getElementById('flexTotal').textContent = fmt(flexSum);
-
-  document.getElementById('grandTotal').textContent = fmt(totalExpenses);
-
-  // Store flexible items for next pages
-  flexibleItems = flexItems.filter(e => e.amount > 0);
 }
 
-// ── Build Page 1: Rating ──
-function buildPage1() {
-  let html = '';
-  flexibleItems.forEach((item, i) => {
-    html += `<div class="rate-item" id="rate-${item.id}">
-      <div class="rate-top">
-        <span class="rate-name">${item.label}</span>
-        <span class="rate-amount">${fmt(item.amount)}</span>
-      </div>
-      <div class="rate-btns">
-        <button class="rate-btn keep" id="keep-${item.id}" onclick="rateItem('${item.id}','keep')">לא מוכן לוותר</button>
-        <button class="rate-btn can-drop" id="drop-${item.id}" onclick="rateItem('${item.id}','drop')">אפשר בלעדיהן</button>
-      </div>
-    </div>`;
-  });
-  document.getElementById('rateList').innerHTML = html;
-  updateRateCounter();
-}
-
-function rateItem(itemId, choice) {
-  ratings[itemId] = choice;
-  const container = document.getElementById('rate-' + itemId);
-  const keepBtn = document.getElementById('keep-' + itemId);
-  const dropBtn = document.getElementById('drop-' + itemId);
-
-  // Reset
-  container.className = 'rate-item rated';
-  keepBtn.classList.remove('selected');
-  dropBtn.classList.remove('selected');
-
-  if (choice === 'keep') {
-    keepBtn.classList.add('selected');
-    container.classList.add('rated-keep');
-  } else {
-    dropBtn.classList.add('selected');
-    container.classList.add('rated-drop');
-  }
-
-  updateRateCounter();
-  checkAllRated();
-}
-
-function updateRateCounter() {
-  let dropSum = 0;
-  let dropCount = 0;
-  flexibleItems.forEach(item => {
-    if (ratings[item.id] === 'drop') {
-      dropSum += item.amount;
-      dropCount++;
-    }
-  });
-  document.getElementById('dropTotal').textContent = fmt(dropSum);
-  document.getElementById('dropCount').textContent = dropCount + ' פריטים נבחרו';
-
-  // Save to localStorage
-  localStorage.setItem('day2_ratings', JSON.stringify(ratings));
-}
-
-function checkAllRated() {
-  const allRated = flexibleItems.every(item => ratings[item.id]);
-  document.getElementById('toPage2Btn').disabled = !allRated;
-}
-
-// ── Build Page 2: 3% Law ──
-function buildPage2() {
+// ── Build Page 3: Accordion lists ──
+function buildPage3() {
   const threePercent = Math.round(totalExpenses * 0.03);
   document.getElementById('threePercentDisplay').textContent = fmt(threePercent);
 
-  // Get droppable items (rated as 'drop')
-  const droppable = flexibleItems.filter(item => ratings[item.id] === 'drop');
+  // Filter items by type/category
+  const flexItems = expenseItems.filter(e => e.type === 'flexible' && e.catId !== 'investments' && e.amount > 0);
+  const rigidItems = expenseItems.filter(e => e.type === 'rigid' && e.amount > 0);
+  const savingsItems = expenseItems.filter(e => e.catId === 'investments' && e.amount > 0);
 
-  let html = '';
-  if (droppable.length === 0) {
-    html = '<div style="text-align:center;padding:20px;color:var(--dark-mid);font-size:14px">לא סימנת אף פריט כ"אפשר בלעדיהן".<br>תחזור לשלב הקודם ותסמן לפחות פריט אחד.</div>';
-  } else {
-    droppable.forEach(item => {
-      html += `<div class="drop-select-item" id="ds-${item.id}" onclick="toggleDropSelect('${item.id}')">
-        <div class="drop-check" id="dsc-${item.id}"></div>
-        <div class="drop-info">
-          <div class="drop-name">${item.label}</div>
-          <div style="font-size:11px;color:var(--dark-mid)">${item.catName}</div>
-        </div>
-        <div class="drop-amount">${fmt(item.amount)}</div>
+  // 1. Build rigid list (read-only lock icons)
+  let rigidHTML = '';
+  rigidItems.forEach(item => {
+    rigidHTML += `
+      <div class="expense-card" style="padding: 10px 12px; margin-bottom: 6px; border-radius: 8px; border: 1px solid var(--cream-dark); display: flex; justify-content: space-between; align-items: center; background: var(--white); font-size: 14px; border-right: 3px solid var(--blue);">
+        <div><span style="font-weight:600">${item.label}</span><div style="font-size:11px;color:var(--dark-mid)">${item.catName}</div></div>
+        <span style="font-weight:800;direction:ltr">${fmt(item.amount)}</span>
       </div>`;
+  });
+  if (rigidItems.length === 0) {
+    rigidHTML = '<div style="text-align:center;padding:12px;color:var(--dark-mid);font-size:13px">לא נמצאו הוצאות קבועות</div>';
+  }
+  document.getElementById('list-need').innerHTML = rigidHTML;
+  document.getElementById('sum-need').textContent = fmt(rigidItems.reduce((s, e) => s + e.amount, 0));
+
+  // 2. Build savings list (read-only check icons)
+  let savingsHTML = '';
+  savingsItems.forEach(item => {
+    savingsHTML += `
+      <div class="expense-card" style="padding: 10px 12px; margin-bottom: 6px; border-radius: 8px; border: 1px solid var(--cream-dark); display: flex; justify-content: space-between; align-items: center; background: var(--white); font-size: 14px; border-right: 3px solid var(--green);">
+        <div><span style="font-weight:600">${item.label}</span><div style="font-size:11px;color:var(--dark-mid)">${item.catName}</div></div>
+        <span style="font-weight:800;direction:ltr;color:var(--green-text)">${fmt(item.amount)}</span>
+      </div>`;
+  });
+  if (savingsItems.length === 0) {
+    savingsHTML = '<div style="text-align:center;padding:12px;color:var(--dark-mid);font-size:13px">לא נמצאו חסכונות והפקדות</div>';
+  }
+  document.getElementById('list-savings').innerHTML = savingsHTML;
+  document.getElementById('sum-savings').textContent = fmt(savingsItems.reduce((s, e) => s + e.amount, 0));
+
+  // 3. Build flexible list (interactive checkbox cards)
+  let flexHTML = '';
+  if (flexItems.length === 0) {
+    flexHTML = '<div style="text-align:center;padding:20px;color:var(--dark-mid);font-size:14px">לא נמצאו הוצאות גמישות.</div>';
+  } else {
+    flexItems.forEach(item => {
+      const isSelected = !!dropSelections[item.id];
+      flexHTML += `
+        <div class="drop-select-item ${isSelected ? 'selected' : ''}" id="ds-${item.id}" onclick="toggleDropSelect('${item.id}')">
+          <div class="drop-check" id="dsc-${item.id}">${isSelected ? '✓' : ''}</div>
+          <div class="drop-info">
+            <div class="drop-name">${item.label}</div>
+            <div style="font-size:11px;color:var(--dark-mid)">${item.catName}</div>
+          </div>
+          <div class="drop-amount">${fmt(item.amount)}</div>
+        </div>`;
     });
   }
-  document.getElementById('dropSelectList').innerHTML = html;
-  dropSelections = {};
+  document.getElementById('list-want').innerHTML = flexHTML;
+  document.getElementById('sum-want').textContent = fmt(flexItems.reduce((s, e) => s + e.amount, 0));
+
   updateDropSelection();
 }
 
@@ -915,7 +1120,7 @@ function toggleDropSelect(itemId) {
 function updateDropSelection() {
   const threePercent = Math.round(totalExpenses * 0.03);
   let selectedSum = 0;
-  flexibleItems.forEach(item => {
+  expenseItems.forEach(item => {
     if (dropSelections[item.id]) selectedSum += item.amount;
   });
 
@@ -925,10 +1130,15 @@ function updateDropSelection() {
 
   // Show commit button when target reached
   const commitSection = document.getElementById('commitSection');
+  const wantAccordion = document.getElementById('accordion-want');
   if (selectedSum >= threePercent && threePercent > 0) {
-    commitSection.style.display = 'block';
+    if (!committed) {
+      commitSection.style.display = 'block';
+    }
+    wantAccordion.classList.add('is-touched');
   } else {
     commitSection.style.display = 'none';
+    wantAccordion.classList.remove('is-touched');
   }
 }
 
@@ -938,17 +1148,17 @@ function commitSavings() {
   // Hide commit section
   document.getElementById('commitSection').style.display = 'none';
 
-  // Show done animation
+  // Show done status
   const doneEl = document.getElementById('commitDone');
   doneEl.style.display = 'block';
 
   // Enable next button
-  document.getElementById('toPage3Btn').disabled = false;
+  document.getElementById('toPage4Btn').disabled = false;
 
   // Save to localStorage
   const selectedItems = [];
   let savingAmount = 0;
-  flexibleItems.forEach(item => {
+  expenseItems.forEach(item => {
     if (dropSelections[item.id]) {
       selectedItems.push({id: item.id, label: item.label, amount: item.amount});
       savingAmount += item.amount;
@@ -979,10 +1189,17 @@ async function saveCommitmentToSupabase(amount) {
   }
 }
 
-// ── Build Page 3: Impact ──
-function buildPage3() {
+// ── Defer Day ──
+function deferDay() {
+  localStorage.setItem('day2_deferred', 'true');
+  const homeUrl = 'home.html' + (pid ? '?pid=' + pid : '');
+  window.location.href = homeUrl;
+}
+
+// ── Build Page 4: Impact ──
+function buildPage4() {
   let monthlySaving = 0;
-  flexibleItems.forEach(item => {
+  expenseItems.forEach(item => {
     if (dropSelections[item.id]) monthlySaving += item.amount;
   });
 
@@ -1012,7 +1229,8 @@ function buildPage3() {
   // circumference = 2 * PI * 65 ≈ 408.4
   // 60% fill = 408.4 * 0.4 = 163.4 dashoffset
   setTimeout(() => {
-    document.getElementById('ringFill').style.strokeDashoffset = '163.4';
+    const ringFill = document.getElementById('ringFill');
+    if (ringFill) ringFill.style.strokeDashoffset = '163.4';
   }, 1200);
 }
 
@@ -1020,24 +1238,11 @@ function buildPage3() {
 let currentPage = 0;
 
 function goPage(n) {
-  // Build content when navigating to pages
-  if (n === 1 && currentPage === 0) buildPage1();
-  if (n === 2 && currentPage === 1) buildPage2();
   if (n === 3 && currentPage === 2) buildPage3();
+  if (n === 4 && currentPage === 3) buildPage4();
 
   document.getElementById('page-' + currentPage).classList.remove('active');
   document.getElementById('page-' + n).classList.add('active');
-
-  // Update progress dots (0-3)
-  for (let i = 0; i <= 3; i++) {
-    const dot = document.getElementById('pd-' + i);
-    const line = document.getElementById('pl-' + i);
-    dot.classList.remove('active', 'done');
-    if (line) line.classList.remove('done');
-    if (i < n) { dot.classList.add('done'); dot.textContent = '✓'; if (line) line.classList.add('done'); }
-    else if (i === n) { dot.classList.add('active'); dot.textContent = (i + 1); }
-    else { dot.textContent = (i + 1); }
-  }
 
   currentPage = n;
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1056,7 +1261,6 @@ async function checkDayUnlock(pid, dayNumber) {
       { headers: { 'Content-Type': 'application/json' } }
     );
     if (!res.ok) {
-      // If 404 (no participant), treat as unlocked - let normal flow handle missing data
       return { unlocked: true };
     }
     return await res.json();
@@ -1067,7 +1271,6 @@ async function checkDayUnlock(pid, dayNumber) {
 }
 
 function showLockedScreen(unlockData, dayNumber) {
-  // Hide all existing content
   document.body.innerHTML = `
     <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#FDF8F0;font-family:Heebo,sans-serif;direction:rtl;padding:20px;">
       <div style="max-width:480px;text-align:center;background:#fff;border-radius:20px;padding:40px 28px;box-shadow:0 4px 24px rgba(0,0,0,.08);">
@@ -1080,20 +1283,17 @@ function showLockedScreen(unlockData, dayNumber) {
       </div>
     </div>`;
 
-  // Format unlock date
   const unlockAt = new Date(unlockData.unlockAt);
   document.getElementById('lockUnlockDate').textContent = unlockAt.toLocaleString('he-IL', {
     day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Jerusalem'
   });
 
-  // Update back link with pid if available
   const params = new URLSearchParams(location.search);
   const pid = params.get('pid') || localStorage.getItem('challenge_pid');
   if (pid) {
     document.getElementById('lockBackLink').href = `day${dayNumber - 1}.html?pid=${pid}`;
   }
 
-  // Live countdown
   const targetTime = unlockAt.getTime();
   const updateCountdown = () => {
     const now = Date.now();
@@ -1115,12 +1315,10 @@ function showLockedScreen(unlockData, dayNumber) {
   setInterval(updateCountdown, 1000);
 }
 
-// Wraps init logic with unlock check. Call this instead of original init.
 async function unlockGate(dayNumber, originalInitFn) {
   const params = new URLSearchParams(location.search);
   const pid = params.get('pid') || localStorage.getItem('challenge_pid');
   if (!pid) {
-    // No pid - let original logic handle (it will show error screen)
     originalInitFn();
     return;
   }
@@ -1137,59 +1335,85 @@ function originalInit() {
   const params = new URLSearchParams(window.location.search);
   pid = params.get('pid');
 
+  // Normalise gender from localStorage if possible
+  try {
+    const lead = JSON.parse(localStorage.getItem('fhink_lead_v1') || 'null');
+    if (lead && lead.gender) {
+      userGender = normalizeGender(lead.gender);
+    }
+  } catch(_) {}
+
   if (pid) {
+    localStorage.setItem('challenge_pid', pid);
     loadFromSupabase(pid).then(row => {
       participantData = row;
       userAge = row.age || 35;
 
-      // Set name
-      document.getElementById('userName').textContent = row.name || 'משתתף';
+      // Update name
+      const name = row.name || 'משתתף';
+      const welcomeNameEl = document.getElementById('welcomeName');
+      if (welcomeNameEl) welcomeNameEl.textContent = name;
+
+      // Extract gender if available in row
+      if (row.gender) {
+        userGender = normalizeGender(row.gender);
+      }
+
+      applyGender(userGender);
 
       // Parse expenses
       expenseItems = parseExpenses(row);
+      const rigidSum = expenseItems.filter(e => e.type === 'rigid').reduce((s, e) => s + e.amount, 0);
+      const flexSum = expenseItems.filter(e => e.type === 'flexible').reduce((s, e) => s + e.amount, 0);
+      totalExpenses = rigidSum + flexSum;
 
       // Hide loading, show page 0
       document.getElementById('loadingScreen').style.display = 'none';
       document.getElementById('page-0').classList.add('active');
 
-      // Build page 0
-      buildPage0();
-
-      // Restore ratings from localStorage
-      const savedRatings = localStorage.getItem('day2_ratings');
-      if (savedRatings) {
-        try { ratings = JSON.parse(savedRatings); } catch(e) {}
-      }
+      // Init accordions
+      initAccordions();
     }).catch(err => {
       document.getElementById('loadingScreen').style.display = 'none';
       document.getElementById('errorScreen').style.display = 'block';
       document.getElementById('errorMsg').textContent = err.message;
-      document.getElementById('progressBar').style.display = 'none';
     });
   } else {
-    // No pid - try localStorage
     const storedPid = localStorage.getItem('challenge_pid');
     if (storedPid) {
       pid = storedPid;
       loadFromSupabase(pid).then(row => {
         participantData = row;
         userAge = row.age || 35;
-        document.getElementById('userName').textContent = row.name || 'משתתף';
+
+        const name = row.name || 'משתתף';
+        const welcomeNameEl = document.getElementById('welcomeName');
+        if (welcomeNameEl) welcomeNameEl.textContent = name;
+
+        if (row.gender) {
+          userGender = normalizeGender(row.gender);
+        }
+
+        applyGender(userGender);
+
         expenseItems = parseExpenses(row);
+        const rigidSum = expenseItems.filter(e => e.type === 'rigid').reduce((s, e) => s + e.amount, 0);
+        const flexSum = expenseItems.filter(e => e.type === 'flexible').reduce((s, e) => s + e.amount, 0);
+        totalExpenses = rigidSum + flexSum;
+
         document.getElementById('loadingScreen').style.display = 'none';
         document.getElementById('page-0').classList.add('active');
-        buildPage0();
+
+        initAccordions();
       }).catch(err => {
         document.getElementById('loadingScreen').style.display = 'none';
         document.getElementById('errorScreen').style.display = 'block';
         document.getElementById('errorMsg').textContent = 'לא נמצא מזהה משתתף. תחזור ליום 1 ותמלא את השאלון.';
-        document.getElementById('progressBar').style.display = 'none';
       });
     } else {
       document.getElementById('loadingScreen').style.display = 'none';
       document.getElementById('errorScreen').style.display = 'block';
       document.getElementById('errorMsg').textContent = 'לא נמצא מזהה משתתף. תחזור ליום 1 ותמלא את השאלון.';
-      document.getElementById('progressBar').style.display = 'none';
     }
   }
 }
@@ -1197,61 +1421,61 @@ function originalInit() {
 unlockGate(2, originalInit);
 </script>
 
-  <a href="https://wa.me/972546232063?text=%D7%94%D7%99%D7%99%2C%20%D7%9E%D7%A9%D7%94%D7%95%20%D7%91%D7%94%D7%AA%D7%A0%D7%A1%D7%95%D7%AA%20%D7%9C%D7%90%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9C%D7%99" class="wa-support-float" target="_blank" rel="noopener noreferrer">
-    <svg viewBox="0 0 24 24" fill="currentColor">
-      <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.717-1.458L0 24zm6.59-4.846c1.6.95 3.167 1.455 4.767 1.456 5.405 0 9.803-4.394 9.806-9.794.002-2.615-1.012-5.074-2.859-6.924C16.463 2.042 14.01 1.026 11.998 1.026 6.596 1.026 2.201 5.421 2.198 10.823c-.001 1.714.453 3.39 1.316 4.869l-.98 3.577 3.665-.961zm10.407-3.414c-.28-.14-1.65-.814-1.906-.907-.256-.093-.443-.14-.63.14-.187.28-.724.907-.887 1.093-.163.187-.327.21-.607.07-.28-.14-1.18-.435-2.25-1.39-.83-.74-1.39-1.655-1.553-1.936-.163-.28-.018-.43.122-.57.126-.127.28-.327.42-.49.14-.163.187-.28.28-.467.093-.187.047-.35-.023-.49-.07-.14-.63-1.52-.86-2.07-.225-.54-.472-.46-.645-.47-.167-.008-.36-.01-.553-.01-.193 0-.508.073-.773.36-.265.287-1.01 1.013-1.01 2.47 0 1.455 1.06 2.864 1.208 3.06.147.197 2.085 3.182 5.05 4.464.705.305 1.256.487 1.683.623.71.226 1.356.194 1.867.118.57-.085 1.72-.704 1.96-1.385.24-.683.24-1.266.168-1.385-.072-.12-.264-.19-.544-.33z"/>
-    </svg>
-    <span class="wa-support-text">לא עובד ? תדווחו לנו</span>
-  </a>
+<a href="https://wa.me/972546232063?text=%D7%94%D7%99%D7%99%2C%20%D7%9E%D7%A9%D7%94%D7%95%20%D7%91%D7%94%D7%AA%D7%A0%D7%A1%D7%95%D7%AA%20%D7%9C%D7%90%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9C%D7%99" class="wa-support-float" target="_blank" rel="noopener noreferrer">
+  <svg viewBox="0 0 24 24" fill="currentColor">
+    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.717-1.458L0 24zm6.59-4.846c1.6.95 3.167 1.455 4.767 1.456 5.405 0 9.803-4.394 9.806-9.794.002-2.615-1.012-5.074-2.859-6.924C16.463 2.042 14.01 1.026 11.998 1.026 6.596 1.026 2.201 5.421 2.198 10.823c-.001 1.714.453 3.39 1.316 4.869l-.98 3.577 3.665-.961zm10.407-3.414c-.28-.14-1.65-.814-1.906-.907-.256-.093-.443-.14-.63.14-.187.28-.724.907-.887 1.093-.163.187-.327.21-.607.07-.28-.14-1.18-.435-2.25-1.39-.83-.74-1.39-1.655-1.553-1.936-.163-.28-.018-.43.122-.57.126-.127.28-.327.42-.49.14-.163.187-.28.28-.467.093-.187.047-.35-.023-.49-.07-.14-.63-1.52-.86-2.07-.225-.54-.472-.46-.645-.47-.167-.008-.36-.01-.553-.01-.193 0-.508.073-.773.36-.265.287-1.01 1.013-1.01 2.47 0 1.455 1.06 2.864 1.208 3.06.147.197 2.085 3.182 5.05 4.464.705.305 1.256.487 1.683.623.71.226 1.356.194 1.867.118.57-.085 1.72-.704 1.96-1.385.24-.683.24-1.266.168-1.385-.072-.12-.264-.19-.544-.33z"/>
+  </svg>
+  <span class="wa-support-text">לא עובד ? תדווחו לנו</span>
+</a>
 
-  <style>
+<style>
+  .wa-support-float {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    background-color: #25d366;
+    color: #fff;
+    border-radius: 50px;
+    padding: 10px 18px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    direction: rtl;
+  }
+  .wa-support-float:hover {
+    background-color: #20ba56;
+    transform: scale(1.05);
+    color: #fff;
+    text-decoration: none;
+  }
+  .wa-support-float svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+  }
+  .wa-support-text {
+    white-space: nowrap;
+  }
+  @media (max-width: 480px) {
     .wa-support-float {
-      position: fixed;
-      bottom: 24px;
-      left: 24px;
-      background-color: #25d366;
-      color: #fff;
-      border-radius: 50px;
-      padding: 10px 18px;
-      font-family: 'Heebo', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      text-decoration: none;
-      transition: transform 0.2s ease, background-color 0.2s ease;
-      direction: rtl;
-    }
-    .wa-support-float:hover {
-      background-color: #20ba56;
-      transform: scale(1.05);
-      color: #fff;
-      text-decoration: none;
+      bottom: 16px;
+      left: 16px;
+      padding: 8px 14px;
+      font-size: 13px;
     }
     .wa-support-float svg {
-      width: 20px;
-      height: 20px;
-      display: block;
+      width: 18px;
+      height: 18px;
     }
-    .wa-support-text {
-      white-space: nowrap;
-    }
-    @media (max-width: 480px) {
-      .wa-support-float {
-        bottom: 16px;
-        left: 16px;
-        padding: 8px 14px;
-        font-size: 13px;
-      }
-      .wa-support-float svg {
-        width: 18px;
-        height: 18px;
-      }
-    }
-  </style>
+  }
+</style>
 
 </body>
 </html>
