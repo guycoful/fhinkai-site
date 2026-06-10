@@ -645,10 +645,14 @@
 
     // ─── UNLOCK LEVEL ───
     const isAdmin = getParam('admin') === 'true';
+    const isBypass = getParam('bypass') === '1';
     const urlUnlock = parseInt(getParam('unlock') || '0', 10);
     const storedUnlock = parseInt(localStorage.getItem('challenge_unlock') || '0', 10);
 
     let unlockLevel = Math.max(urlUnlock, storedUnlock, 1); // default: day 1 always open
+    if (isBypass) {
+      unlockLevel = 4;
+    }
 
     // Admin saves to localStorage so all users see it
     if (isAdmin && urlUnlock > 0) {
@@ -707,12 +711,17 @@
 
     states.forEach((state, i) => applyCardState(i + 1, state));
 
-    // ─── ATTACH PID TO DAY 2 LINK ───
+    // ─── ATTACH PID AND BYPASS TO LINKS ───
     const pid = getParam('pid');
-    if (pid) {
-      const card2 = document.getElementById('card-2');
-      const base = card2.getAttribute('href') || 'day2.html';
-      card2.setAttribute('href', base + '?pid=' + pid);
+    for (let d = 1; d <= 4; d++) {
+      const card = document.getElementById('card-' + d);
+      if (card) {
+        let base = card.getAttribute('href') || `day${d}.html`;
+        const urlObj = new URL(base, window.location.origin);
+        if (pid) urlObj.searchParams.set('pid', pid);
+        if (isBypass) urlObj.searchParams.set('bypass', '1');
+        card.setAttribute('href', urlObj.pathname + urlObj.search);
+      }
     }
 
     // ─── FLOW TIMELINE ───

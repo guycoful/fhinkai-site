@@ -1066,7 +1066,12 @@ function showSummary() {
 // ── Navigate to Day 2 ──
 function goToDay2() {
   const pid = localStorage.getItem('challenge_pid');
-  const url = 'day2.html' + (pid ? '?pid=' + pid : '');
+  const params = new URLSearchParams(window.location.search);
+  const bypass = params.get('bypass');
+  let url = 'day2.html' + (pid ? '?pid=' + pid : '');
+  if (bypass === '1') {
+    url += (pid ? '&' : '?') + 'bypass=1';
+  }
   window.location.href = url;
 }
 

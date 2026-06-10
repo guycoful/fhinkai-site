@@ -413,6 +413,7 @@
         const p = new URLSearchParams(window.location.search);
         let cohort = p.get('cohort');
         let src = p.get('src');
+        const bypass = p.get('bypass') === '1';
         if (!cohort) {
           try { cohort = (JSON.parse(localStorage.getItem('fhink_lead_v1') || 'null') || {}).cohort || ''; } catch (_) {}
         }
@@ -429,7 +430,7 @@
         };
         const startIso = COHORT_START[cohort] || COHORT_START['pilot'];
         const startTs = new Date(startIso).getTime();
-        if (Date.now() < startTs) {
+        if (!bypass && Date.now() < startTs) {
           const d = new Date(startIso);
           const dateStr = d.toLocaleDateString('he-IL', { day: 'numeric', month: 'long' });
           showToast('האתגר ייפתח ב-' + dateStr + ' בבוקר. שמרנו את ההרשמה שלך ונשלח תזכורת.');
@@ -441,6 +442,7 @@
           const params = new URLSearchParams();
           if (cohort) params.set('cohort', cohort);
           if (src) params.set('src', src);
+          if (bypass) params.set('bypass', '1');
           const qs = params.toString();
           window.location.href = '/day1.html' + (qs ? '?' + qs : '');
         }, 1400);

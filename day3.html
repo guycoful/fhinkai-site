@@ -691,6 +691,11 @@ function showLockedScreen(unlockData, dayNumber) {
 
 async function unlockGate(dayNumber, originalInitFn) {
   const params = new URLSearchParams(location.search);
+  const bypass = params.get('bypass') === '1';
+  if (bypass) {
+    originalInitFn();
+    return;
+  }
   const p = params.get('pid') || localStorage.getItem('challenge_pid');
   if (!p) { originalInitFn(); return; }
   const unlockData = await checkDayUnlock(p, dayNumber);
@@ -905,7 +910,12 @@ function showEndedScreen(finalText) {
   $('endedTurns').textContent = String(turnsCount);
   $('endedAgent').textContent = agentName;
   $('goDay4Btn').onclick = () => {
-    const url = 'day4.html' + (pid ? '?pid=' + encodeURIComponent(pid) : '');
+    const params = new URLSearchParams(window.location.search);
+    const bypass = params.get('bypass');
+    let url = 'day4.html' + (pid ? '?pid=' + encodeURIComponent(pid) : '');
+    if (bypass === '1') {
+      url += (pid ? '&' : '?') + 'bypass=1';
+    }
     window.location.href = url;
   };
   showScreen('ended');

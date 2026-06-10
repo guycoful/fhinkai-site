@@ -1095,6 +1095,11 @@ function showLockedScreen(unlockData, dayNumber) {
 // Wraps init logic with unlock check. Call this instead of original init.
 async function unlockGate(dayNumber, originalInitFn) {
   const params = new URLSearchParams(location.search);
+  const bypass = params.get('bypass') === '1';
+  if (bypass) {
+    originalInitFn();
+    return;
+  }
   const pid = params.get('pid') || localStorage.getItem('challenge_pid');
   if (!pid) {
     // No pid - let original logic handle (it will show error screen)
