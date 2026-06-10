@@ -787,13 +787,13 @@
     const googleBtn = document.querySelector('[data-action="cal-google"]');
     const icalBtn   = document.querySelector('[data-action="cal-ical"]');
 
-    // Create dynamic links for Webinar: Wednesday 17 Dec 2026 20:00-21:30 IDT (UTC+2)
-    // 20261217T180000Z / 20261217T193000Z
+    // Create dynamic links for Webinar: Wednesday 17 Jun 2026 20:00-21:30 IDT (UTC+3)
+    // 20260617T170000Z / 20260617T183000Z
     const title = 'FHINK AI · וובינר חיתום האתגר';
     const details = 'וובינר סיום אתגר 4 הימים של FHINK AI. נתחבר ונשלב את כל התוצאות שעבדת עליהן.';
     const location = 'אונליין (קישור יישלח בוואטסאפ)';
-    const startStr = '20261217T180000Z';
-    const endStr   = '20261217T193000Z';
+    const startStr = '20260617T170000Z';
+    const endStr   = '20260617T183000Z';
 
     if (googleBtn) {
       googleBtn.href = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${startStr}/${endStr}&details=${encodeURIComponent(details)}&location=${encodeURIComponent(location)}`;
