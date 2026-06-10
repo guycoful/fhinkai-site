@@ -8,24 +8,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --gold: #D4A853;
-    --gold-light: #E8C77A;
-    --gold-dark: #B8892E;
-    --gold-bg: #FBF3E1;
-    --warm-white: #FDF8F0;
-    --cream: #F5EDE0;
-    --cream-dark: #E6D5C3;
+    --gold: #26A59A;
+    --gold-light: #B2DFDB;
+    --gold-dark: #1F8D84;
+    --gold-bg: rgba(38, 165, 154, 0.08);
+    --warm-white: #F5F7F7;
+    --cream: #FFFFFF;
+    --cream-dark: #EEF1F2;
     --white: #FFFFFF;
-    --dark: #2C2419;
-    --dark-mid: #5C4E3C;
-    --navy: #1A2744;
-    --navy-light: #2A3D6E;
-    --green: #2E7D52;
-    --green-light: #E8F5EE;
-    --green-text: #1B5E3B;
-    --red: #C0392B;
-    --red-light: #FDEEEC;
-    --red-text: #922B21;
+    --dark: #151924;
+    --dark-mid: rgba(21, 25, 36, 0.75);
+    --navy: #151924;
+    --navy-light: rgba(21, 25, 36, 0.9);
+    --green: #2DAA6E;
+    --green-light: rgba(45, 170, 110, 0.08);
+    --green-text: #2DAA6E;
+    --red: #D64545;
+    --red-light: rgba(214, 69, 69, 0.08);
+    --red-text: #D64545;
     --yellow: #D4A017;
     --yellow-light: #FFF8E1;
     --blue: #2E6B9E;
@@ -38,19 +38,19 @@
 
     /* Accordion styles variables */
     --teal: #26A59A;
-    --teal-soft: #E0F2F1;
+    --teal-soft: rgba(38, 165, 154, 0.08);
     --teal-light: #B2DFDB;
-    --ice: #FDF8F0;
-    --silver-50: #E6D5C3;
-    --silver-45: #EAD9C4;
-    --charcoal: #2C2419;
-    --charcoal-75: #4A3C2E;
-    --charcoal-60: #5C4E3C;
+    --ice: #F5F7F7;
+    --silver-50: rgba(205, 205, 205, 0.50);
+    --silver-45: rgba(205, 205, 205, 0.45);
+    --charcoal: #151924;
+    --charcoal-75: rgba(21, 25, 36, 0.75);
+    --charcoal-60: rgba(21, 25, 36, 0.60);
     --field-radius-lg: 14px;
-    --t-fast: 0.2s;
-    --t-med: 0.35s;
+    --t-fast: 160ms;
+    --t-med: 280ms;
     --ease: cubic-bezier(0.4, 0, 0.2, 1);
-    --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -812,10 +812,10 @@ const CATEGORIES = [
   {
     id: 'household', name: 'משק בית', type: 'rigid',
     items: [
-      {id:'rent',label:'שכ"ד / משכנתא'},{id:'arnona',label:'ארנונה'},
+      {id:'rent_mortgage',label:'שכ"ד / משכנתא'},{id:'arnona',label:'ארנונה'},
       {id:'electricity',label:'חשמל'},{id:'water',label:'מים'},
-      {id:'gas',label:'גז'},{id:'vaad_bayit',label:'ועד בית'},
-      {id:'household_other',label:'אחר (משק בית)',isOther:true}
+      {id:'gas',label:'גז'},{id:'house_committee',label:'ועד בית'},
+      {id:'other',label:'אחר (משק בית)',isOther:true}
     ]
   },
   {
@@ -829,46 +829,46 @@ const CATEGORIES = [
   {
     id: 'education', name: 'חינוך', type: 'rigid',
     items: [
-      {id:'daycare',label:'גן / מעון'},{id:'afternoon',label:'צהרון'},
+      {id:'kindergarten',label:'גן / מעון'},{id:'afternoon',label:'צהרון'},
       {id:'tuition',label:'שכר לימוד'},{id:'education_other',label:'אחר (חינוך)',isOther:true}
     ]
   },
   {
     id: 'loans', name: 'הלוואות', type: 'rigid',
     items: [
-      {id:'bank_loans',label:'הלוואות בנקאיות'},{id:'credit_card',label:'כרטיס אשראי'},
-      {id:'external_loans',label:'הלוואה חוץ-בנקאית'},{id:'loans_other',label:'אחר (הלוואות)',isOther:true}
+      {id:'bank_loans',label:'הלוואות בנקאיות'},{id:'credit_cards',label:'כרטיס אשראי'},
+      {id:'private_loans',label:'הלוואה חוץ-בנקאית'},{id:'loans_other',label:'אחר (הלוואות)',isOther:true}
     ]
   },
   {
     id: 'health', name: 'בריאות', type: 'rigid',
     items: [
-      {id:'kupat_holim',label:'קופ"ח'},{id:'medication',label:'תרופות'},
+      {id:'health_fund',label:'קופ"ח'},{id:'medication',label:'תרופות'},
       {id:'dental',label:'טיפולי שיניים'},{id:'glasses',label:'משקפיים / עדשות'},
       {id:'health_other',label:'אחר (בריאות)',isOther:true}
     ]
   },
   {
-    id: 'hobbies', name: 'חוגים', type: 'flexible',
+    id: 'classes', name: 'חוגים', type: 'flexible',
     items: [
-      {id:'kids_hobbies',label:'חוגים לילדים'},{id:'fitness',label:'כושר / ספורט'},
-      {id:'hobbies_other',label:'אחר (חוגים)',isOther:true}
+      {id:'kids_classes',label:'חוגים לילדים'},{id:'fitness',label:'כושר / ספורט'},
+      {id:'other',label:'אחר (חוגים)',isOther:true}
     ]
   },
   {
     id: 'transport', name: 'תחבורה', type: 'flexible',
     items: [
       {id:'fuel',label:'דלק'},{id:'parking',label:'חניה'},
-      {id:'public_transit',label:'תחב"צ'},{id:'leasing',label:'ליסינג / תשלומי רכב'},
+      {id:'public',label:'תחב"צ'},{id:'leasing',label:'ליסינג / תשלומי רכב'},
       {id:'transport_other',label:'אחר (תחבורה)',isOther:true}
     ]
   },
   {
-    id: 'telecom', name: 'תקשורת', type: 'flexible',
+    id: 'comms', name: 'תקשורת', type: 'flexible',
     items: [
-      {id:'phone_bill',label:'טלפון'},{id:'internet',label:'אינטרנט'},
+      {id:'phone',label:'טלפון'},{id:'internet',label:'אינטרנט'},
       {id:'tv',label:'טלוויזיה'},{id:'streaming',label:'סטרימינג'},
-      {id:'telecom_other',label:'אחר (תקשורת)',isOther:true}
+      {id:'other',label:'אחר (תקשורת)',isOther:true}
     ]
   },
   {
@@ -883,8 +883,8 @@ const CATEGORIES = [
     id: 'leisure', name: 'פנאי', type: 'flexible',
     items: [
       {id:'entertainment',label:'בילויים'},{id:'vacations',label:'חופשות'},
-      {id:'shopping',label:'קניות'},{id:'personal_hobbies',label:'תחביבים'},
-      {id:'leisure_other',label:'אחר (פנאי)',isOther:true}
+      {id:'shopping',label:'קניות'},{id:'hobbies',label:'תחביבים'},
+      {id:'other',label:'אחר (פנאי)',isOther:true}
     ]
   },
   {
@@ -985,7 +985,7 @@ function parseExpenses(row) {
       rent: {label:'שכ"ד / משכנתא', cat:'household', type:'rigid'},
       arnona: {label:'ארנונה', cat:'household', type:'rigid'},
       utilities: {label:'מים+גז+חשמל', cat:'household', type:'rigid'},
-      telecom: {label:'תקשורת', cat:'telecom', type:'flexible'},
+      telecom: {label:'תקשורת', cat:'comms', type:'flexible'},
       car_insurance: {label:'ביטוח רכב', cat:'insurance', type:'rigid'},
       loans: {label:'הלוואות', cat:'loans', type:'rigid'},
       education: {label:'חינוך', cat:'education', type:'rigid'},
@@ -997,7 +997,7 @@ function parseExpenses(row) {
       health: {label:'בריאות', cat:'health', type:'flexible'},
       shopping: {label:'קניות', cat:'leisure', type:'flexible'},
       leisure: {label:'בילויים', cat:'leisure', type:'flexible'},
-      kids: {label:'ילדים/חיות', cat:'hobbies', type:'flexible'},
+      kids: {label:'ילדים/חוגים', cat:'classes', type:'flexible'},
       pension_extra: {label:'פנסיה נוספת', cat:'investments', type:'flexible'},
       keren_hishtalmut: {label:'קרן השתלמות', cat:'investments', type:'flexible'},
       gemel_invest: {label:'גמל להשקעה', cat:'investments', type:'flexible'},
@@ -1192,7 +1192,12 @@ async function saveCommitmentToSupabase(amount) {
 // ── Defer Day ──
 function deferDay() {
   localStorage.setItem('day2_deferred', 'true');
-  const homeUrl = 'index.html' + (pid ? '?pid=' + pid : '');
+  const params = new URLSearchParams(window.location.search);
+  const bypass = params.get('bypass');
+  let homeUrl = 'index.html' + (pid ? '?pid=' + pid : '');
+  if (bypass === '1') {
+    homeUrl += (pid ? '&' : '?') + 'bypass=1';
+  }
   window.location.href = homeUrl;
 }
 

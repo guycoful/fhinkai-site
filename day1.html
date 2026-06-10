@@ -1,1254 +1,659 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>יום 1 - מיפוי פיננסי | כסף שעובד</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --gold: #D4A853; --gold-light: #E8C77A; --gold-dark: #B8892E; --gold-bg: #FBF3E1;
-    --warm-white: #FDF8F0; --cream: #F5EDE0; --cream-dark: #E6D5C3;
-    --white: #fff; --dark: #2C2419; --dark-mid: #5C4E3C;
-    --navy: #1A2744; --green: #2E7D52; --green-light: #E8F5EE;
-    --red: #C0392B; --red-light: #FDEEEC;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Heebo', sans-serif; background: var(--warm-white); color: var(--dark); direction: rtl; min-height: 100vh; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5" />
+  <meta name="description" content="FHINK AI · יום 1 של האתגר — ניקוי הערפל. מיפוי פיננסי מלא של ההכנסות וההוצאות שלך." />
+  <meta name="theme-color" content="#26A59A" />
+  <title>FHINK AI · יום 1 — ניקוי הערפל</title>
 
-  /* Header */
-  .header { background: var(--navy); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
-  .header-logo { font-size: 16px; font-weight: 700; color: var(--gold); }
-  .header-badge { background: var(--gold-bg); color: var(--gold-dark); padding: 4px 14px; border-radius: 50px; font-size: 12px; font-weight: 600; }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-  /* Container */
-  .container { max-width: 520px; margin: 0 auto; padding: 20px 16px 40px; }
-
-  /* Progress */
-  .progress { display: flex; align-items: center; gap: 0; margin-bottom: 24px; padding: 0 4px; }
-  .prog-step { display: flex; flex-direction: column; align-items: center; flex: 1; }
-  .prog-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; border: 2px solid var(--cream-dark); background: var(--white); color: var(--dark-mid); transition: all .3s; }
-  .prog-dot.active { background: var(--gold); border-color: var(--gold-dark); color: white; box-shadow: 0 0 0 4px rgba(212,168,83,.2); }
-  .prog-dot.done { background: var(--green); border-color: var(--green); color: white; }
-  .prog-label { font-size: 9px; color: var(--dark-mid); margin-top: 4px; font-weight: 500; white-space: nowrap; }
-  .prog-line { height: 2px; flex: 1; background: var(--cream-dark); max-width: 40px; margin-top: -16px; transition: background .3s; }
-  .prog-line.done { background: var(--green); }
-
-  /* Page */
-  .page { display: none; }
-  .page.active { display: block; animation: fadeIn .3s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-  /* Card */
-  .card { background: var(--white); border: 1px solid var(--cream-dark); border-radius: 16px; padding: 24px 18px; margin-bottom: 16px; box-shadow: 0 2px 12px rgba(44,36,25,.06); }
-  .card h2 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
-  .card .subtitle { font-size: 13px; color: var(--dark-mid); margin-bottom: 20px; }
-
-  /* Section header */
-  .section-head { font-size: 12px; font-weight: 700; color: var(--gold-dark); text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--cream); }
-  .section-head:first-of-type { margin-top: 0; }
-
-  /* Dynamic income rows */
-  .income-row { display: flex; gap: 8px; align-items: flex-end; margin-bottom: 8px; }
-  .income-row select { flex: 1; padding: 10px 8px; border: 1.5px solid var(--cream-dark); border-radius: 10px; font-family: Heebo; font-size: 13px; }
-  .income-row input { flex: 1.2; }
-  .income-row .del-btn { background: var(--red-light); color: var(--red); border: 1px solid var(--red); border-radius: 50%; width: 32px; height: 32px; font-size: 16px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-bottom: 2px; }
-  .add-income-btn { background: var(--gold-bg); color: var(--gold-dark); border: 1.5px dashed var(--gold); border-radius: 10px; width: 100%; padding: 10px; font-family: Heebo; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 4px; }
-
-  /* Fields */
-  .field { margin-bottom: 14px; }
-  .field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: var(--dark); }
-  .field input, .field select {
-    width: 100%; padding: 12px 14px; border: 1.5px solid var(--cream-dark); border-radius: 10px;
-    font-family: 'Heebo'; font-size: 15px; color: var(--dark); background: var(--white);
-    transition: border-color .2s; min-height: 46px;
-  }
-  .field input:focus, .field select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,168,83,.1); }
-  .field input::placeholder { color: var(--cream-dark); }
-  .field .hint { font-size: 11px; color: var(--dark-mid); margin-top: 3px; }
-  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .row-3 { grid-template-columns: 1fr 1fr 1fr; }
-  @media (max-width: 400px) { .row-3 { grid-template-columns: 1fr 1fr; } }
-
-  /* Buttons */
-  .btn-row { display: flex; gap: 10px; margin-top: 20px; }
-  .btn { flex: 1; padding: 14px; border: none; border-radius: 50px; font-family: 'Heebo'; font-size: 15px; font-weight: 700; cursor: pointer; transition: transform .15s; min-height: 48px; }
-  .btn:hover { transform: translateY(-1px); }
-  .btn-next { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--navy); box-shadow: 0 4px 16px rgba(212,168,83,.3); }
-  .btn-back { background: var(--cream); color: var(--dark-mid); }
-  .btn-submit { background: linear-gradient(135deg, var(--green), #1B7A42); color: white; box-shadow: 0 4px 16px rgba(46,125,82,.3); }
-  .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
-
-  /* Error */
-  .error-msg { background: var(--red-light); color: var(--red); padding: 10px 14px; border-radius: 10px; font-size: 13px; margin-top: 10px; display: none; }
-
-  /* ── Page 0: Commitment ── */
-  .commit-card { background: var(--white); border: 2px solid var(--gold); border-radius: 16px; padding: 32px 22px; box-shadow: 0 4px 20px rgba(212,168,83,.12); text-align: center; }
-  .commit-card .commit-quote { font-size: 16px; font-weight: 500; line-height: 1.7; color: var(--dark); margin-bottom: 24px; padding: 0 8px; }
-  .commit-card .commit-question { font-size: 17px; font-weight: 800; margin-bottom: 20px; color: var(--navy); }
-  .commit-btns { display: flex; gap: 12px; margin-bottom: 20px; }
-  .commit-btns .btn { flex: 1; }
-  .btn-yes { background: linear-gradient(135deg, var(--green), #1B7A42); color: white; box-shadow: 0 4px 16px rgba(46,125,82,.3); }
-  .btn-no { background: var(--cream); color: var(--dark-mid); border: 1.5px solid var(--cream-dark); }
-
-  /* Time picker area */
-  .time-pick-area { display: none; background: var(--gold-bg); border-radius: 12px; padding: 20px 16px; margin-top: 16px; text-align: center; }
-  .time-pick-area label { font-size: 14px; font-weight: 700; display: block; margin-bottom: 10px; }
-  .time-pick-area input[type="time"] { padding: 12px 16px; border: 1.5px solid var(--gold); border-radius: 10px; font-family: Heebo; font-size: 18px; text-align: center; background: var(--white); direction: ltr; }
-  .time-pick-area .btn { margin-top: 14px; }
-
-  /* Countdown lock */
-  .lock-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: var(--navy); color: var(--white); flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 32px; }
-  .lock-overlay .lock-icon { font-size: 64px; margin-bottom: 16px; }
-  .lock-overlay h2 { font-size: 22px; font-weight: 800; margin-bottom: 8px; color: var(--gold); }
-  .lock-overlay p { font-size: 15px; color: var(--cream); line-height: 1.6; margin-bottom: 24px; }
-  .lock-overlay .countdown-display { font-size: 48px; font-weight: 900; color: var(--gold-light); direction: ltr; font-variant-numeric: tabular-nums; }
-
-  /* iCal area */
-  .ical-area { display: none; background: var(--green-light); border: 1.5px solid var(--green); border-radius: 12px; padding: 20px 16px; margin-top: 16px; text-align: center; }
-  .ical-area p { font-size: 14px; line-height: 1.6; margin-bottom: 14px; color: var(--dark); }
-  .ical-area .btn { background: linear-gradient(135deg, var(--green), #1B7A42); color: white; }
-
-  /* ── Page 2: Category expenses (sequential layout) ── */
-  .cat-section { background: var(--cream); border-radius: 12px; padding: 14px 14px 4px; margin-bottom: 14px; border: 1.5px solid transparent; transition: border-color .2s, background .2s; }
-  .cat-section.has-data { border-color: var(--green); background: var(--green-light); }
-  .cat-section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-  .cat-section-header h3 { font-size: 15px; font-weight: 700; flex: 1; }
-  .cat-num { width: 26px; height: 26px; border-radius: 50%; background: var(--gold); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; flex-shrink: 0; }
-  .cat-section.has-data .cat-num { background: var(--green); }
-  .cat-check { width: 22px; height: 22px; border-radius: 50%; background: var(--green); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; opacity: 0; transition: opacity .2s; flex-shrink: 0; }
-  .cat-section.has-data .cat-check { opacity: 1; }
-  .cat-section .field { margin-bottom: 10px; }
-  .cat-section .field label { font-size: 12px; }
-  .cat-section .field input { font-size: 14px; padding: 10px 12px; min-height: 42px; }
-
-  .expense-total-bar { background: var(--navy); color: var(--gold-light); border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; margin-top: 8px; margin-bottom: 8px; }
-  .expense-total-bar .total-label { font-size: 14px; font-weight: 600; }
-  .expense-total-bar .total-amount { font-size: 20px; font-weight: 900; direction: ltr; }
-
-  /* Other detail field */
-  .other-detail-field { display: none; margin-top: 6px; }
-  .other-detail-field input { border-color: var(--gold) !important; }
-
-  /* ── Page 4: Summary ── */
-  .summary-card { text-align: center; padding: 28px 18px; }
-  .summary-card h2 { font-size: 22px; font-weight: 900; margin-bottom: 16px; }
-  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-radius: 10px; margin-bottom: 8px; font-size: 15px; }
-  .summary-row.income { background: var(--green-light); }
-  .summary-row.expense { background: var(--red-light); }
-  .summary-row.delta { background: var(--gold-bg); font-weight: 800; font-size: 17px; }
-  .summary-row .label { font-weight: 600; }
-  .summary-row .value { font-weight: 800; direction: ltr; }
-  .summary-row .value.positive { color: var(--green); }
-  .summary-row .value.negative { color: var(--red); }
-
-  /* Readiness meter */
-  .readiness-wrap { margin: 28px auto 20px; display: flex; flex-direction: column; align-items: center; }
-  .readiness-ring { position: relative; width: 140px; height: 140px; }
-  .readiness-ring svg { width: 140px; height: 140px; transform: rotate(-90deg); }
-  .readiness-ring .ring-bg { fill: none; stroke: var(--cream-dark); stroke-width: 10; }
-  .readiness-ring .ring-fill { fill: none; stroke: var(--gold); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 408; stroke-dashoffset: 326.4; transition: stroke-dashoffset 1.5s ease; }
-  .readiness-pct { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 900; color: var(--gold-dark); }
-  .readiness-label { font-size: 14px; font-weight: 600; color: var(--dark-mid); margin-top: 8px; }
-
-  .summary-message { font-size: 15px; line-height: 1.7; color: var(--dark-mid); margin: 20px 0; padding: 0 8px; }
-  .summary-highlight { background: var(--gold-bg); border-radius: 12px; padding: 16px; margin-top: 16px; font-size: 14px; font-weight: 600; color: var(--gold-dark); line-height: 1.6; }
-</style>
+  <link rel="stylesheet" href="day1V1/styles.css" />
+  <link rel="icon" type="image/png" href="day1V1/assets/logo-mark.png">
 </head>
 <body>
 
-<div class="header">
-  <div class="header-logo">המקפצה הפיננסית</div>
-  <div class="header-badge">יום 1 מתוך 4</div>
-</div>
-
-<!-- Lock overlay for countdown -->
-<div class="lock-overlay" id="lockOverlay">
-  <div class="lock-icon">🔒</div>
-  <h2>נתראה בזמן שקבעת</h2>
-  <p>הזמן שלך שמור. תחזור כשתהיה מוכן.</p>
-  <div class="countdown-display" id="countdownDisplay">00:00:00</div>
-</div>
-
-<div class="container">
-
-  <!-- Progress (5 steps) -->
-  <div class="progress" style="display:none" id="mainProgress">
-    <div class="prog-step"><div class="prog-dot" id="pd-0">0</div><div class="prog-label">מוכנות</div></div>
-    <div class="prog-line" id="pl-0"></div>
-    <div class="prog-step"><div class="prog-dot" id="pd-1">1</div><div class="prog-label">פרטים</div></div>
-    <div class="prog-line" id="pl-1"></div>
-    <div class="prog-step"><div class="prog-dot" id="pd-2">2</div><div class="prog-label">הוצאות</div></div>
-    <div class="prog-line" id="pl-2"></div>
-    <div class="prog-step"><div class="prog-dot" id="pd-3">3</div><div class="prog-label">קשר</div></div>
-    <div class="prog-line" id="pl-3"></div>
-    <div class="prog-step"><div class="prog-dot" id="pd-4">4</div><div class="prog-label">סיכום</div></div>
+  <!-- Background decoration -->
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow--top"></div>
+    <div class="bg-glow bg-glow--bottom"></div>
   </div>
 
-  <!-- ═══ PAGE LOCKED: Challenge not yet open (early-access gate) ═══ -->
-  <div class="page" id="page-locked">
-    <div class="commit-card" style="text-align:center;">
-      <div class="commit-quote" style="font-size:18px;">
-        האתגר עוד לא נפתח לציבור.
-      </div>
-      <div class="commit-question" style="margin-top:18px;">
-        הפיילוט הציבורי ייפתח<br><strong id="lockedOpenDate">בקרוב</strong><br>בשעה 06:00 בבוקר.
-      </div>
-      <p style="margin-top:20px;color:var(--dark-mid);font-size:14px;line-height:1.7;">
-        שמרנו את ההרשמה שלך. נשלח לך תזכורת לפני הפתיחה עם הקישור האישי שלך ליום 1.
-      </p>
-      <p style="margin-top:16px;color:var(--dark-mid);font-size:13px;">
-        אם כבר הגשת את המידע שלך, פתח את האתר במכשיר שבו מילאת ותגיע ישר לדף הסיכום שלך.
-      </p>
-    </div>
-  </div>
+  <!-- Header -->
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <a href="/" class="brand" aria-label="FHINK AI">
+        <img src="day1V1/assets/logo.png" alt="FHINK AI · Financial Thinking Powered by AI" class="brand-logo" />
+      </a>
 
-  <!-- ═══ PAGE 0: Commitment ═══ -->
-  <div class="page active" id="page-0">
-    <div class="commit-card">
-      <div class="commit-quote">
-        אומרים שמזל זה כשהזדמנות פוגשת מוכנות.<br>
-        ההזדמנות כבר כאן, עכשיו תורך להראות מוכנות.
-      </div>
-      <div class="commit-question">האם יש לך 30 דקות עכשיו כדי להתחיל את השינוי הכלכלי שלך ?</div>
-      <div class="commit-btns">
-        <button class="btn btn-yes" onclick="commitYes()">כן, אני מוכן</button>
-        <button class="btn btn-no" onclick="commitNo()">לא עכשיו</button>
-      </div>
-
-      <!-- Time picker (shown when NO) -->
-      <div class="time-pick-area" id="timePickArea">
-        <label>מתי היום יהיה לך זמן ?</label>
-        <input type="time" id="pickTime" value="18:00">
-        <div>
-          <button class="btn btn-next" style="margin-top:14px;flex:none;display:inline-block;padding:12px 32px;" onclick="setLockTime()">קבע תזכורת</button>
+      <!-- Day progress (always visible during the challenge) -->
+      <div class="day-progress" id="dayProgress">
+        <div class="day-progress__top">
+          <span class="day-progress__label">יום 1 מתוך 4</span>
+          <span class="day-progress__title">ניקוי הערפל</span>
+        </div>
+        <div class="day-progress__bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="25" aria-label="התקדמות באתגר">
+          <div class="day-progress__fill" style="width:25%"></div>
         </div>
       </div>
-
-      <!-- iCal area (shown after YES or after time set) -->
-      <div class="ical-area" id="icalArea">
-        <p>המסע הזה מסתיים בשיא בוובינר ביום רביעי. שלחנו לך זימון ליומן - אשר אותו עכשיו כדי להבטיח את מקומך.</p>
-        <button class="btn" onclick="goPage(1)">אישרתי את הזימון ביומן, אפשר להתחיל</button>
-      </div>
     </div>
-  </div>
+  </header>
 
-  <!-- ═══ PAGE 1: Personal Info + Income ═══ -->
-  <div class="page" id="page-1">
-    <div class="card">
-      <h2>קצת עליך</h2>
-      <div class="subtitle">30 שניות - פרטים בסיסיים והכנסות</div>
+  <main class="container" id="app">
 
-      <div class="field">
-        <label>שם פרטי</label>
-        <input type="text" id="f_name" placeholder="איך קוראים לך ?" required>
-      </div>
-      <div class="row">
-        <div class="field">
-          <label>גיל</label>
-          <input type="number" id="f_age" placeholder="32" inputmode="numeric">
+    <!-- ============================================================
+         SCREEN: LOCKED (early-access gate)
+    ============================================================ -->
+    <section class="screen" data-screen="locked" aria-labelledby="locked-title">
+      <div class="card card--center">
+        <div class="day-badge">
+          <span class="day-badge__dot" aria-hidden="true"></span>
+          <span>פיילוט לאתגר</span>
         </div>
-        <div class="field">
-          <label>סוג תעסוקה</label>
-          <select id="f_job">
-            <option value="שכיר">שכיר</option>
-            <option value="שכירה">שכירה</option>
-            <option value="self_employed">עצמאי/ת</option>
-            <option value="hybrid">היברידי</option>
-          </select>
+        <h1 id="locked-title" class="title-xl">
+          האתגר עוד לא נפתח לציבור
+        </h1>
+        <p class="lead" style="margin-top: 1.5rem;">
+          הפיילוט הציבורי ייפתח ב-<strong id="lockedOpenDate">בקרוב</strong> בשעה 06:00 בבוקר.
+        </p>
+        <div class="done-extra" style="margin: 20px 0; padding: 16px; background: var(--teal-soft); border-radius: 12px; border: 1px solid var(--teal-soft-2);">
+          <p style="margin: 0; font-size: 14px; line-height: 1.6;">
+            שמרנו את ההרשמה שלך. נשלח לך תזכורת לפני הפתיחה עם הקישור האישי שלך ליום 1.
+          </p>
+          <p style="margin: 10px 0 0 0; font-size: 13px; opacity: 0.85;">
+            אם כבר הגשת את המידע שלך, פתח את האתר במכשיר שבו מילאת ותגיע ישר לדף הסיכום שלך.
+          </p>
         </div>
       </div>
+    </section>
 
-      <div class="section-head">הכנסות</div>
-      <div class="field">
-        <label>שכר חודשי נטו (₪)</label>
-        <input type="number" id="f_income" placeholder="15,000" inputmode="numeric" required>
-        <div class="hint">הסכום שנכנס לחשבון אחרי מס</div>
-      </div>
-      <div class="field">
-        <label>הכנסות נוספות</label>
-        <div id="extraIncomeList"></div>
-        <button type="button" class="add-income-btn" onclick="addIncomeRow()">+ הוסף הכנסה נוספת (פרילנס, שכ"ד, פנסיה...)</button>
-        <input type="hidden" id="f_income2" value="0">
-        <div class="hint">אם אין, תשאיר 0</div>
-      </div>
+    <!-- ============================================================
+         SCREEN 1.1 — SCREEN: OPENING / WELCOME
+    ============================================================ -->
+    <section class="screen is-active" data-screen="opening" aria-labelledby="opening-title">
+      <div class="card card--center">
 
-      <div class="btn-row">
-        <button class="btn btn-back" onclick="goPage(0)">&#8594; חזרה</button>
-        <button class="btn btn-next" onclick="goPage(2)">המשך &#8592;</button>
-      </div>
-    </div>
-  </div>
+        <div class="day-badge">
+          <span class="day-badge__dot" aria-hidden="true"></span>
+          <span>פיילוט לאתגר</span>
+        </div>
 
-  <!-- ═══ PAGE 2: Expenses (Category-based IKEA Effect) ═══ -->
-  <div class="page" id="page-2">
-    <div class="card">
-      <h2>ההוצאות שלך</h2>
-      <div class="subtitle">עברו קטגוריה אחר קטגוריה ומלאו את הסכומים החודשיים (₪)</div>
+        <h1 id="opening-title" class="title-xl">
+          <span class="greet-name" data-username>שלום</span>,
+          <span class="title-block"
+                data-male="האם אתה מוכן לשנות את הדרך"
+                data-female="האם את מוכנה לשנות את הדרך">
+            האם אתה מוכן לשנות את הדרך
+          </span>
+          <span class="title-block"
+                data-male="שבה אתה מנהל את הכסף שלך?"
+                data-female="שבה את מנהלת את הכסף שלך?">
+            שבה אתה מנהל את הכסף שלך?
+          </span>
+        </h1>
 
-      <!-- Category sections (generated by JS, all visible sequentially) -->
-      <div id="catPanels"></div>
+        <p class="lead">
+          4 ימים, 30 דקות ביום. ביום הראשון נבנה יחד את תמונת המצב הכלכלית המלאה שלך.
+        </p>
 
-      <!-- Running total -->
-      <div class="expense-total-bar">
-        <div class="total-label">סך הוצאות</div>
-        <div class="total-amount" id="expenseTotalDisplay">₪0</div>
-      </div>
+        <!-- 4-day roadmap -->
+        <div class="roadmap" role="list" aria-label="המסלול שלך">
+          <div class="roadmap__item is-active" role="listitem">
+            <div class="roadmap__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M12 6v6l4 2"></path>
+              </svg>
+            </div>
+            <div class="roadmap__day">יום 1</div>
+            <div class="roadmap__title">ניקוי הערפל</div>
+            <div class="roadmap__status">מתחיל עכשיו</div>
+          </div>
 
-      <div class="btn-row">
-        <button class="btn btn-back" onclick="goPage(1)">&#8594; חזרה</button>
-        <button class="btn btn-next" onclick="goPage(3)">המשך &#8592;</button>
-      </div>
-    </div>
-  </div>
+          <div class="roadmap__item is-locked" role="listitem">
+            <div class="roadmap__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="5" y="11" width="14" height="9" rx="2"></rect>
+                <path d="M8 11V8a4 4 0 0 1 8 0v3"></path>
+              </svg>
+            </div>
+            <div class="roadmap__day">יום 2</div>
+            <div class="roadmap__title">החזרת השליטה</div>
+            <div class="roadmap__status">נפתח מחר</div>
+          </div>
 
-  <!-- ═══ PAGE 3: Contact + Savings ═══ -->
-  <div class="page" id="page-3">
-    <div class="card">
-      <h2>חסכונות ופרטי קשר</h2>
-      <div class="subtitle">60 שניות - כמעט סיימנו</div>
+          <div class="roadmap__item is-locked" role="listitem">
+            <div class="roadmap__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="5" y="11" width="14" height="9" rx="2"></rect>
+                <path d="M8 11V8a4 4 0 0 1 8 0v3"></path>
+              </svg>
+            </div>
+            <div class="roadmap__day">יום 3</div>
+            <div class="roadmap__title">ייצור ערך</div>
+            <div class="roadmap__status">נפתח ביום ג׳</div>
+          </div>
 
-      <div class="section-head">הפקדות וחסכונות (₪ לחודש)</div>
-      <div class="row">
-        <div class="field"><label>פנסיה מעבר לחובה</label><input type="number" id="f_pension" placeholder="0" inputmode="numeric"></div>
-        <div class="field"><label>קרן השתלמות עצמית</label><input type="number" id="f_keren" placeholder="0" inputmode="numeric"></div>
-      </div>
-      <div class="row">
-        <div class="field"><label>גמל להשקעה</label><input type="number" id="f_gemel" placeholder="0" inputmode="numeric"></div>
-        <div class="field"><label>חיסכון לילד</label><input type="number" id="f_child_save" placeholder="0" inputmode="numeric"></div>
-      </div>
-      <div class="field">
-        <label>חיסכון כללי / רשת ביטחון</label>
-        <input type="number" id="f_save_gen" placeholder="0" inputmode="numeric">
-      </div>
+          <div class="roadmap__item is-locked" role="listitem">
+            <div class="roadmap__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="5" y="11" width="14" height="9" rx="2"></rect>
+                <path d="M8 11V8a4 4 0 0 1 8 0v3"></path>
+              </svg>
+            </div>
+            <div class="roadmap__day">יום 4</div>
+            <div class="roadmap__title">מבחן החמצן</div>
+            <div class="roadmap__status">נפתח ביום ד׳</div>
+          </div>
+        </div>
 
-      <div class="section-head">פרטי קשר</div>
-      <div class="field">
-        <label>כתובת מייל</label>
-        <input type="email" id="f_email" placeholder="name@email.com">
-      </div>
-      <div class="field">
-        <label>טלפון (חובה - לקבלת תזכורות יומיות באתגר)</label>
-        <input type="tel" id="f_phone" placeholder="050-1234567" inputmode="tel" required>
-      </div>
+        <div class="actions actions--center">
+          <button type="button" class="btn btn--primary btn--cta" data-action="next" data-target="commitment">
+            <span>בוא נתחיל</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+        </div>
 
-      <div class="error-msg" id="errorMsg"></div>
-
-      <div class="btn-row">
-        <button class="btn btn-back" onclick="goPage(2)">&#8594; חזרה</button>
-        <button class="btn btn-submit" id="submitBtn" onclick="submitForm()">שלח וסכם &#8592;</button>
       </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- ═══ PAGE 4: Summary + Readiness Meter ═══ -->
-  <div class="page" id="page-4">
-    <div class="card summary-card">
-      <h2>התמונה הפיננסית שלך</h2>
+    <!-- ============================================================
+         SCREEN 1.2 — SCREEN: COMMITMENT (Seneca)
+    ============================================================ -->
+    <section class="screen" data-screen="commitment" aria-labelledby="commit-title">
+      <div class="card">
 
-      <div class="summary-row income">
-        <span class="label">סך הכנסות</span>
-        <span class="value positive" id="sumIncome">₪0</span>
-      </div>
-      <div class="summary-row expense">
-        <span class="label">סך הוצאות</span>
-        <span class="value negative" id="sumExpense">₪0</span>
-      </div>
-      <div class="summary-row delta">
-        <span class="label">יתרה חודשית</span>
-        <span class="value" id="sumDelta">₪0</span>
-      </div>
-
-      <div class="readiness-wrap">
-        <div class="readiness-ring">
-          <svg viewBox="0 0 140 140">
-            <circle class="ring-bg" cx="70" cy="70" r="65"/>
-            <circle class="ring-fill" id="ringFill" cx="70" cy="70" r="65"/>
+        <div class="quote-block">
+          <svg class="quote-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <path d="M11 9c-3.3 0-6 2.7-6 6v8h8v-8H8c0-1.6 1.3-3 3-3V9zm14 0c-3.3 0-6 2.7-6 6v8h8v-8h-5c0-1.6 1.3-3 3-3V9z"
+                  fill="currentColor" opacity="0.18"/>
           </svg>
-          <div class="readiness-pct">20%</div>
+          <p class="quote-text">
+            <strong>מזל</strong> הוא הזדמנות שפוגשת מוכנות.
+          </p>
+          <p class="quote-author">— הפילוסוף הרומאי סנקה</p>
         </div>
-        <div class="readiness-label">מוכנות פיננסית</div>
-      </div>
 
-      <div class="summary-message">
-        הערפל התנקה. מחר נלמד איך להחזיר לעצמך את השליטה על הכסף בלי לוותר על איכות החיים.
-      </div>
+        <div class="commit-content">
+          <h2 id="commit-title" class="title-lg">
+            ההזדמנות הגיעה. תורך להראות מוכנות.
+          </h2>
+          <p class="subtitle">
+            <span data-male="האם אתה מוכן" data-female="האם את מוכנה">האם אתה מוכן</span>
+            להקדיש 25–30 דקות עכשיו כדי לבנות יחד את תמונת המצב הפיננסית שלך?
+          </p>
 
-      <div class="summary-highlight">
-        מחר ביום 2 תגלה: איפה הכסף שלך נעלם, כמה זה עולה לך בשנה, ומה הצעד הכי קל לחיסכון מיידי.
-      </div>
+          <div class="commit-pills" role="list" aria-label="מה ניצור יחד">
+            <div class="commit-pill" role="listitem">
+              <span class="commit-pill__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </span>
+              <span>25–30 דקות</span>
+            </div>
+            <div class="commit-pill" role="listitem">
+              <span class="commit-pill__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+              </span>
+              <span>תמונת מצב מלאה</span>
+            </div>
+            <div class="commit-pill" role="listitem">
+              <span class="commit-pill__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L9.5 8L3 9l5 4.5L6.5 21L12 17.5L17.5 21L16 13.5L21 9l-6.5-1z"/></svg>
+              </span>
+              <span>מד מוכנות 20%</span>
+            </div>
+          </div>
+        </div>
 
-      <div class="btn-row">
-        <button class="btn btn-next" onclick="goToDay2()">ליום 2 &#8592;</button>
+        <div class="actions actions--commit">
+          <button type="button" class="btn btn--ghost" id="commitNo" data-action="postpone">
+            אעשה את זה בהמשך היום
+          </button>
+          <button type="button" class="btn btn--primary btn--cta" id="commitYes" data-action="next" data-target="calendar">
+            <span data-male="כן, אני מוכן" data-female="כן, אני מוכנה">כן, אני מוכן</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SCREEN 1.3 — SCREEN: CALENDAR / WEBINAR CONFIRMATION
+    ============================================================ -->
+    <section class="screen" data-screen="calendar" aria-labelledby="calendar-title">
+      <div class="card">
+
+        <div class="calendar-visual" aria-hidden="true">
+          <div class="cal-card">
+            <div class="cal-card__header">
+              <span class="cal-card__day-name">יום רביעי</span>
+              <span class="cal-card__day-num">17</span>
+              <span class="cal-card__month">דצמבר 2026</span>
+            </div>
+            <div class="cal-card__body">
+              <div class="cal-card__event">
+                <span class="cal-card__time">20:00</span>
+                <span class="cal-card__title">וובינר חיתום האתגר</span>
+              </div>
+              <div class="cal-card__location">FHINK AI · אונליין · 90 דק׳</div>
+            </div>
+            <div class="cal-card__ribbon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>במסלול שלך</span>
+            </div>
+          </div>
+        </div>
+
+        <h2 id="calendar-title" class="title-lg">המסע הזה מסתיים בשיא ביום רביעי</h2>
+        <p class="subtitle">
+          שלחנו לך זימון ליומן לוובינר חיתום האתגר. אשר אותו עכשיו כדי להבטיח את מקומך — זו השעה שבה כל מה שעבדת עליו 4 ימים מתחבר.
+        </p>
+
+        <div class="cal-actions">
+          <a class="cal-btn" href="#" data-action="cal-google" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <span>הוסף ליומן Google</span>
+          </a>
+          <a class="cal-btn" href="#" data-action="cal-ical" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>הורד ל-Apple / Outlook</span>
+          </a>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn btn--secondary" data-action="back">חזרה</button>
+          <button type="button" class="btn btn--primary" id="calConfirm" data-action="next" data-target="basics">
+            <span>אישרתי, נמשיך</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SCREEN 1.4 — SCREEN: BASIC FINANCIAL DETAILS (Income)
+    ============================================================ -->
+    <section class="screen" data-screen="basics" aria-labelledby="basics-title">
+      <div class="card">
+
+        <!-- Inner progress (within Day 1) -->
+        <div class="progress">
+          <div class="progress-meta">
+            <span class="progress-text">שלב 1 מתוך 2</span>
+            <span class="progress-percent">50%</span>
+          </div>
+          <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+            <div class="progress-fill" style="width:50%"></div>
+          </div>
+        </div>
+
+        <h2 id="basics-title" class="title-lg">קודם — הצד שמכניס</h2>
+        <p class="subtitle">
+          רק מספרים שאתה מכיר. בלי לחפש תלושים. הסכומים שנכנסים לחשבון, אחרי מס.
+        </p>
+
+        <form class="form" data-step="basics" novalidate>
+
+          <div class="field field--money">
+            <label class="field-label" for="salary">
+              שכר חודשי נטו
+              <span class="field-required" aria-hidden="true">*</span>
+            </label>
+            <div class="money-input">
+              <span class="money-input__currency" aria-hidden="true">₪</span>
+              <input
+                type="number"
+                id="salary"
+                name="salary"
+                class="input input--money"
+                placeholder="לדוגמה: 12,500"
+                min="0"
+                step="100"
+                inputmode="numeric"
+                required
+              />
+            </div>
+            <div class="field-helper">הסכום שנכנס לחשבון אחרי מס. אם אין הכנסה כעת — הזן 0.</div>
+          </div>
+
+          <!-- Additional incomes (dynamic) -->
+          <div class="additional-incomes">
+            <div class="additional-incomes__header">
+              <span class="additional-incomes__title">הכנסות נוספות</span>
+              <span class="additional-incomes__hint">אופציונלי · עד 5</span>
+            </div>
+
+            <div class="additional-incomes__list" id="incomesList">
+              <!-- Items injected by JS -->
+            </div>
+
+            <button type="button" class="btn-add" id="addIncomeBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <span>הוסף הכנסה נוספת</span>
+            </button>
+          </div>
+
+          <!-- Live total -->
+          <div class="live-total" id="incomeTotal">
+            <span class="live-total__label">סך הכל מכניס בחודש</span>
+            <span class="live-total__amount">
+              <span class="live-total__currency">₪</span><span data-total="income">0</span>
+            </span>
+          </div>
+
+        </form>
+
+        <div class="actions">
+          <button type="button" class="btn btn--secondary" data-action="back">חזרה</button>
+          <button type="button" class="btn btn--primary" data-action="next" data-target="expenses">
+            <span>עכשיו ההוצאות</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SCREEN 1.5 — SCREEN: EXPENSES (the heart of Day 1)
+    ============================================================ -->
+    <section class="screen" data-screen="expenses" aria-labelledby="expenses-title">
+      <div class="card">
+
+        <div class="progress">
+          <div class="progress-meta">
+            <span class="progress-text">שלב 2 מתוך 2</span>
+            <span class="progress-percent">100%</span>
+          </div>
+          <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+            <div class="progress-fill" style="width:100%"></div>
+          </div>
+        </div>
+
+        <h2 id="expenses-title" class="title-lg">עכשיו — הצד שיוצא</h2>
+        <p class="subtitle">
+          נסכם יחד מה יוצא לחשבון כל חודש. אין צורך לדייק לשקל — קח את המספר שמרגיש לך נכון.
+        </p>
+
+        <div class="categories" id="categories">
+          <!-- Categories injected by JS -->
+        </div>
+
+        <!-- Sticky bottom summary -->
+        <div class="expenses-summary" id="expensesSummary">
+          <div class="expenses-summary__row">
+            <span class="expenses-summary__label">סך הכל יוצא בחודש</span>
+            <span class="expenses-summary__amount">
+              <span>₪</span><span data-total="expense">0</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn btn--secondary" data-action="back">חזרה</button>
+          <button type="button" class="btn btn--primary" data-action="next" data-target="summary">
+            <span>ראה את התמונה המלאה</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SCREEN 1.6 — SCREEN: DAY 1 SUMMARY
+    ============================================================ -->
+    <section class="screen" data-screen="summary" aria-labelledby="summary-title">
+      <div class="card card--center">
+
+        <!-- Animated success check -->
+        <div class="summary-check">
+          <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="40" cy="40" r="36" fill="none" stroke="#26A59A" stroke-width="3"
+                    stroke-dasharray="226" stroke-dashoffset="226"
+                    style="animation: drawCircle 700ms var(--ease) 100ms forwards;"/>
+            <polyline points="25 42 36 53 56 31" fill="none" stroke="#26A59A" stroke-width="4"
+                      stroke-linecap="round" stroke-linejoin="round"
+                      stroke-dasharray="60" stroke-dashoffset="60"
+                      style="animation: drawCheck 400ms var(--ease) 700ms forwards;"/>
+          </svg>
+        </div>
+
+        <h2 id="summary-title" class="title-xl">
+          <span class="greet-name" data-username>חבר</span>,
+          <span data-male="הצלחת." data-female="הצלחת.">הצלחת.</span>
+          <br>
+          תמונת הפתיחה שלך מוכנה.
+        </h2>
+
+        <!-- Numbers grid -->
+        <div class="numbers-grid">
+          <div class="number-card number-card--income">
+            <div class="number-card__label">
+              <span class="number-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 15 12 9 18 15"/></svg>
+              </span>
+              נכנס לחשבון
+            </div>
+            <div class="number-card__amount">
+              <span class="number-card__currency">₪</span><span data-total="income">0</span>
+            </div>
+            <div class="number-card__hint">כולל הכנסות נוספות</div>
+          </div>
+
+          <div class="number-card number-card--expense">
+            <div class="number-card__label">
+              <span class="number-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+              יוצא מהחשבון
+            </div>
+            <div class="number-card__amount">
+              <span class="number-card__currency">₪</span><span data-total="expense">0</span>
+            </div>
+            <div class="number-card__hint">מ-11 קטגוריות</div>
+          </div>
+        </div>
+
+        <!-- Balance bar -->
+        <div class="balance" id="balanceBlock">
+          <div class="balance__label" id="balanceLabel">נשאר בסוף החודש</div>
+          <div class="balance__amount" id="balanceAmount">
+            <span class="balance__currency">₪</span><span data-total="balance">0</span>
+          </div>
+          <div class="balance__hint" id="balanceHint">זו נקודת הפתיחה שלך</div>
+        </div>
+
+        <!-- AI Insight -->
+        <div class="insight" id="aiInsight">
+          <div class="insight__header">
+            <span class="insight__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            </span>
+            <span class="insight__title">תובנת AI ראשונה</span>
+          </div>
+          <p class="insight__text" id="insightText">
+            הנתונים מתעבדים...
+          </p>
+        </div>
+
+        <!-- Readiness meter -->
+        <div class="readiness">
+          <div class="readiness__header">
+            <span class="readiness__label">מד המוכנות שלך</span>
+            <span class="readiness__percent">20%</span>
+          </div>
+          <div class="readiness__bar">
+            <div class="readiness__fill" style="width: 20%"></div>
+            <div class="readiness__milestones">
+              <div class="readiness__milestone is-reached" style="right: 20%" data-day="1"></div>
+              <div class="readiness__milestone" style="right: 50%" data-day="2"></div>
+              <div class="readiness__milestone" style="right: 80%" data-day="3"></div>
+              <div class="readiness__milestone" style="right: 100%" data-day="4"></div>
+            </div>
+          </div>
+          <div class="readiness__caption">3 ימים נוספים — 60% מוכנות נוספים</div>
+        </div>
+
+        <!-- Next day teaser -->
+        <div class="next-day">
+          <div class="next-day__day">מחר · יום 2</div>
+          <h3 class="next-day__title">הערפל התנקה. נחזיר לך שליטה.</h3>
+          <p class="next-day__text">
+            מחר נלמד איך לסגור את הברז הגדול ביותר בלי לוותר על איכות החיים. נשלח לך מייל כשהיום נפתח.
+          </p>
+        </div>
+
+        <div class="actions actions--center actions--summary">
+          <button type="button" class="btn btn--secondary" data-action="back" data-target="expenses">
+            חזור לערוך הוצאות
+          </button>
+          <button type="button" class="btn btn--primary btn--cta" data-action="complete">
+            <span>סיימתי את יום 1</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SCREEN: FINAL — COMPLETION
+    ============================================================ -->
+    <section class="screen" data-screen="completed" aria-labelledby="completed-title">
+      <div class="card card--center card--done">
+        <div class="done-icon">
+          <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="40" cy="40" r="36" fill="none" stroke="#26A59A" stroke-width="3"
+                    stroke-dasharray="226" stroke-dashoffset="226"
+                    style="animation: drawCircle 700ms var(--ease) 100ms forwards;"/>
+            <polyline points="25 42 36 53 56 31" fill="none" stroke="#26A59A" stroke-width="4"
+                      stroke-linecap="round" stroke-linejoin="round"
+                      stroke-dasharray="60" stroke-dashoffset="60"
+                      style="animation: drawCheck 400ms var(--ease) 700ms forwards;"/>
+          </svg>
+        </div>
+        <h2 id="completed-title" class="title-xl">יום 1 הושלם</h2>
+        <p class="lead">נתראה מחר בבוקר עם יום 2. נשלח לך הודעה כשהוא נפתח.</p>
+        <div class="done-extra">
+          <p>תוכל לחזור ולעדכן את הנתונים שלך בכל שלב במהלך האתגר.</p>
+        </div>
+        <div class="actions actions--center" style="margin-top: 24px;">
+          <button type="button" class="btn btn--primary btn--cta" id="goToDay2Btn">
+            <span>להמשך ליום 2</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SCREEN: POSTPONED — user chose "I'll do this later"
+    ============================================================ -->
+    <section class="screen" data-screen="postponed" aria-labelledby="postponed-title">
+      <div class="card card--center card--done">
+        <div class="done-icon done-icon--soft">
+          <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="40" cy="40" r="36" fill="none" stroke="#26A59A" stroke-width="3"
+                    stroke-dasharray="226" stroke-dashoffset="226"
+                    style="animation: drawCircle 700ms var(--ease) 100ms forwards;"/>
+            <path d="M40 24v18l12 7" fill="none" stroke="#26A59A" stroke-width="4"
+                  stroke-linecap="round" stroke-linejoin="round"
+                  stroke-dasharray="60" stroke-dashoffset="60"
+                  style="animation: drawCheck 500ms var(--ease) 700ms forwards;"/>
+          </svg>
+        </div>
+        <h2 id="postponed-title" class="title-xl">נשמר. נתראה בעוד שעתיים.</h2>
+        <p class="lead">
+          נשלח לך תזכורת קצרה במייל ובוואטסאפ עם קישור שיחזיר אותך לבדיוק כאן.
+          האתגר ממתין לך — כשתהיה מוכן.
+        </p>
+        <div class="done-extra">
+          <p>השאר את הדף פתוח, או חזור דרך הקישור בתזכורת.</p>
+        </div>
+        <div class="actions actions--center">
+          <button type="button" class="btn btn--primary" data-action="next" data-target="commitment">
+            <span data-male="התחרטתי, אני ממשיך" data-female="התחרטתי, אני ממשיכה">התחרטתי, אני ממשיך</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skip warning modal -->
+    <div class="modal" id="skipModal" hidden role="dialog" aria-modal="true" aria-labelledby="skipModalTitle">
+      <div class="modal__backdrop" data-action="modal-close"></div>
+      <div class="modal__card" role="document">
+        <h3 id="skipModalTitle" class="modal__title">רגע, עוד לא הזנת הוצאות</h3>
+        <p class="modal__text">
+          בלי תמונת ההוצאות, יום 2 לא יוכל לעבוד נכון.
+          <span data-male="תרצה לחזור ולהזין?" data-female="תרצי לחזור ולהזין?">תרצה לחזור ולהזין?</span>
+        </p>
+        <div class="modal__actions">
+          <button type="button" class="btn btn--ghost" data-action="modal-close" data-skip="true">
+            דלג בכל זאת
+          </button>
+          <button type="button" class="btn btn--primary" data-action="modal-close">
+            <span>בטח, אני ממלא</span>
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
-</div>
-
-<script>
-// ── Supabase config ──
-const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI';
-
-// ── Category definitions ──
-const CATEGORIES = [
-  {
-    id: 'household', name: 'משק בית',
-    items: [
-      { id: 'rent', label: 'שכ"ד / משכנתא' },
-      { id: 'arnona', label: 'ארנונה' },
-      { id: 'electricity', label: 'חשמל' },
-      { id: 'water', label: 'מים' },
-      { id: 'gas', label: 'גז' },
-      { id: 'vaad_bayit', label: 'ועד בית' },
-      { id: 'household_other', label: 'אחר', isOther: true }
-    ]
-  },
-  {
-    id: 'insurance', name: 'ביטוחים',
-    items: [
-      { id: 'car_insurance', label: 'ביטוח רכב' },
-      { id: 'home_insurance', label: 'ביטוח דירה' },
-      { id: 'life_insurance', label: 'ביטוח חיים' },
-      { id: 'health_insurance', label: 'ביטוח בריאות' },
-      { id: 'insurance_other', label: 'אחר', isOther: true }
-    ]
-  },
-  {
-    id: 'health', name: 'בריאות',
-    items: [
-      { id: 'kupat_holim', label: 'קופ"ח' },
-      { id: 'medication', label: 'תרופות' },
-      { id: 'dental', label: 'טיפולי שיניים' },
-      { id: 'glasses', label: 'משקפיים / עדשות' },
-      { id: 'health_other', label: 'אחר', isOther: true }
-    ]
-  },
-  {
-    id: 'hobbies', name: 'חוגים',
-    items: [
-      { id: 'kids_hobbies', label: 'חוגים לילדים' },
-      { id: 'fitness', label: 'כושר / ספורט' },
-      { id: 'hobbies_other', label: 'אחר', isOther: true }
-    ]
-  },
-  {
-    id: 'education', name: 'חינוך',
-    items: [
-      { id: 'daycare', label: 'גן / מעון' },
-      { id: 'afternoon', label: 'צהרון' },
-      { id: 'tuition', label: 'שכר לימוד' },
-      { id: 'education_other', label: 'אחר', isOther: true }
-    ]
-  },
-  {
-    id: 'transport', name: 'תחבורה',
-    items: [
-      { id: 'fuel', label: 'דלק' },
-      { id: 'parking', label: 'חניה' },
-      { id: 'public_transit', label: 'תחב"צ' },
-      { id: 'leasing', label: 'ליסינג / תשלומי רכב' },
-      { id: 'transport_other', label: 'אחר', isOther: true }
-    ]
-  },
-  {
-    id: 'telecom', name: 'תקשורת',
-    items: [
-      { id: 'phone_bill', label: 'טלפון' },
-      { id: 'internet', label: 'אינטרנט' },
-      { id: 'tv', label: 'טלוויזיה' },
-      { id: 'streaming', label: 'סטרימינג' },
-      { id: 'telecom_other', label: 'אחר', isOther: true }
-    ]
-  },
-  {
-    id: 'food', name: 'אוכל',
-    items: [
-      { id: 'groceries', label: 'סופר' },
-      { id: 'dining', label: 'אוכל בחוץ' },
-      { id: 'delivery', label: 'משלוחים' },
-      { id: 'coffee', label: 'קפה' },
-      { id: 'food_other', label: 'אחר', isOther: true }
-    ]
-  },
-  {
-    id: 'leisure', name: 'פנאי',
-    items: [
-      { id: 'entertainment', label: 'בילויים' },
-      { id: 'vacations', label: 'חופשות' },
-      { id: 'shopping', label: 'קניות' },
-      { id: 'personal_hobbies', label: 'תחביבים' },
-      { id: 'leisure_other', label: 'אחר', isOther: true }
-    ]
-  },
-  {
-    id: 'investments', name: 'השקעות',
-    items: [
-      { id: 'keren_hishtalmut', label: 'קרן השתלמות' },
-      { id: 'extra_pension', label: 'פנסיה נוספת' },
-      { id: 'gemel_invest', label: 'גמל / השקעות' },
-      { id: 'child_savings', label: 'חיסכון ילדים' },
-      { id: 'general_savings', label: 'חיסכון כללי' },
-      { id: 'investments_other', label: 'אחר', isOther: true }
-    ]
-  },
-  {
-    id: 'loans', name: 'הלוואות',
-    items: [
-      { id: 'bank_loans', label: 'הלוואות בנקאיות' },
-      { id: 'credit_card', label: 'כרטיס אשראי' },
-      { id: 'external_loans', label: 'הלוואה חוץ-בנקאית' },
-      { id: 'loans_other', label: 'אחר', isOther: true }
-    ]
-  }
-];
-
-// ── Build category UI (sequential, all visible) ──
-function buildCategories() {
-  const panelsContainer = document.getElementById('catPanels');
-
-  CATEGORIES.forEach((cat, idx) => {
-    const section = document.createElement('div');
-    section.className = 'cat-section';
-    section.id = 'section-' + cat.id;
-
-    let html = `
-      <div class="cat-section-header">
-        <span class="cat-num">${idx + 1}</span>
-        <h3>${cat.name}</h3>
-        <span class="cat-check" id="check-' + cat.id + '"></span>
-      </div>`;
-    html = html.replace("'check-' + cat.id + '", 'check-' + cat.id);
-
-    let itemPairs = [];
-    cat.items.forEach(item => {
-      const fieldHtml = `
-        <div class="field">
-          <label>${item.label}</label>
-          <input type="number" id="exp_${item.id}" placeholder="0" inputmode="numeric"
-            oninput="onExpenseInput('${cat.id}', '${item.id}', ${item.isOther ? 'true' : 'false'})">
-          ${item.isOther ? `<div class="other-detail-field" id="detail_${item.id}"><input type="text" id="detail_text_${item.id}" placeholder="פרט במה מדובר" oninput="onExpenseInput('${cat.id}','${item.id}',true)"></div>` : ''}
-        </div>`;
-      itemPairs.push(fieldHtml);
-    });
-
-    // Layout items in rows of 2 (except "other" gets full width)
-    let i = 0;
-    while (i < itemPairs.length) {
-      const isOtherItem = cat.items[i].isOther;
-      if (isOtherItem) {
-        html += itemPairs[i];
-        i++;
-      } else if (i + 1 < itemPairs.length && !cat.items[i + 1].isOther) {
-        html += '<div class="row">' + itemPairs[i] + itemPairs[i + 1] + '</div>';
-        i += 2;
-      } else {
-        html += itemPairs[i];
-        i++;
-      }
-    }
-
-    section.innerHTML = html;
-    panelsContainer.appendChild(section);
-  });
-}
-
-function onExpenseInput(catId, itemId, isOther) {
-  // Show/hide detail field for "other"
-  if (isOther) {
-    const val = parseFloat(document.getElementById('exp_' + itemId).value) || 0;
-    const detailField = document.getElementById('detail_' + itemId);
-    if (detailField) {
-      detailField.style.display = val > 0 ? 'block' : 'none';
-    }
-  }
-
-  // Update category has-data indicator
-  updateCategoryIndicator(catId);
-
-  // Update running total
-  updateExpenseTotal();
-
-  // Persist to Day-2 bridge keys
-  saveAsafSchema();
-}
-
-function updateCategoryIndicator(catId) {
-  const cat = CATEGORIES.find(c => c.id === catId);
-  const section = document.getElementById('section-' + catId);
-  const check = document.getElementById('check-' + catId);
-  if (!section || !check) return;
-  let hasData = false;
-  cat.items.forEach(item => {
-    const val = parseFloat(document.getElementById('exp_' + item.id).value) || 0;
-    if (val > 0) hasData = true;
-  });
-  section.classList.toggle('has-data', hasData);
-  check.textContent = hasData ? '✓' : '';
-}
-
-function updateExpenseTotal() {
-  let total = 0;
-  CATEGORIES.forEach(cat => {
-    cat.items.forEach(item => {
-      total += parseFloat(document.getElementById('exp_' + item.id).value) || 0;
-    });
-  });
-  document.getElementById('expenseTotalDisplay').textContent = '₪' + total.toLocaleString();
-}
-
-function getExpenseTotal() {
-  let total = 0;
-  CATEGORIES.forEach(cat => {
-    cat.items.forEach(item => {
-      total += parseFloat(document.getElementById('exp_' + item.id).value) || 0;
-    });
-  });
-  return total;
-}
-
-function getAllExpenseData() {
-  const detail = {};
-  CATEGORIES.forEach(cat => {
-    cat.items.forEach(item => {
-      const val = parseFloat(document.getElementById('exp_' + item.id).value) || 0;
-      if (val > 0) {
-        detail[item.id] = val;
-        if (item.isOther) {
-          const textEl = document.getElementById('detail_text_' + item.id);
-          if (textEl && textEl.value.trim()) {
-            detail[item.id + '_desc'] = textEl.value.trim();
-          }
-        }
-      }
-    });
-  });
-  return detail;
-}
-
-// ════════════════════════════════════════════════════════════
-// Asaf Day-2 bridge: write fhink_day1_v1 + fhink_lead_v1
-// Day 2 (V11) reads these keys. Item ids must match data.js groupMap.
-// ════════════════════════════════════════════════════════════
-
-// day1 category id → Day-2 (Asaf) category id
-const ASAF_CAT = {
-  household:'household', insurance:'insurance', health:'health',
-  hobbies:'classes', education:'education', transport:'transport',
-  telecom:'comms', food:'food', leisure:'leisure',
-  investments:'investments', loans:'loans'
-};
-
-// day1 item id → Day-2 (Asaf) item id
-const ASAF_ITEM = {
-  rent:'rent_mortgage', arnona:'arnona', electricity:'electricity', water:'water',
-  gas:'gas', vaad_bayit:'house_committee', household_other:'other',
-  car_insurance:'car_insurance', home_insurance:'home_insurance',
-  life_insurance:'life_insurance', health_insurance:'health_insurance', insurance_other:'other',
-  kupat_holim:'health_fund', medication:'medicine', dental:'dental', glasses:'optics', health_other:'other',
-  kids_hobbies:'kids_classes', fitness:'fitness', hobbies_other:'other',
-  daycare:'kindergarten', afternoon:'afternoon', tuition:'tuition', education_other:'other',
-  fuel:'fuel', parking:'parking', public_transit:'public', leasing:'leasing', transport_other:'other',
-  phone_bill:'phone', internet:'internet', tv:'tv', streaming:'streaming', telecom_other:'other',
-  groceries:'supermarket', dining:'restaurants', delivery:'delivery', coffee:'coffee', food_other:'other',
-  entertainment:'entertainment', vacations:'vacations', shopping:'shopping', personal_hobbies:'hobbies', leisure_other:'other',
-  keren_hishtalmut:'training_fund', extra_pension:'extra_pension', gemel_invest:'investments',
-  child_savings:'kids_savings', general_savings:'general_savings', investments_other:'other',
-  bank_loans:'bank_loans', credit_card:'credit_cards', external_loans:'private_loans', loans_other:'other'
-};
-
-// day1 has no real gender field; infer from job type, else '' (Day 2 defaults to male)
-function deriveGender() {
-  const job = (document.getElementById('f_job') || {}).value || '';
-  if (job === 'שכירה') return 'נקבה';
-  if (job === 'שכיר')  return 'זכר';
-  return '';
-}
-
-function buildAsafExpenses() {
-  const expenses = {};
-  CATEGORIES.forEach(cat => {
-    const asafCat = ASAF_CAT[cat.id] || cat.id;
-    cat.items.forEach(item => {
-      const el = document.getElementById('exp_' + item.id);
-      const val = parseFloat(el && el.value) || 0;
-      if (val > 0) {
-        const asafItem = ASAF_ITEM[item.id] || item.id;
-        if (!expenses[asafCat]) expenses[asafCat] = {};
-        const entry = { amount: String(val) };
-        if (item.isOther) {
-          const t = document.getElementById('detail_text_' + item.id);
-          if (t && t.value.trim()) entry.desc = t.value.trim();
-        }
-        expenses[asafCat][asafItem] = entry;
-      }
-    });
-  });
-  return expenses;
-}
-
-function buildAdditionalIncomes() {
-  const list = [];
-  document.querySelectorAll('#extraIncomeList .income-row').forEach(row => {
-    const typeEl = row.querySelector('select');
-    const amtEl  = row.querySelector('input[type=number]');
-    const amount = parseFloat(amtEl && amtEl.value) || 0;
-    if (amount > 0) list.push({ type: typeEl ? typeEl.value : 'אחר', amount: amount });
-  });
-  return list;
-}
-
-// Writes both keys Day 2 expects. localStorage is the source of truth for the
-// internal pilot (DB sync planned 31.5). Called on every input + on submit.
-function saveAsafSchema() {
-  try {
-    const nameEl  = document.getElementById('f_name');
-    const emailEl = document.getElementById('f_email');
-    const phoneEl = document.getElementById('f_phone');
-    const incEl   = document.getElementById('f_income');
-    const name   = (nameEl  && nameEl.value  || '').trim();
-    const email  = (emailEl && emailEl.value || '').trim();
-    const phone  = (phoneEl && phoneEl.value || '').trim();
-    const salary = parseFloat(incEl && incEl.value) || 0;
-    const gender = deriveGender();
-
-    const day1 = {
-      user: { firstName: name, fullName: name, gender: gender },
-      basics: { salary: salary, additionalIncomes: buildAdditionalIncomes() },
-      expenses: buildAsafExpenses()
-    };
-    localStorage.setItem('fhink_day1_v1', JSON.stringify(day1));
-    localStorage.setItem('fhink_lead_v1', JSON.stringify({ fullName: name, gender: gender, email: email, phone: phone }));
-  } catch (_) {}
-}
-
-// ── Validate "other" fields ──
-function validateOtherFields() {
-  let valid = true;
-  CATEGORIES.forEach(cat => {
-    cat.items.forEach(item => {
-      if (item.isOther) {
-        const val = parseFloat(document.getElementById('exp_' + item.id).value) || 0;
-        if (val > 0) {
-          const textEl = document.getElementById('detail_text_' + item.id);
-          if (textEl && !textEl.value.trim()) {
-            textEl.style.borderColor = 'var(--red)';
-            textEl.focus();
-            valid = false;
-          } else if (textEl) {
-            textEl.style.borderColor = 'var(--gold)';
-          }
-        }
-      }
-    });
-  });
-  return valid;
-}
-
-// ── Page 0: Commitment ──
-function commitYes() {
-  document.getElementById('timePickArea').style.display = 'none';
-  document.getElementById('icalArea').style.display = 'block';
-}
-
-function commitNo() {
-  document.getElementById('icalArea').style.display = 'none';
-  document.getElementById('timePickArea').style.display = 'block';
-}
-
-function setLockTime() {
-  const timeVal = document.getElementById('pickTime').value;
-  if (!timeVal) return;
-
-  const now = new Date();
-  const [hours, minutes] = timeVal.split(':').map(Number);
-  const target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0);
-
-  // If chosen time is in the past (earlier today), treat as "now" and proceed
-  if (target <= now) {
-    document.getElementById('timePickArea').style.display = 'none';
-    document.getElementById('icalArea').style.display = 'block';
-    return;
-  }
-
-  localStorage.setItem('makpatza_unlock_time', target.getTime().toString());
-  showLockScreen(target.getTime());
-}
-
-function showLockScreen(unlockTs) {
-  const overlay = document.getElementById('lockOverlay');
-  overlay.style.display = 'flex';
-
-  function tick() {
-    const now = Date.now();
-    const diff = unlockTs - now;
-    if (diff <= 0) {
-      overlay.style.display = 'none';
-      localStorage.removeItem('makpatza_unlock_time');
-      // Show iCal area after unlock
-      document.getElementById('timePickArea').style.display = 'none';
-      document.getElementById('icalArea').style.display = 'block';
-      return;
-    }
-    const h = Math.floor(diff / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
-    document.getElementById('countdownDisplay').textContent =
-      String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-    requestAnimationFrame(tick);
-  }
-  tick();
-}
-
-// ── Check lock on page load ──
-function checkLock() {
-  const stored = localStorage.getItem('makpatza_unlock_time');
-  if (stored) {
-    const ts = parseInt(stored);
-    if (ts > Date.now()) {
-      showLockScreen(ts);
-    } else {
-      localStorage.removeItem('makpatza_unlock_time');
-    }
-  }
-}
-
-// ── Dynamic income rows ──
-const INCOME_TYPES = ['פרילנס / עצמאי', 'שכירות / נדל"ן', 'פנסיה / קצבה', 'דיבידנדים / השקעות', 'עסק', 'אחר'];
-let incomeRowCount = 0;
-
-function addIncomeRow() {
-  incomeRowCount++;
-  const id = 'extra_' + incomeRowCount;
-  const row = document.createElement('div');
-  row.className = 'income-row';
-  row.id = 'row_' + id;
-  row.innerHTML = `
-    <select id="type_${id}">
-      ${INCOME_TYPES.map(t => '<option>' + t + '</option>').join('')}
-    </select>
-    <input type="number" id="${id}" placeholder="₪0" inputmode="numeric" oninput="calcExtraIncome()">
-    <button type="button" class="del-btn" onclick="removeIncomeRow('row_${id}')">×</button>`;
-  document.getElementById('extraIncomeList').appendChild(row);
-}
-
-function removeIncomeRow(rowId) {
-  document.getElementById(rowId).remove();
-  calcExtraIncome();
-}
-
-function calcExtraIncome() {
-  let total = 0;
-  document.querySelectorAll('#extraIncomeList input[type=number]').forEach(inp => {
-    total += parseFloat(inp.value) || 0;
-  });
-  document.getElementById('f_income2').value = total;
-  saveAsafSchema();
-}
-
-// ── Navigation ──
-let currentPage = 0;
-
-function goPage(n) {
-  // Validate page 1 -> 2
-  if (n > 1 && currentPage === 1) {
-    if (!document.getElementById('f_name').value.trim()) {
-      document.getElementById('f_name').focus();
-      return;
-    }
-    if (!document.getElementById('f_income').value) {
-      document.getElementById('f_income').focus();
-      return;
-    }
-  }
-
-  // Validate page 2 -> 3 (check "other" detail fields)
-  if (n > 2 && currentPage === 2) {
-    if (!validateOtherFields()) return;
-  }
-
-  // Show progress bar when leaving page 0
-  if (currentPage === 0 && n > 0) {
-    document.getElementById('mainProgress').style.display = 'flex';
-  }
-
-  document.getElementById('page-' + currentPage).classList.remove('active');
-  document.getElementById('page-' + n).classList.add('active');
-
-  // Update progress dots (0-4)
-  for (let i = 0; i <= 4; i++) {
-    const dot = document.getElementById('pd-' + i);
-    const line = document.getElementById('pl-' + i);
-    dot.classList.remove('active', 'done');
-    if (line) line.classList.remove('done');
-    if (i < n) { dot.classList.add('done'); dot.textContent = '\u2713'; if (line) line.classList.add('done'); }
-    else if (i === n) { dot.classList.add('active'); dot.textContent = i; }
-    else { dot.textContent = i; }
-  }
-
-  currentPage = n;
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function gv(id) { return parseFloat(document.getElementById(id).value) || 0; }
-
-// ── Map old column names for backward compat ──
-function mapExpensesToLegacyColumns() {
-  return {
-    rent: gv('exp_rent'),
-    arnona: gv('exp_arnona'),
-    utilities: (gv('exp_electricity') + gv('exp_water') + gv('exp_gas')),
-    telecom: (gv('exp_phone_bill') + gv('exp_internet') + gv('exp_tv') + gv('exp_streaming')),
-    car_insurance: gv('exp_car_insurance'),
-    loans: (gv('exp_bank_loans') + gv('exp_credit_card') + gv('exp_external_loans')),
-    education: (gv('exp_daycare') + gv('exp_afternoon') + gv('exp_tuition')),
-    leasing: gv('exp_leasing'),
-    groceries: gv('exp_groceries'),
-    dining: gv('exp_dining'),
-    coffee: gv('exp_coffee'),
-    transport: (gv('exp_fuel') + gv('exp_parking') + gv('exp_public_transit')),
-    health: (gv('exp_kupat_holim') + gv('exp_medication') + gv('exp_dental') + gv('exp_glasses')),
-    shopping: gv('exp_shopping'),
-    leisure: (gv('exp_entertainment') + gv('exp_vacations') + gv('exp_personal_hobbies')),
-    kids: (gv('exp_kids_hobbies') + gv('exp_fitness'))
-  };
-}
-
-// ── Submit ──
-async function submitForm() {
-  const btn = document.getElementById('submitBtn');
-  const err = document.getElementById('errorMsg');
-  btn.disabled = true;
-  btn.textContent = 'שולח...';
-  err.style.display = 'none';
-
-  // Validate phone (required for daily WhatsApp reminders)
-  const phoneVal = document.getElementById('f_phone').value.trim();
-  const phoneDigits = phoneVal.replace(/[^0-9]/g, '');
-  if (phoneDigits.length < 9) {
-    err.textContent = 'נדרש טלפון תקין (לפחות 9 ספרות) כדי לקבל תזכורות יומיות.';
-    err.style.display = 'block';
-    btn.disabled = false;
-    btn.textContent = 'שלח וסכם ←';
-    document.getElementById('f_phone').focus();
-    return;
-  }
-
-  // Persist Day-2 bridge keys before the network call (localStorage = source of truth for pilot)
-  saveAsafSchema();
-
-  const legacyCols = mapExpensesToLegacyColumns();
-  const expensesDetail = JSON.stringify(getAllExpenseData());
-
-  const row = {
-    name: document.getElementById('f_name').value.trim(),
-    age: gv('f_age'),
-    job_type: document.getElementById('f_job').value,
-    income: gv('f_income'),
-    income_extra: gv('f_income2'),
-    email: document.getElementById('f_email').value.trim(),
-    phone: document.getElementById('f_phone').value.trim(),
-    // Legacy expense columns
-    rent: legacyCols.rent,
-    arnona: legacyCols.arnona,
-    utilities: legacyCols.utilities,
-    telecom: legacyCols.telecom,
-    car_insurance: legacyCols.car_insurance,
-    loans: legacyCols.loans,
-    education: legacyCols.education,
-    leasing: legacyCols.leasing,
-    test_annual: 0,
-    groceries: legacyCols.groceries,
-    dining: legacyCols.dining,
-    coffee: legacyCols.coffee,
-    transport: legacyCols.transport,
-    health: legacyCols.health,
-    shopping: legacyCols.shopping,
-    leisure: legacyCols.leisure,
-    kids: legacyCols.kids,
-    // Savings
-    pension_extra: gv('f_pension'),
-    keren_hishtalmut: gv('f_keren'),
-    gemel_invest: gv('f_gemel'),
-    child_savings: gv('f_child_save'),
-    general_savings: gv('f_save_gen'),
-    annual_insurance: 0,
-    emergency_fund: 0,
-    annual_subs: 0,
-    // Detailed expense JSON
-    expenses_detail: expensesDetail,
-    // Cohort/source from URL (?cohort=pilot|lms&src=...)
-    cohort: (new URLSearchParams(location.search).get('cohort') || 'pilot').toLowerCase(),
-    source: new URLSearchParams(location.search).get('src') || ''
-  };
-
-  try {
-    const res = await fetch(SUPA_URL + '/functions/v1/create-participant-v10', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'apikey': SUPA_KEY,
-        'Authorization': 'Bearer ' + SUPA_KEY,
-      },
-      body: JSON.stringify(row),
-    });
-
-    if (res.status === 403) {
-      const errData = await res.json();
-      if (errData.error === 'too_early') {
-        const startsAt = errData.starts_at ? new Date(errData.starts_at) : null;
-        const dateStr = startsAt ? startsAt.toLocaleDateString('he-IL', { day: 'numeric', month: 'long' }) : 'בקרוב';
-        err.innerHTML = '<strong>האתגר עוד לא נפתח.</strong><br>נפתחים ב-' + dateStr + ' בבוקר. שמרנו את ההרשמה שלך, נשלח תזכורת לפני הפתיחה.';
-        err.style.display = 'block';
-        btn.disabled = false;
-        btn.textContent = 'שלח וסכם ←';
-        return;
-      }
-      if (errData.error === 'late_registration') {
-        err.innerHTML = '<strong>הרישום סגור.</strong><br>הקוהורט הזה כבר התחיל. הקוהורט הבא ייפתח בקרוב.';
-        err.style.display = 'block';
-        btn.disabled = false;
-        btn.textContent = 'שלח וסכם ←';
-        return;
-      }
-    }
-
-    if (!res.ok) {
-      const errBody = await res.text();
-      console.error('Edge function error:', errBody);
-      throw new Error('שגיאה בשמירה');
-    }
-
-    const data = await res.json();
-    const pid = data?.id;
-    if (pid) {
-      localStorage.setItem('challenge_pid', pid);
-    }
-
-    // Save assessment if exists
-    const assessRaw = localStorage.getItem('makpatza_assess');
-
-    // Show summary page
-    showSummary();
-    goPage(4);
-
-  } catch (e) {
-    err.textContent = 'שגיאה: ' + e.message + '. תנסה שוב.';
-    err.style.display = 'block';
-    btn.disabled = false;
-    btn.textContent = 'שלח וסכם \u2190';
-  }
-}
-
-// ── Summary ──
-function showSummary() {
-  const totalIncome = gv('f_income') + gv('f_income2');
-  const totalExpense = getExpenseTotal();
-  const delta = totalIncome - totalExpense;
-
-  document.getElementById('sumIncome').textContent = '₪' + totalIncome.toLocaleString();
-  document.getElementById('sumExpense').textContent = '₪' + totalExpense.toLocaleString();
-
-  const deltaEl = document.getElementById('sumDelta');
-  deltaEl.textContent = (delta >= 0 ? '+' : '') + '₪' + delta.toLocaleString();
-  deltaEl.classList.toggle('positive', delta >= 0);
-  deltaEl.classList.toggle('negative', delta < 0);
-
-  // Animate readiness ring (20% = 80% dashoffset of circumference)
-  // circumference = 2 * PI * 65 = ~408.4
-  // 20% fill = 408.4 * 0.8 = 326.7 dashoffset
-  setTimeout(() => {
-    document.getElementById('ringFill').style.strokeDashoffset = '326.7';
-  }, 300);
-}
-
-// ── Navigate to Day 2 ──
-function goToDay2() {
-  const pid = localStorage.getItem('challenge_pid');
-  const params = new URLSearchParams(window.location.search);
-  const bypass = params.get('bypass');
-  let url = 'day2.html' + (pid ? '?pid=' + pid : '');
-  if (bypass === '1') {
-    url += (pid ? '&' : '?') + 'bypass=1';
-  }
-  window.location.href = url;
-}
-
-// ── Init ──
-document.addEventListener('DOMContentLoaded', function() {
-  // Already submitted? Skip to summary instead of empty form
-  const existingPid = localStorage.getItem('challenge_pid');
-  if (existingPid && !location.search.includes('reset=1')) {
-    // Show "already submitted" version of summary
-    document.getElementById('mainProgress').style.display = 'flex';
-    ['pd-0','pd-1','pd-2','pd-3'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.classList.add('done');
-    });
-    document.getElementById('pd-4').classList.add('active');
-    showAlreadyDoneScreen(existingPid);
-    return;
-  }
-
-  // Early-access gate: block new visitors before the cohort officially opens.
-  // Mirrors create-participant-v10 COHORT_START. Existing participants are
-  // not affected (their existingPid hits the branch above and skips this).
-  const COHORT_START_DAY1 = {
-    'pilot': '2026-06-14T06:00:00+03:00',
-    'rehearsal': '2026-05-20T06:00:00+03:00',
-    'lms': '2026-05-20T11:30:00+03:00',
-  };
-  const urlCohort = (new URLSearchParams(location.search).get('cohort') || 'pilot').toLowerCase();
-  const cohortKey = COHORT_START_DAY1[urlCohort] ? urlCohort : 'pilot';
-  const startIso = COHORT_START_DAY1[cohortKey];
-  const startTs = new Date(startIso).getTime();
-  if (Date.now() < startTs && !location.search.includes('bypass=1')) {
-    const d = new Date(startIso);
-    const dateStr = d.toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' });
-    const labelEl = document.getElementById('lockedOpenDate');
-    if (labelEl) labelEl.textContent = dateStr;
-    document.getElementById('page-0').classList.remove('active');
-    document.getElementById('page-locked').classList.add('active');
-    return;
-  }
-
-  buildCategories();
-  checkLock();
-
-  // Prefill name/email/phone/age/job from previous funnel steps:
-  //   - landing/script.js stored 'fhink_lead_v1' { name, email, phone }
-  //   - READY/script.js stored 'fhink:opening-questionnaire' with questionnaire answers
-  //   - URL param ?lead=email is fallback for direct entry
-  try {
-    const params = new URLSearchParams(location.search);
-    const leadEmail = params.get('lead');
-    const lead  = JSON.parse(localStorage.getItem('fhink_lead_v1') || 'null');
-    const ready = JSON.parse(localStorage.getItem('fhink:opening-questionnaire') || 'null');
-    const emailEl = document.getElementById('f_email');
-    const phoneEl = document.getElementById('f_phone');
-    const nameEl  = document.getElementById('f_name');
-    const ageEl   = document.getElementById('f_age');
-    const jobEl   = document.getElementById('f_job');
-    // Name+email+phone come from landing first; fall back to READY answers
-    const name  = (lead && lead.name)  || (ready && ready.fullName) || '';
-    const email = (lead && lead.email) || (ready && ready.email)    || '';
-    const phone = (lead && lead.phone) || (ready && ready.phone)    || '';
-    const age   = (ready && ready.age) || '';
-    if (nameEl  && !nameEl.value  && name)  nameEl.value  = name;
-    if (emailEl && !emailEl.value && email) emailEl.value = email;
-    if (phoneEl && !phoneEl.value && phone) phoneEl.value = phone;
-    if (ageEl   && !ageEl.value   && age)   ageEl.value   = age;
-    if (leadEmail && emailEl && !emailEl.value) emailEl.value = leadEmail;
-    // Map READY's employment + gender to day1's job dropdown (שכיר/שכירה/עצמאי)
-    if (jobEl && !jobEl.value && ready && ready.employment) {
-      const g   = (ready.gender || '').trim();
-      const emp = (ready.employment || '').trim();
-      let jv = '';
-      if (emp.indexOf('עצמא') !== -1)            jv = 'עצמאי';
-      else if (emp.indexOf('שכיר') !== -1)       jv = (g === 'נקבה') ? 'שכירה' : 'שכיר';
-      if (jv) jobEl.value = jv;
-    }
-  } catch (_) { /* ignore */ }
-
-  // Autosave Day-2 bridge keys on personal/contact field changes
-  ['f_name','f_income','f_job','f_email','f_phone'].forEach(function(id) {
-    const el = document.getElementById(id);
-    if (el) { el.addEventListener('input', saveAsafSchema); el.addEventListener('change', saveAsafSchema); }
-  });
-  // Persist prefilled values so Day-2 bridge keys reflect them even without user edits
-  try { saveAsafSchema(); } catch (_) {}
-
-  // Show progress bar with page 0 active
-  document.getElementById('mainProgress').style.display = 'flex';
-  document.getElementById('pd-0').classList.add('active');
-});
-
-function showAlreadyDoneScreen(pid) {
-  // Hide all pages, show a custom "already done" message
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  const card = document.querySelector('#page-4 .card') || document.querySelector('.card');
-  if (!card) return;
-
-  // Replace content with already-done state
-  const summaryPage = document.getElementById('page-4') || document.createElement('div');
-  summaryPage.id = 'page-4';
-  summaryPage.className = 'page active';
-  summaryPage.innerHTML = `
-    <div class="card" style="text-align:center;">
-      <h2 style="font-size:24px;margin-bottom:12px;">✓ כבר השלמת את יום 1</h2>
-      <p style="color:var(--dark-mid);margin-bottom:20px;">הנתונים שלך נשמרו. תמשיך מהמקום שעצרת.</p>
-      <a href="day2.html?pid=${encodeURIComponent(pid)}" class="btn btn-next" style="display:inline-block;text-decoration:none;padding:14px 28px;">המשך ליום 2 →</a>
-      <p style="margin-top:16px;font-size:12px;color:var(--dark-mid);">
-        רוצה למלא מחדש ?
-        <a href="?reset=1" style="color:var(--gold-dark);font-weight:600;">אפס את הנתונים</a>
-      </p>
-    </div>`;
-  if (!summaryPage.parentNode) {
-    document.querySelector('.container').appendChild(summaryPage);
-  }
-}
-</script>
-  <!-- Floating WhatsApp Support Button -->
-  <a href="https://wa.me/972546232063?text=%D7%94%D7%99%D7%99%2C%20%D7%9E%D7%A9%D7%94%D7%95%20%D7%91%D7%94%D7%AA%D7%A0%D7%A1%D7%95%D7%AA%20%D7%9C%D7%90%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9C%D7%99"
-     class="wa-support-float" 
-     target="_blank" 
-     rel="noopener noreferrer" 
-     aria-label="דיווח על תקלה טכנית בוואטסאפ">
-    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-      <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.42 9.863-9.855.001-2.63-1.02-5.101-2.871-6.955C16.6 1.99 14.124.97 11.5.969c-5.443 0-9.87 4.42-9.873 9.856 0 1.696.444 3.351 1.288 4.793L1.922 21.78l6.233-1.636-.508-.31zM17.5 14.4c-.28-.14-1.65-.81-1.91-.9-.26-.09-.45-.14-.64.14-.19.28-.74.9-.91 1.09-.17.19-.34.21-.62.07-1.3-.65-2.22-1.15-3.04-2.56-.22-.38.22-.35.63-1.16.07-.14.04-.26-.02-.38-.06-.12-.64-1.54-.88-2.11-.23-.56-.47-.48-.64-.49-.16-.01-.35-.01-.54-.01-.19 0-.5.07-.76.35-.26.28-1 .98-1 2.38s1.02 2.76 1.16 2.95c.14.19 2 3.05 4.85 4.28.68.29 1.21.47 1.62.6.68.22 1.3.19 1.79.12.54-.08 1.65-.67 1.88-1.33.23-.66.23-1.23.16-1.33-.07-.1-.26-.18-.54-.32z"/>
-    </svg>
-    <span class="wa-support-text">לא עובד ? תדווחו לנו</span>
-  </a>
-
-  <style>
-    .wa-support-float {
-      position: fixed;
-      bottom: 24px;
-      left: 24px;
-      background-color: #25d366;
-      color: #fff;
-      border-radius: 50px;
-      padding: 10px 18px;
-      font-family: 'Heebo', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      text-decoration: none;
-      transition: transform 0.2s ease, background-color 0.2s ease;
-      direction: rtl;
-    }
-    .wa-support-float:hover {
-      background-color: #20ba56;
-      transform: scale(1.05);
-      color: #fff;
-      text-decoration: none;
-    }
-    .wa-support-float svg {
-      width: 20px;
-      height: 20px;
-      display: block;
-    }
-    .wa-support-text {
-      white-space: nowrap;
-    }
-    @media (max-width: 480px) {
-      .wa-support-float {
-        bottom: 16px;
-        left: 16px;
-        padding: 8px 14px;
-        font-size: 13px;
-      }
-      .wa-support-float svg {
-        width: 18px;
-        height: 18px;
-      }
-    }
-  </style>
-
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="footer-brand__name">FHINK AI</span>
+        <span class="footer-brand__sep" aria-hidden="true">·</span>
+        <span class="footer-brand__tag">Financial Thinking <em>Powered by AI</em></span>
+      </div>
+      <div class="footer-meta">יום 1 · ניקוי הערפל</div>
+    </div>
+  </footer>
+
+  <script src="day1V1/data.js"></script>
+  <script src="day1.js"></script>
 </body>
 </html>

@@ -172,6 +172,8 @@
       const params = new URLSearchParams({ lead: email });
       if (payload.cohort) params.set('cohort', payload.cohort);
       if (payload.source) params.set('src', payload.source);
+      const bypass = new URLSearchParams(window.location.search).get('bypass');
+      if (bypass) params.set('bypass', bypass);
       window.location.href = `${CONFIG.redirectTo}?${params.toString()}`;
     }, CONFIG.redirectDelayMs);
   });
