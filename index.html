@@ -2,12 +2,15 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5" />
   <meta name="facebook-domain-verification" content="7gkdhgh7t14rplhqyj0rtomlvdkpcv" />
+  <meta name="theme-color" content="#26A59A" />
   <title>המקפצה הפיננסית - אתגר 4 הימים</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  
   <style>
     *, *::before, *::after {
       box-sizing: border-box;
@@ -16,113 +19,147 @@
     }
 
     :root {
-      --gold: #26A59A;
-      --gold-light: #B2DFDB;
-      --gold-dark: #1F8D84;
-      --warm-white: #F5F7F7;
-      --cream: #FFFFFF;
-      --cream-dark: #EEF1F2;
-      --dark: #151924;
-      --dark-mid: rgba(21, 25, 36, 0.75);
-      --navy: #151924;
-      --navy-light: rgba(21, 25, 36, 0.9);
-      --green: #2DAA6E;
-      --green-light: rgba(45, 170, 110, 0.08);
-      --gray: #CDCDCD;
+      --teal: #26A59A;
+      --teal-hover: #1F8D84;
+      --teal-active: #19796F;
+      --teal-soft: rgba(38, 165, 154, 0.08);
+      --teal-soft-2: rgba(38, 165, 154, 0.14);
+      --teal-light: #5EE8DC;
+      --charcoal: #151924;
+      --charcoal-90: rgba(21, 25, 36, 0.92);
+      --charcoal-75: rgba(21, 25, 36, 0.75);
+      --charcoal-60: rgba(21, 25, 36, 0.60);
+      --charcoal-40: rgba(21, 25, 36, 0.40);
+      --charcoal-20: rgba(21, 25, 36, 0.20);
+      --white: #FFFFFF;
+      --ice: #F5F7F7;
+      --ice-2: #EEF1F2;
+      --silver: #CDCDCD;
+      --silver-50: rgba(205, 205, 205, 0.50);
+      --error: #D64545;
+      --success: #2DAA6E;
+      --shadow-card: 0 12px 35px rgba(21, 25, 36, 0.06);
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     body {
       font-family: 'Heebo', sans-serif;
-      background-color: var(--warm-white);
-      color: var(--dark);
+      background-color: var(--ice);
+      color: var(--charcoal);
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
       direction: rtl;
-    }
-
-    /* ─── HEADER ─── */
-    header {
-      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 50%, #1E3260 100%);
-      padding: 28px 20px 24px;
-      text-align: center;
       position: relative;
-      overflow: hidden;
     }
 
-    header::before {
-      content: '';
-      position: absolute;
-      top: -40px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle, rgba(212,168,83,0.15) 0%, transparent 70%);
+    /* ─── BACKGROUND DECORATION ─── */
+    .bg-decoration {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
       pointer-events: none;
     }
 
-    .header-logo {
-      font-size: 28px;
-      font-weight: 900;
-      color: var(--gold);
-      letter-spacing: -0.5px;
-      line-height: 1.2;
-      position: relative;
+    .bg-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(21, 25, 36, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(21, 25, 36, 0.02) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(ellipse at 50% 0%, rgba(0, 0, 0, 0.5), transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse at 50% 0%, rgba(0, 0, 0, 0.5), transparent 70%);
     }
 
-    .header-logo span {
-      display: inline-block;
-      margin-left: 8px;
-      font-size: 22px;
+    .bg-glow {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.25;
+    }
+    .bg-glow--top {
+      top: -200px;
+      right: -100px;
+      background: radial-gradient(circle, rgba(38, 165, 154, 0.25), transparent 65%);
+    }
+    .bg-glow--bottom {
+      bottom: -250px;
+      left: -150px;
+      background: radial-gradient(circle, rgba(21, 25, 36, 0.08), transparent 65%);
     }
 
-    .header-subtitle {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--gold-light);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-top: 4px;
-      opacity: 0.9;
+    /* ─── SITE HEADER ─── */
+    .site-header {
+      width: 100%;
+      padding: 24px 24px 16px;
     }
 
-    .header-authors {
-      font-size: 12px;
-      color: rgba(253, 248, 240, 0.6);
-      margin-top: 8px;
-      font-weight: 400;
+    .header-inner {
+      max-width: 480px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .brand {
+      display: inline-flex;
+      text-decoration: none;
+      padding: 10px 20px;
+      background: var(--white);
+      border-radius: 16px;
+      border: 1px solid var(--silver-50);
+      box-shadow: 0 4px 16px rgba(21, 25, 36, 0.06);
+      transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+    }
+    .brand:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(21, 25, 36, 0.10);
+    }
+    .brand-logo {
+      height: 40px;
+      width: auto;
+      object-fit: contain;
     }
 
     /* ─── HERO ─── */
     .hero {
-      background: linear-gradient(180deg, var(--cream) 0%, var(--warm-white) 100%);
-      padding: 32px 20px 24px;
+      padding: 16px 20px 24px;
       text-align: center;
-      border-bottom: 1px solid var(--cream-dark);
     }
 
     .welcome-greeting {
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 800;
-      color: var(--dark);
+      color: var(--charcoal);
       margin-bottom: 6px;
     }
 
     .welcome-greeting .name-highlight {
-      color: var(--gold-dark);
+      color: var(--teal);
     }
 
     .welcome-tagline {
       font-size: 14px;
-      color: var(--dark-mid);
+      color: var(--charcoal-75);
       font-weight: 400;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
       line-height: 1.6;
     }
 
     /* Progress bar */
     .progress-wrapper {
-      max-width: 340px;
+      max-width: 360px;
       margin: 0 auto;
+      background: var(--white);
+      border: 1px solid var(--silver-50);
+      border-radius: 16px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow-card);
     }
 
     .progress-label {
@@ -133,48 +170,48 @@
     }
 
     .progress-text {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 600;
-      color: var(--dark-mid);
+      color: var(--charcoal-75);
     }
 
     .progress-count {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 700;
-      color: var(--gold-dark);
+      color: var(--teal);
     }
 
     .progress-bar-bg {
-      background: var(--cream-dark);
-      border-radius: 20px;
-      height: 10px;
+      background: var(--ice-2);
+      border-radius: var(--progress-radius, 8px);
+      height: 8px;
       overflow: hidden;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
     }
 
     .progress-bar-fill {
       height: 100%;
-      background: linear-gradient(90deg, var(--gold-dark), var(--gold-light));
-      border-radius: 20px;
+      background: linear-gradient(90deg, var(--teal), var(--teal-light));
+      border-radius: 8px;
       transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
       width: 0%;
     }
 
     /* ─── MAIN CONTENT ─── */
     main {
-      padding: 28px 16px 32px;
+      padding: 16px 16px 32px;
       max-width: 480px;
       margin: 0 auto;
+      width: 100%;
     }
 
     .section-title {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
-      color: var(--gray);
+      color: var(--charcoal-60);
       letter-spacing: 1.5px;
       text-transform: uppercase;
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     /* ─── FLOW TIMELINE ─── */
@@ -183,7 +220,7 @@
       align-items: center;
       justify-content: center;
       gap: 0;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
       padding: 0 4px;
     }
     .flow-step {
@@ -195,76 +232,85 @@
       max-width: 80px;
     }
     .flow-dot {
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
-      background: var(--cream-dark);
-      color: var(--gray);
+      background: var(--white);
+      border: 1.5px solid var(--silver-50);
+      color: var(--charcoal-40);
       transition: all .3s;
     }
     .flow-dot.done {
-      background: var(--green);
+      background: var(--success);
+      border-color: var(--success);
       color: #fff;
     }
     .flow-dot.current {
-      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      background: linear-gradient(135deg, var(--teal), var(--teal-hover));
+      border-color: var(--teal-hover);
       color: #fff;
-      box-shadow: 0 0 0 4px rgba(212,168,83,.2);
+      box-shadow: 0 0 0 4px var(--teal-soft);
       animation: flowPulse 2s ease-in-out infinite;
     }
     @keyframes flowPulse {
-      0%,100% { box-shadow: 0 0 0 4px rgba(212,168,83,.2); }
-      50% { box-shadow: 0 0 0 8px rgba(212,168,83,.08); }
+      0%, 100% { box-shadow: 0 0 0 4px var(--teal-soft); }
+      50% { box-shadow: 0 0 0 8px var(--teal-soft-2); }
     }
     .flow-label {
       font-size: 9px;
       font-weight: 600;
-      color: var(--gray);
+      color: var(--charcoal-60);
       text-align: center;
-      line-height: 1.2;
+      line-height: 1.25;
     }
     .flow-dot.done + .flow-label,
-    .flow-dot.current + .flow-label { color: var(--dark-mid); }
+    .flow-dot.current + .flow-label {
+      color: var(--charcoal);
+      font-weight: 700;
+    }
     .flow-line {
       height: 2px;
       flex: 1;
       max-width: 40px;
-      background: var(--cream-dark);
-      margin-top: -16px;
+      background: var(--silver-50);
+      margin-top: -14px;
     }
     .flow-line.done {
-      background: var(--green);
+      background: var(--success);
     }
 
     /* ─── DAY CARDS ─── */
     .cards-list {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 16px;
     }
 
     .day-card {
-      border-radius: 16px;
-      padding: 18px 16px;
+      border-radius: 20px;
+      padding: 20px 18px;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
       text-decoration: none;
       color: inherit;
-      transition: transform 0.22s ease, box-shadow 0.22s ease;
+      transition: transform 0.22s var(--ease), box-shadow 0.22s var(--ease), border-color 0.22s var(--ease);
       opacity: 0;
       transform: translateY(20px);
       position: relative;
       overflow: hidden;
+      background: var(--white);
+      border: 1px solid var(--silver-50);
+      box-shadow: var(--shadow-card);
     }
 
     .day-card.animate-in {
-      animation: cardFadeIn 0.5s ease forwards;
+      animation: cardFadeIn 0.5s var(--ease) forwards;
     }
 
     @keyframes cardFadeIn {
@@ -276,35 +322,33 @@
 
     /* Locked */
     .day-card.locked {
-      background: var(--cream);
-      border: 1.5px solid var(--cream-dark);
-      filter: grayscale(0.5);
+      background: rgba(255, 255, 255, 0.5);
+      border-color: var(--silver-50);
       cursor: not-allowed;
       pointer-events: none;
     }
 
     .day-card.locked.animate-in {
-      animation: cardFadeInLocked 0.5s ease forwards;
+      animation: cardFadeInLocked 0.5s var(--ease) forwards;
     }
 
     @keyframes cardFadeInLocked {
       to {
-        opacity: 0.55;
+        opacity: 0.6;
         transform: translateY(0);
       }
     }
 
     /* Active */
     .day-card.active {
-      background: #fff;
-      border: 2px solid var(--gold);
-      box-shadow: 0 4px 20px rgba(212, 168, 83, 0.2), 0 2px 8px rgba(0,0,0,0.06);
+      border-color: var(--teal);
+      box-shadow: 0 8px 24px var(--teal-soft);
       cursor: pointer;
     }
 
     .day-card.active:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 30px rgba(212, 168, 83, 0.3), 0 4px 12px rgba(0,0,0,0.08);
+      transform: translateY(-2px);
+      box-shadow: 0 14px 32px var(--teal-soft-2);
     }
 
     .day-card.active::before {
@@ -314,21 +358,20 @@
       right: 0;
       width: 4px;
       height: 100%;
-      background: linear-gradient(180deg, var(--gold-light), var(--gold-dark));
-      border-radius: 0 16px 16px 0;
+      background: linear-gradient(180deg, var(--teal-light), var(--teal));
+      border-radius: 0 20px 20px 0;
     }
 
     /* Completed */
     .day-card.completed {
-      background: #fff;
-      border: 1.5px solid #C8E6D9;
-      box-shadow: 0 2px 10px rgba(46, 125, 82, 0.08);
+      border-color: var(--success);
+      box-shadow: 0 6px 16px rgba(46, 125, 82, 0.04);
       cursor: pointer;
     }
 
     .day-card.completed:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(46, 125, 82, 0.12);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(46, 125, 82, 0.08);
     }
 
     .day-card.completed::before {
@@ -338,39 +381,37 @@
       right: 0;
       width: 4px;
       height: 100%;
-      background: linear-gradient(180deg, var(--green-light), var(--green));
-      border-radius: 0 16px 16px 0;
+      background: var(--success);
+      border-radius: 0 20px 20px 0;
     }
 
     /* Day Number Circle */
     .day-number {
       flex-shrink: 0;
-      width: 48px;
-      height: 48px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
-      font-weight: 900;
+      font-size: 16px;
+      font-weight: 800;
       position: relative;
     }
 
     .locked .day-number {
-      background: var(--cream-dark);
-      color: var(--gray);
+      background: var(--ice-2);
+      color: var(--charcoal-40);
     }
 
     .active .day-number {
-      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      background: linear-gradient(135deg, var(--teal), var(--teal-hover));
       color: #fff;
-      box-shadow: 0 3px 12px rgba(212, 168, 83, 0.4);
     }
 
     .completed .day-number {
-      background: linear-gradient(135deg, var(--green-light), var(--green));
+      background: var(--success);
       color: #fff;
-      box-shadow: 0 3px 12px rgba(46, 125, 82, 0.3);
     }
 
     /* Card Text */
@@ -382,8 +423,8 @@
     .card-title {
       font-size: 16px;
       font-weight: 700;
-      line-height: 1.3;
-      color: var(--dark);
+      line-height: 1.35;
+      color: var(--charcoal);
       display: flex;
       align-items: center;
       gap: 8px;
@@ -391,27 +432,26 @@
     }
 
     .locked .card-title {
-      color: var(--gray);
+      color: var(--charcoal-40);
     }
 
     .card-subtitle {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 400;
-      color: var(--dark-mid);
-      margin-top: 3px;
-      line-height: 1.4;
+      color: var(--charcoal-75);
+      margin-top: 4px;
+      line-height: 1.45;
     }
 
     .locked .card-subtitle {
-      color: var(--gray);
+      color: var(--charcoal-40);
     }
 
     .card-locked-label {
       font-size: 11px;
       font-weight: 600;
-      color: var(--gray);
-      margin-top: 5px;
-      letter-spacing: 0.5px;
+      color: var(--charcoal-40);
+      margin-top: 4px;
     }
 
     /* Status indicator */
@@ -420,30 +460,30 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 28px;
+      width: 24px;
     }
 
     .status-lock {
-      font-size: 18px;
-      opacity: 0.5;
+      font-size: 16px;
+      opacity: 0.45;
     }
 
     .status-check {
-      font-size: 20px;
+      font-size: 18px;
     }
 
     .status-dot {
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
-      background: var(--green-light);
-      box-shadow: 0 0 0 3px rgba(76, 175, 128, 0.25);
+      background: var(--teal);
+      box-shadow: 0 0 0 3px var(--teal-soft);
       animation: pulseDot 2s ease-in-out infinite;
     }
 
     @keyframes pulseDot {
-      0%, 100% { box-shadow: 0 0 0 3px rgba(76, 175, 128, 0.25); }
-      50% { box-shadow: 0 0 0 6px rgba(76, 175, 128, 0.1); }
+      0%, 100% { box-shadow: 0 0 0 3px var(--teal-soft); }
+      50% { box-shadow: 0 0 0 6px var(--teal-soft-2); }
     }
 
     /* Premium Badge */
@@ -451,85 +491,79 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      background: linear-gradient(135deg, var(--teal), var(--teal-hover));
       color: #fff;
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 20px;
+      padding: 2px 6px;
+      border-radius: 8px;
       letter-spacing: 0.5px;
     }
 
     .locked .badge-premium {
-      background: var(--cream-dark);
-      color: var(--gray);
+      background: var(--ice-2);
+      color: var(--charcoal-40);
     }
 
     /* Arrow */
     .card-arrow {
       flex-shrink: 0;
-      color: var(--gold);
-      font-size: 18px;
+      color: var(--teal);
+      font-size: 16px;
       opacity: 0.7;
-      transition: transform 0.2s ease;
+      transition: transform 0.2s var(--ease);
     }
 
     .active:hover .card-arrow,
     .completed:hover .card-arrow {
-      transform: translateX(-4px);
+      transform: translateX(-3px);
     }
 
     .completed .card-arrow {
-      color: var(--green);
+      color: var(--success);
     }
 
     /* ─── FOOTER ─── */
     footer {
       text-align: center;
-      padding: 28px 20px 40px;
-      border-top: 1px solid var(--cream-dark);
-      background: var(--cream);
+      padding: 32px 20px 48px;
+      background: transparent;
+      margin-top: auto;
     }
 
     .footer-wish {
-      font-size: 16px;
+      font-size: 14.5px;
       font-weight: 700;
-      color: var(--dark);
-      margin-bottom: 8px;
+      color: var(--charcoal);
+      margin-bottom: 6px;
     }
 
     .footer-wish span {
-      color: var(--gold-dark);
+      color: var(--teal);
     }
 
     .footer-copyright {
       font-size: 11px;
-      color: var(--gray);
-      margin-top: 4px;
-    }
-
-    /* ─── RESPONSIVE ─── */
-    @media (max-width: 360px) {
-      .header-logo { font-size: 23px; }
-      .welcome-greeting { font-size: 19px; }
-      .day-number { width: 42px; height: 42px; font-size: 16px; }
-      .card-title { font-size: 15px; }
-    }
-
-    @media (min-width: 480px) {
-      main { padding: 32px 24px 40px; }
+      color: var(--charcoal-40);
     }
   </style>
 </head>
 <body>
 
+  <!-- Background decoration -->
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow--top"></div>
+    <div class="bg-glow bg-glow--bottom"></div>
+  </div>
+
   <!-- HEADER -->
-  <header>
-    <div class="header-logo">
-      <span>🚀</span>המקפצה הפיננסית
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="brand" aria-label="FHINK AI">
+        <img src="day1V1/assets/logo.png" alt="FHINK AI · Financial Thinking Powered by AI" class="brand-logo" />
+      </a>
     </div>
-    <div class="header-subtitle">אתגר 4 הימים</div>
-    <div class="header-authors">אתגר חינמי - 4 ימים לשינוי פיננסי</div>
   </header>
 
   <!-- HERO -->
@@ -761,6 +795,7 @@
       }, 150 + i * 150);
     });
   </script>
+  
   <!-- Floating WhatsApp Support Button -->
   <a href="https://wa.me/972546232063?text=%D7%94%D7%99%D7%99%2C%20%D7%9E%D7%A9%D7%94%D7%95%20%D7%91%D7%94%D7%AA%D7%A0%D7%A1%D7%95%D7%AA%20%D7%9C%D7%90%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9C%D7%99"
      class="wa-support-float" 
