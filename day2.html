@@ -1192,7 +1192,7 @@ async function saveCommitmentToSupabase(amount) {
 // ── Defer Day ──
 function deferDay() {
   localStorage.setItem('day2_deferred', 'true');
-  const homeUrl = 'home.html' + (pid ? '?pid=' + pid : '');
+  const homeUrl = 'index.html' + (pid ? '?pid=' + pid : '');
   window.location.href = homeUrl;
 }
 
