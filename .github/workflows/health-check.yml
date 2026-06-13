@@ -100,6 +100,7 @@ jobs:
             local status="$1"
             local body="$2"
             case "$status" in
+              415) echo "415 — WAF/openresty rejected request (missing browser User-Agent/Accept header)" ;;
               000) echo "Timeout or DNS resolution failure" ;;
               404) echo "404 Not Found — page/route removed or path changed" ;;
               500|502|503|504) echo "Server error (${status}) — upstream crash or deployment issue" ;;
@@ -111,14 +112,20 @@ jobs:
 
           # 1. Landing page
           check "fhinkai.com/landing/" "200" "" \
+            -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36" \
+            -H "Accept: text/html" \
             https://fhinkai.com/landing/
 
           # 2. Day 1 page
           check "fhinkai.com/day1.html" "200" "" \
+            -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36" \
+            -H "Accept: text/html" \
             https://fhinkai.com/day1.html
 
           # 3. READY endpoint
           check "fhinkai.com/READY/" "200" "" \
+            -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36" \
+            -H "Accept: text/html" \
             https://fhinkai.com/READY/
 
           # 4. create-lead edge function
