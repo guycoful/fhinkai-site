@@ -25,6 +25,10 @@
     targetRate: 0.03,                   // 3% of need-expenses
   };
 
+  const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI';
+  const PILOT_UNLOCK_ISO = '2026-06-14T06:00:00+03:00';
+
   const DATA = window.FHINK_DAY2_DATA;
   const SCREEN_ORDER = ['opening', 'commitment', 'webinar', 'basics', 'trim', 'summary', 'completed'];
   const ACTIVE_CONSENT = false; // ← flip to true if אילת requires active consent
@@ -43,10 +47,11 @@
   // ============================================================
   document.addEventListener('DOMContentLoaded', init);
 
-  function init() {
+  async function init() {
+    if (!allowEarlyAccess()) return;
     applyUrlParams();
     applyUserContext();
-    loadDay1();
+    await loadDay1();
     buildRows();
     computeTotals();
     renderPulled();
@@ -94,7 +99,10 @@
 
     // Supabase user id — arrives in links between pages, never typed by the user
     const pid = params.get('pid');
-    if (pid) state.user.pid = pid;
+    if (pid) {
+      state.user.pid = pid;
+      try { localStorage.setItem('challenge_pid', pid); } catch (_) {}
+    }
 
     // Pre-applied example trims, for review of the tracker/summary states
     if (params.get('demotrims') === '1') {
@@ -194,7 +202,7 @@
   // ============================================================
   // Day-1 data — pulled automatically, demo fallback
   // ============================================================
-  function loadDay1() {
+  async function loadDay1() {
     try {
       const raw = localStorage.getItem(CONFIG.day1StorageKey);
       if (raw) {
@@ -206,6 +214,17 @@
         }
       }
     } catch (_) {}
+
+    const pid = state.user.pid || localStorage.getItem('challenge_pid');
+    if (pid) {
+      const remote = await fetchDay1Participant(pid);
+      if (remote) {
+        day1 = remote;
+        state.meta.demo = false;
+        return;
+      }
+    }
+
     day1 = DATA.demoDay1;
     state.meta.demo = true;
   }
@@ -214,6 +233,93 @@
     return Object.values(expenses).some(items =>
       Object.values(items || {}).some(it => parseFloat(it.amount) > 0)
     );
+  }
+
+  async function fetchDay1Participant(pid) {
+    try {
+      const res = await fetch(`${SUPA_URL}/rest/v1/challenge_participants?id=eq.${encodeURIComponent(pid)}&select=*`, {
+        headers: {
+          apikey: SUPA_KEY,
+          Authorization: `Bearer ${SUPA_KEY}`,
+        },
+      });
+      if (!res.ok) return null;
+      const rows = await res.json();
+      if (!Array.isArray(rows) || !rows.length) return null;
+      return normalizeParticipantDay1(rows[0]);
+    } catch (err) {
+      console.warn('[FHINK] day1 REST load failed:', err);
+      return null;
+    }
+  }
+
+  function normalizeParticipantDay1(row) {
+    const detail = parseMaybeJson(row.expenses_detail);
+    const expenses = {};
+
+    DATA.categories.forEach(cat => {
+      const catValues = {};
+      cat.items.forEach(item => {
+        const amount = readParticipantAmount(row, detail, item.id);
+        if (!amount || amount <= 0) return;
+        catValues[item.id] = {
+          amount: String(amount),
+          otherDetail: detail[item.id + '_desc'] || '',
+        };
+      });
+      if (Object.keys(catValues).length) expenses[cat.id] = catValues;
+    });
+
+    const salary = parseFloat(row.income || row.salary || 0) || 0;
+    const extra = parseFloat(row.income_extra || 0) || 0;
+    return {
+      basics: {
+        salary: String(salary),
+        additionalIncomes: extra > 0 ? [{ type: 'other', amount: String(extra), otherDetail: '' }] : [],
+      },
+      expenses,
+      user: { fullName: row.name || row.full_name || '' },
+      meta: {},
+    };
+  }
+
+  function parseMaybeJson(raw) {
+    if (!raw || typeof raw !== 'string') return {};
+    try { return JSON.parse(raw); } catch (_) { return {}; }
+  }
+
+  function readParticipantAmount(row, detail, itemId) {
+    const detailAmount = parseFloat(detail?.[itemId]);
+    if (!isNaN(detailAmount) && detailAmount > 0) return detailAmount;
+    const rowAmount = parseFloat(row?.[itemId]);
+    if (!isNaN(rowAmount) && rowAmount > 0) return rowAmount;
+    return 0;
+  }
+
+  function allowEarlyAccess() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('bypass') === '1') return true;
+    const unlockIso = PILOT_UNLOCK_ISO;
+    if (Date.now() >= new Date(unlockIso).getTime()) return true;
+    showLockedOverlay(unlockIso, 'יום 2');
+    return false;
+  }
+
+  function showLockedOverlay(unlockIso, label) {
+    const unlockAt = new Date(unlockIso);
+    const unlockLabel = unlockAt.toLocaleString('he-IL', {
+      dateStyle: 'full',
+      timeStyle: 'short',
+      timeZone: 'Asia/Jerusalem',
+    });
+    document.body.innerHTML = `
+      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f8f2e8;padding:24px;direction:rtl;font-family:Heebo,sans-serif;">
+        <div style="max-width:520px;width:100%;background:#fff;border-radius:28px;padding:40px 28px;box-shadow:0 16px 60px rgba(0,0,0,.12);text-align:center;">
+          <div style="font-size:56px;line-height:1;margin-bottom:12px;">🔒</div>
+          <h1 style="font-size:28px;line-height:1.2;margin:0 0 12px;color:#231d15;font-weight:800;">${label} עדיין נעול</h1>
+          <p style="margin:0;color:#5d5143;font-size:16px;line-height:1.8;">הפתיחה לצוות הפיילוט נקבעה ל-${unlockLabel}. אם קיבלת bypass=1, הדף ייפתח מייד.</p>
+        </div>
+      </div>`;
   }
 
   // ============================================================
@@ -892,6 +998,7 @@
 
   async function postDay2() {
     const saved = savedByBucket();
+    const targetVal = saved.need + saved.want;
     const payload = {
       ...state,
       results: {
@@ -909,10 +1016,17 @@
       console.log('[FHINK] dev mode — would POST', payload);
       return { ok: true, mocked: true };
     }
-    const res = await fetch(CONFIG.apiEndpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+    const pid = state.user.pid || localStorage.getItem('challenge_pid') || new URLSearchParams(window.location.search).get('pid');
+    if (!pid) throw new Error('Missing pid');
+    const res = await fetch(`${SUPA_URL}/rest/v1/challenge_participants?id=eq.${encodeURIComponent(pid)}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: SUPA_KEY,
+        Authorization: `Bearer ${SUPA_KEY}`,
+        Prefer: 'return=representation',
+      },
+      body: JSON.stringify({ savings_commitment: targetVal }),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return res.json();

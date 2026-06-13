@@ -25,6 +25,10 @@
     apiEndpoint: '/api/day4',           // ← wire by Claude Code
   };
 
+  const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI';
+  const PILOT_UNLOCK_ISO = '2026-06-14T06:00:00+03:00';
+
   const DATA = window.FHINK_DAY4_DATA;
   const A = DATA.assumptions;
   const SCREEN_ORDER = ['opening', 'commitment', 'webinar', 'pension', 'pensionSummary', 'networth', 'summary', 'completed'];
@@ -44,12 +48,13 @@
   // ============================================================
   document.addEventListener('DOMContentLoaded', init);
 
-  function init() {
+  async function init() {
+    if (!allowEarlyAccess()) return;
     applyUrlParams();
     state.meta.watched = state.meta.watched || {};
     applyUserContext();
     restoreWatchedVideos();
-    loadPriorDays();
+    await loadPriorDays();
     seedDemoIfEmpty();
     buildFundSelect();
     bindPensionForm();
@@ -96,7 +101,10 @@
 
     // Supabase user id — arrives in links between pages, never typed by the user
     const pid = params.get('pid');
-    if (pid) state.user.pid = pid;
+    if (pid) {
+      state.user.pid = pid;
+      try { localStorage.setItem('challenge_pid', pid); } catch (_) {}
+    }
 
     const popup = params.get('popup');
     if (popup) setTimeout(() => {
@@ -104,8 +112,6 @@
       if (m) { m.hidden = false; document.body.style.overflow = 'hidden'; }
     }, 300);
 
-    // Unlocks the 50/30/20 scenario, for review (in production: after the webinar)
-    if (params.get('unlock') === '1') state.meta.modelUnlocked = true;
   }
 
   // ============================================================
@@ -204,9 +210,11 @@
   // ============================================================
   // Prior-day data
   // ============================================================
-  function loadPriorDays() {
+  async function loadPriorDays() {
     let d1 = null;
+    let ready = null;
     try { d1 = JSON.parse(localStorage.getItem(CONFIG.day1StorageKey) || 'null'); } catch (_) {}
+    try { ready = JSON.parse(localStorage.getItem('fhink:opening-questionnaire') || 'null'); } catch (_) {}
 
     if (d1 && d1.basics && parseFloat(d1.basics.salary) > 0) {
       state.meta.demo = false;
@@ -228,14 +236,29 @@
       });
       monthlyExpenses = expenses;
     } else {
+      const pid = state.user.pid || localStorage.getItem('challenge_pid');
+      if (pid) {
+        const remote = await fetchParticipantRow(pid);
+        if (remote) {
+          state.meta.demo = false;
+          salary = parseFloat(remote.income || remote.salary || 0) || DATA.demo.salary;
+          monthlyIncome = salary + (parseFloat(remote.income_extra || 0) || 0);
+          monthlyExpenses = parseFloat(remote.monthly_expenses || remote.expenses_total || 0) || DATA.demo.monthlyExpenses;
+          age = parseInt(remote.age || 0, 10) || DATA.demo.age;
+          day2Saved = parseFloat(remote.savings_commitment || 0) || 0;
+          if (!day2Saved) day2Saved = DATA.demo.day2Saved;
+          return;
+        }
+      }
+
       state.meta.demo = true;
       salary = DATA.demo.salary;
       monthlyIncome = DATA.demo.monthlyIncome;
       monthlyExpenses = DATA.demo.monthlyExpenses;
     }
 
-    // Age comes from the opening questionnaire in production; demo here
-    age = DATA.demo.age;
+    // Age comes from the opening questionnaire in production; demo fallback otherwise
+    if (!age) age = parseInt(ready && ready.age, 10) || DATA.demo.age;
 
     // Day-2 trim total (the savings goal)
     day2Saved = 0;
@@ -262,6 +285,48 @@
       }
     } catch (_) {}
     if (!day2Saved) day2Saved = DATA.demo.day2Saved;
+  }
+
+  async function fetchParticipantRow(pid) {
+    try {
+      const res = await fetch(`${SUPA_URL}/rest/v1/challenge_participants?id=eq.${encodeURIComponent(pid)}&select=*`, {
+        headers: {
+          apikey: SUPA_KEY,
+          Authorization: `Bearer ${SUPA_KEY}`,
+        },
+      });
+      if (!res.ok) return null;
+      const rows = await res.json();
+      return Array.isArray(rows) && rows.length ? rows[0] : null;
+    } catch (err) {
+      console.warn('[FHINK] day4 REST load failed:', err);
+      return null;
+    }
+  }
+
+  function allowEarlyAccess() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('bypass') === '1') return true;
+    if (Date.now() >= new Date(PILOT_UNLOCK_ISO).getTime()) return true;
+    showLockedOverlay(PILOT_UNLOCK_ISO, 'יום 4');
+    return false;
+  }
+
+  function showLockedOverlay(unlockIso, label) {
+    const unlockAt = new Date(unlockIso);
+    const unlockLabel = unlockAt.toLocaleString('he-IL', {
+      dateStyle: 'full',
+      timeStyle: 'short',
+      timeZone: 'Asia/Jerusalem',
+    });
+    document.body.innerHTML = `
+      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f8f2e8;padding:24px;direction:rtl;font-family:Heebo,sans-serif;">
+        <div style="max-width:520px;width:100%;background:#fff;border-radius:28px;padding:40px 28px;box-shadow:0 16px 60px rgba(0,0,0,.12);text-align:center;">
+          <div style="font-size:56px;line-height:1;margin-bottom:12px;">🔒</div>
+          <h1 style="font-size:28px;line-height:1.2;margin:0 0 12px;color:#231d15;font-weight:800;">${label} עדיין נעול</h1>
+          <p style="margin:0;color:#5d5143;font-size:16px;line-height:1.8;">הפתיחה לצוות הפיילוט נקבעה ל-${unlockLabel}. אם קיבלת bypass=1, הדף ייפתח מייד.</p>
+        </div>
+      </div>`;
   }
 
   function seedDemoIfEmpty() {
@@ -662,6 +727,7 @@
 
         case 'webinar-registered': {
           state.meta.webinarConfirmed = true;
+          state.meta.modelUnlocked = true;
           saveState();
           const confirmedChip = document.getElementById('webinarConfirmedChip');
           if (confirmedChip) confirmedChip.hidden = false;

@@ -23,6 +23,11 @@
     apiEndpoint: '/api/day3',           // ← wire by Claude Code
   };
 
+  const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
+  const CHAT_ENDPOINT = `${SUPA_URL}/functions/v1/chat-agent-v10`;
+  const MAX_TURNS = 15;
+  const PILOT_UNLOCK_ISO = '2026-06-14T06:00:00+03:00';
+
   const DATA = window.FHINK_DAY3_DATA;
   const SCREEN_ORDER = ['opening', 'commitment', 'webinar', 'about', 'summary', 'chat', 'plan', 'completed'];
   const CHAT = window.FHINK_DAY3_CHAT;
@@ -33,6 +38,7 @@
   // Derived at boot
   let salary = 0;          // monthly net salary from Day 1 (or demo)
   let day2Saved = 0;       // monthly trim total from Day 2 (0 if absent)
+  let turnsCount = 0;
 
   // ============================================================
   // Boot
@@ -40,6 +46,7 @@
   document.addEventListener('DOMContentLoaded', init);
 
   function init() {
+    if (!allowEarlyAccess()) return;
     applyUrlParams();
     state.meta.watched = state.meta.watched || {};
     applyUserContext();
@@ -54,6 +61,7 @@
     bindModals();
     enableActiveConsent();
     bindChatInput();
+    turnsCount = state.chat.round || 0;
     showScreen(state.currentScreen || 'opening');
 
     if (state.meta.demo) {
@@ -91,7 +99,10 @@
 
     // Supabase user id — arrives in links between pages, never typed by the user
     const pid = params.get('pid');
-    if (pid) state.user.pid = pid;
+    if (pid) {
+      state.user.pid = pid;
+      try { localStorage.setItem('challenge_pid', pid); } catch (_) {}
+    }
 
     // Example answers, for review of the summary state
     if (params.get('demoabout') === '1') {
@@ -103,6 +114,31 @@
       const m = document.getElementById(popup);
       if (m) { m.hidden = false; document.body.style.overflow = 'hidden'; }
     }, 300);
+  }
+
+  function allowEarlyAccess() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('bypass') === '1') return true;
+    if (Date.now() >= new Date(PILOT_UNLOCK_ISO).getTime()) return true;
+    showLockedOverlay(PILOT_UNLOCK_ISO, 'יום 3');
+    return false;
+  }
+
+  function showLockedOverlay(unlockIso, label) {
+    const unlockAt = new Date(unlockIso);
+    const unlockLabel = unlockAt.toLocaleString('he-IL', {
+      dateStyle: 'full',
+      timeStyle: 'short',
+      timeZone: 'Asia/Jerusalem',
+    });
+    document.body.innerHTML = `
+      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f8f2e8;padding:24px;direction:rtl;font-family:Heebo,sans-serif;">
+        <div style="max-width:520px;width:100%;background:#fff;border-radius:28px;padding:40px 28px;box-shadow:0 16px 60px rgba(0,0,0,.12);text-align:center;">
+          <div style="font-size:56px;line-height:1;margin-bottom:12px;">🔒</div>
+          <h1 style="font-size:28px;line-height:1.2;margin:0 0 12px;color:#231d15;font-weight:800;">${label} עדיין נעול</h1>
+          <p style="margin:0;color:#5d5143;font-size:16px;line-height:1.8;">הפתיחה לצוות הפיילוט נקבעה ל-${unlockLabel}. אם קיבלת bypass=1, הדף ייפתח מייד.</p>
+        </div>
+      </div>`;
   }
 
   // ============================================================
@@ -622,7 +658,7 @@
       if (state.chat.done) {
         showReplies([{ label: 'הצג את התוכנית', value: '__plan__' }]);
       } else {
-        presentStage(true);
+        showInputBar();
       }
       scrollChat();
       return;
@@ -630,9 +666,11 @@
 
     // Fresh conversation — mentor greeting + path selection
     updateRound();
-    mentorSay(`שלום ${chatCtx().firstName}, אני המנטור הפיננסי שלך. ראיתי את היעד שהצבת — פער של ₪${fmt(chatCtx().gap)} בחודש. באיזה נתיב נתמקד כדי לסגור אותו?`, () => {
-      showReplies(CHAT.paths.map(p => ({ label: p.label, value: 'path:' + p.id })));
-    });
+    const greeting = `שלום ${chatCtx().firstName}, אני המנטור הפיננסי שלך. ראיתי את היעד שהצבת — פער של ₪${fmt(chatCtx().gap)} בחודש. באיזה נתיב נתמקד כדי לסגור אותו?`;
+    addBubble('mentor', greeting, true);
+    state.chat.messages.push({ role: 'mentor', text: greeting });
+    saveState();
+    showReplies(CHAT.paths.map(p => ({ label: p.label, value: 'path:' + p.id })));
   }
 
   function presentStage(instant) {
@@ -649,51 +687,112 @@
 
   function handleAnswer(value, label) {
     if (chatBusy) return;
-
     if (value === '__plan__') { showScreen('plan'); return; }
 
     hideReplies();
     hideInputBar();
-    addBubble('user', label);
+    addBubble('user', label, true);
     state.chat.messages.push({ role: 'user', text: label });
-    state.chat.round += 1;
+    state.chat.round = (state.chat.round || 0) + 1;
+    turnsCount = state.chat.round;
     updateRound();
 
     if (String(value).indexOf('path:') === 0) {
       state.chat.pathId = String(value).slice(5);
-      state.chat.stage = 1;
-      const step = CHAT.steps[0];
-      mentorSay(step.mentor(chatCtx()), () => presentStage());
-    } else {
-      const stage = state.chat.stage;
-      const step = CHAT.steps[stage - 1];
-      state.chat.answers.push({ q: step ? step.mentor(chatCtx()) : '', a: label });
-
-      if (stage >= CHAT.steps.length) {
-        state.chat.done = true;
-        mentorSay(CHAT.closing(chatCtx()), () => {
-          setTimeout(() => showScreen('plan'), 1400);
-        });
-      } else {
-        state.chat.stage += 1;
-        const next = CHAT.steps[state.chat.stage - 1];
-        mentorSay(next.mentor(chatCtx()), () => presentStage());
-      }
+      state.chat.answers.push({ q: 'נתיב', a: label });
     }
+
     autosave();
+    sendLiveMessage(label);
   }
 
-  function mentorSay(text, after) {
+  async function sendLiveMessage(message) {
+    if (chatBusy) return;
     chatBusy = true;
-    showTyping();
-    setTimeout(() => {
-      hideTyping();
-      addBubble('mentor', text);
-      state.chat.messages.push({ role: 'mentor', text: text });
-      autosave();
+    setChatSending(true);
+    const thinking = showTyping();
+    const histToSend = state.chat.messages.slice(0, -1);
+
+    try {
+      const data = await callChat(message, histToSend);
+      hideTyping(thinking);
+
+      const responseText = data.response || data.message || '';
+      if (responseText) {
+        state.chat.messages.push({ role: 'mentor', text: responseText });
+        addBubble('mentor', responseText, true);
+      }
+
+      if (data.agent_name) {
+        const nameEl = document.querySelector('.chat__name');
+        if (nameEl) nameEl.textContent = data.agent_name;
+      }
+
+      if (data.selected_path || data.path_id) {
+        state.chat.pathId = data.selected_path || data.path_id;
+      }
+
+      if (typeof data.turns_count === 'number') {
+        state.chat.round = data.turns_count;
+      }
+      turnsCount = state.chat.round || turnsCount;
+      updateRound();
+
+      if (data.session_ended || turnsCount >= MAX_TURNS) {
+        state.chat.done = true;
+        state.chat.messages = state.chat.messages || [];
+        saveState();
+        buildPlan();
+        setChatSending(true);
+        showScreen('plan');
+        chatBusy = false;
+        return;
+      }
+
+      saveState();
+      showInputBar();
+      setChatSending(false);
       chatBusy = false;
-      if (after) after();
-    }, 850);
+      $('chatInput').focus();
+    } catch (err) {
+      hideTyping(thinking);
+      showInputBar();
+      setChatSending(false);
+      chatBusy = false;
+      state.chat.messages.pop();
+      state.chat.round = Math.max(0, (state.chat.round || 1) - 1);
+      turnsCount = state.chat.round;
+      updateRound();
+      saveState();
+      appendErrorBubble(err.message || 'בעיית רשת', () => {
+        handleAnswer(message, message);
+      });
+    }
+  }
+
+  async function callChat(message, sendHistory) {
+    const pid = state.user.pid || localStorage.getItem('challenge_pid') || new URLSearchParams(window.location.search).get('pid');
+    const body = {
+      pid,
+      message,
+      history: Array.isArray(sendHistory) ? sendHistory.slice(-14) : [],
+    };
+    const res = await fetch(CHAT_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      let errText = 'שגיאת שרת';
+      try {
+        const errJson = await res.json();
+        errText = errJson.error || errText;
+      } catch (_) {}
+      throw new Error(errText);
+    }
+    return res.json();
   }
 
   function addBubble(role, text, instant) {
@@ -714,10 +813,20 @@
     typingEl.innerHTML = '<span></span><span></span><span></span>';
     messagesEl.appendChild(typingEl);
     scrollChat();
+    return typingEl;
   }
 
-  function hideTyping() {
-    if (typingEl) { typingEl.remove(); typingEl = null; }
+  function hideTyping(node) {
+    const el = node || typingEl;
+    if (el) { el.remove(); }
+    typingEl = null;
+  }
+
+  function setChatSending(val) {
+    const input = document.getElementById('chatInput');
+    const send = document.getElementById('chatSend');
+    if (input) input.disabled = !!val;
+    if (send) send.disabled = !!val;
   }
 
   function showReplies(options) {
@@ -771,8 +880,8 @@
   function updateRound() {
     const el = document.getElementById('chatRound');
     if (!el) return;
-    const shown = Math.min(state.chat.round + 1, CHAT.maxRounds);
-    el.textContent = `סבב ${shown} מתוך ${CHAT.maxRounds}`;
+    const shown = Math.min(turnsCount || 0, MAX_TURNS);
+    el.textContent = `${shown}/${MAX_TURNS}`;
   }
 
   function scrollChat() {
