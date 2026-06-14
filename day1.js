@@ -26,6 +26,11 @@
   const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
   const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI';
   const PILOT_UNLOCK_ISO = '2026-06-14T06:00:00+03:00';
+  const VIDEO_MAP = {
+    omri: '78550d3c-134c-4e1c-b07e-6edc9527fee5',
+    guy: null,
+  };
+  let originalVideoPhHTML = '';
 
   const SCREEN_ORDER = ['opening', 'commitment', 'calendar', 'basics', 'expenses', 'summary', 'completed'];
   const ACTIVE_CONSENT = false; // ← flip to true if אילת requires active consent
@@ -40,6 +45,7 @@
 
   function init() {
     if (!allowEarlyAccess()) return;
+    captureVideoPlaceholder();
     applyUrlParams();
     state.meta.watched = state.meta.watched || {};
     applyUserContext();
@@ -232,6 +238,7 @@
         case 'video-open': {
           const titleEl = document.getElementById('videoModalTitle');
           if (titleEl) titleEl.textContent = btn.dataset.videoTitle || 'הסרטון';
+          renderVideoPlayer(btn.dataset.videoId);
           openModalById('videoModal');
           if (btn.dataset.videoId) {
             state.meta.watched = state.meta.watched || {};
@@ -742,9 +749,43 @@
       if (e.key !== 'Escape') return;
       ['privacyModal', 'disclaimerModal', 'videoModal'].forEach(id => {
         const mm = document.getElementById(id);
-        if (mm && !mm.hidden) { mm.hidden = true; document.body.style.overflow = ''; }
+        if (mm && !mm.hidden) closeModalById(id);
       });
     });
+  }
+
+  function captureVideoPlaceholder() {
+    const videoPhEl = document.querySelector('#videoModal .video-ph');
+    if (videoPhEl) originalVideoPhHTML = videoPhEl.innerHTML;
+  }
+
+  function renderVideoPlayer(videoId) {
+    const videoPhEl = document.querySelector('#videoModal .video-ph');
+    if (!videoPhEl) return;
+
+    const videoGuid = VIDEO_MAP[videoId];
+    videoPhEl.style.padding = '0';
+    videoPhEl.style.position = 'relative';
+    videoPhEl.style.overflow = 'hidden';
+    videoPhEl.innerHTML = videoGuid
+      ? `<iframe src="https://player.mediadelivery.net/embed/550242/${videoGuid}?autoplay=true"
+          title="Bunny video player"
+          loading="lazy"
+          style="border: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+          allowfullscreen="true"></iframe>`
+      : `<div style="padding: 24px; text-align: center; color: rgba(255,255,255,0.75);">
+          <p>סרטון ההדרכה הטכני של גיא יעלה בקרוב לקראת פתיחת האתגר !</p>
+        </div>`;
+  }
+
+  function resetVideoPlaceholder() {
+    const videoPhEl = document.querySelector('#videoModal .video-ph');
+    if (!videoPhEl) return;
+    videoPhEl.innerHTML = originalVideoPhHTML;
+    videoPhEl.style.padding = '';
+    videoPhEl.style.position = '';
+    videoPhEl.style.overflow = '';
   }
 
   function openModalById(id) {
@@ -757,6 +798,7 @@
   function closeModalById(id) {
     const m = document.getElementById(id);
     if (!m) return;
+    if (id === 'videoModal') resetVideoPlaceholder();
     m.hidden = true;
     document.body.style.overflow = '';
   }
