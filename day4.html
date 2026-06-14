@@ -1,1224 +1,871 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>יום 4 - מבחן החמצן | כסף שעובד</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-  :root {
-    --gold: #26A59A;
-    --gold-light: #B2DFDB;
-    --gold-dark: #1F8D84;
-    --gold-bg: rgba(38, 165, 154, 0.08);
-    --warm-white: #F5F7F7;
-    --cream: #FFFFFF;
-    --cream-dark: #EEF1F2;
-    --white: #FFFFFF;
-    --dark: #151924;
-    --dark-mid: rgba(21, 25, 36, 0.75);
-    --navy: #151924;
-    --green: #2DAA6E;
-    --green-light: rgba(45, 170, 110, 0.08);
-    --green-text: #2DAA6E;
-    --red: #D64545;
-    --red-light: rgba(214, 69, 69, 0.08);
-    --red-text: #D64545;
-    --yellow: #D4A017;
-    --yellow-light: #FFF8E1;
-    --blue: #2E6B9E;
-    --blue-light: #EBF3FA;
-    --orange: #C87A1A;
-    --orange-light: #FFF3E0;
-    --radius: 16px;
-    --shadow: 0 2px 12px rgba(44,36,25,.06);
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5" />
+  <meta name="description" content="FHINK AI · יום 4 של האתגר — הפנסיה שלך עובדת בשבילך. מסלקה, נכסים מול התחייבויות והמרחק לעצמאות כלכלית." />
+  <meta name="theme-color" content="#26A59A" />
+  <title>FHINK AI · יום 4 — הפנסיה שלך עובדת בשבילך</title>
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-  body {
-    font-family: 'Heebo', sans-serif;
-    background: var(--warm-white);
-    color: var(--dark);
-    direction: rtl;
-    min-height: 100vh;
-    line-height: 1.6;
-  }
-
-  /* ── Header ── */
-  .header {
-    background: var(--navy);
-    padding: 14px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .header-logo { font-size: 16px; font-weight: 700; color: var(--gold); }
-  .header-badge {
-    background: var(--gold-bg);
-    color: var(--gold-dark);
-    padding: 4px 14px;
-    border-radius: 50px;
-    font-size: 12px;
-    font-weight: 600;
-  }
-
-  /* ── Progress dots ── */
-  .progress { display: flex; align-items: center; gap: 0; margin-bottom: 24px; padding: 0 4px; }
-  .prog-step { display: flex; flex-direction: column; align-items: center; flex: 1; }
-  .prog-dot {
-    width: 28px; height: 28px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 800;
-    border: 2px solid var(--cream-dark);
-    background: var(--white); color: var(--dark-mid);
-    transition: all .3s;
-  }
-  .prog-dot.active { background: var(--gold); border-color: var(--gold-dark); color: white; box-shadow: 0 0 0 4px rgba(212,168,83,.2); }
-  .prog-dot.done { background: var(--green); border-color: var(--green); color: white; }
-  .prog-label { font-size: 9px; color: var(--dark-mid); margin-top: 4px; font-weight: 500; white-space: nowrap; }
-  .prog-line { height: 2px; flex: 1; background: var(--cream-dark); max-width: 40px; margin-top: -16px; transition: background .3s; }
-  .prog-line.done { background: var(--green); }
-
-  /* ── Container ── */
-  .container { max-width: 600px; margin: 0 auto; padding: 20px 16px 40px; }
-
-  /* ── Pages ── */
-  .page { display: none; }
-  .page.active { display: block; animation: fadeIn .4s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-
-  /* ── Card ── */
-  .card {
-    background: var(--white);
-    border: 1px solid var(--cream-dark);
-    border-radius: var(--radius);
-    padding: 24px 18px;
-    margin-bottom: 16px;
-    box-shadow: var(--shadow);
-  }
-  .card h2 { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
-  .card h3 { font-size: 15px; font-weight: 700; margin-bottom: 14px; }
-  .card .subtitle { font-size: 13px; color: var(--dark-mid); margin-bottom: 18px; line-height: 1.7; }
-
-  /* ── Hero message ── */
-  .hero-msg {
-    text-align: center;
-    padding: 28px 16px 24px;
-    background: linear-gradient(180deg, var(--cream) 0%, var(--warm-white) 100%);
-    margin: -20px -16px 20px;
-  }
-  .hero-msg h1 { font-size: clamp(20px, 5vw, 26px); font-weight: 800; margin-bottom: 8px; }
-  .hero-msg h1 span { color: var(--gold-dark); }
-  .hero-msg p { font-size: 14px; color: var(--dark-mid); max-width: 420px; margin: 0 auto; line-height: 1.7; }
-
-  /* ── Form ── */
-  .form-group { margin-bottom: 14px; }
-  .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--dark-mid); }
-  .form-group input, .form-group select {
-    width: 100%; padding: 12px 14px; border: 1.5px solid var(--cream-dark); border-radius: 10px;
-    font-family: 'Heebo'; font-size: 15px; color: var(--dark); background: var(--white);
-    transition: border-color .2s; min-height: 46px;
-  }
-  .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,168,83,.1); }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  @media (max-width: 400px) { .form-row { grid-template-columns: 1fr; } }
-  .form-hint { font-size: 11px; color: var(--dark-mid); margin-top: 3px; }
-
-  /* ── Buttons ── */
-  .btn-row { display: flex; gap: 10px; margin-top: 20px; }
-  .btn {
-    flex: 1; padding: 14px; border: none; border-radius: 50px;
-    font-family: 'Heebo'; font-size: 15px; font-weight: 700;
-    cursor: pointer; transition: transform .15s; min-height: 48px;
-  }
-  .btn:hover { transform: translateY(-1px); }
-  .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
-  .btn-next { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--navy); box-shadow: 0 4px 16px rgba(212,168,83,.3); }
-  .btn-back { background: var(--cream); color: var(--dark-mid); }
-
-  /* ── Stats grid (oxygen lines) ── */
-  .oxy-stats { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 16px; }
-  .oxy-stat {
-    background: var(--white);
-    border: 2px solid var(--cream-dark);
-    border-radius: 14px;
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .oxy-stat .oxy-icon { font-size: 22px; flex-shrink: 0; }
-  .oxy-stat .oxy-info { flex: 1; }
-  .oxy-stat .oxy-label { font-size: 12px; color: var(--dark-mid); font-weight: 500; }
-  .oxy-stat .oxy-value { font-size: 15px; font-weight: 800; }
-  .oxy-stat.red { border-color: var(--red); background: var(--red-light); }
-  .oxy-stat.red .oxy-value { color: var(--red-text); }
-  .oxy-stat.yellow { border-color: var(--gold); background: var(--gold-bg); }
-  .oxy-stat.yellow .oxy-value { color: var(--gold-dark); }
-  .oxy-stat.green-locked {
-    border-color: var(--cream-dark);
-    background: var(--cream);
-    position: relative;
-  }
-  .oxy-stat.green-locked .oxy-value { color: var(--dark-mid); }
-  .oxy-stat.green-locked .oxy-info { opacity: .6; }
-  .oxy-stat.green-locked .lock-tag {
-    background: var(--navy);
-    color: var(--gold);
-    padding: 3px 10px;
-    border-radius: 50px;
-    font-size: 10px;
-    font-weight: 700;
-    flex-shrink: 0;
-  }
-
-  /* ── Chart container ── */
-  .chart-card {
-    background: var(--white);
-    border: 1px solid var(--cream-dark);
-    border-radius: var(--radius);
-    padding: 18px 12px;
-    margin-bottom: 16px;
-    box-shadow: var(--shadow);
-    position: relative;
-  }
-  .chart-wrapper {
-    position: relative;
-    height: 320px;
-    width: 100%;
-  }
-  @media (max-width: 400px) {
-    .chart-wrapper { height: 280px; }
-  }
-  .chart-legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    justify-content: center;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid var(--cream-dark);
-  }
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: var(--dark-mid);
-    font-weight: 600;
-  }
-  .legend-line {
-    width: 24px;
-    height: 3px;
-    border-radius: 2px;
-  }
-  .legend-line.red { background: var(--red); }
-  .legend-line.yellow { background: var(--gold-dark); }
-  .legend-line.green {
-    background: var(--green);
-    background: repeating-linear-gradient(90deg, var(--green) 0 4px, transparent 4px 8px);
-    opacity: .5;
-  }
-
-  .chart-lock-overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(26, 39, 68, 0.92);
-    color: var(--gold);
-    padding: 8px 14px;
-    border-radius: 50px;
-    font-size: 11px;
-    font-weight: 700;
-    pointer-events: none;
-    white-space: nowrap;
-    box-shadow: 0 4px 12px rgba(0,0,0,.2);
-    z-index: 5;
-  }
-
-  /* ── Countdown ── */
-  .countdown-card {
-    background: linear-gradient(135deg, var(--navy), #2a3f6f);
-    border-radius: var(--radius);
-    padding: 22px 18px;
-    text-align: center;
-    color: var(--white);
-    margin-bottom: 16px;
-  }
-  .countdown-card .cd-title {
-    font-size: 14px;
-    color: var(--cream);
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-  .countdown-card .cd-subtitle {
-    font-size: 12px;
-    color: rgba(255,255,255,.7);
-    margin-bottom: 14px;
-  }
-  .countdown-display {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    direction: ltr;
-  }
-  .cd-unit {
-    background: rgba(255,255,255,.1);
-    border-radius: 10px;
-    padding: 10px 6px;
-    min-width: 60px;
-    border: 1px solid rgba(212,168,83,.3);
-  }
-  .cd-num {
-    font-size: 24px;
-    font-weight: 900;
-    color: var(--gold-light);
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-  }
-  .cd-label {
-    font-size: 10px;
-    color: rgba(255,255,255,.6);
-    margin-top: 4px;
-    direction: rtl;
-  }
-
-  /* ── Readiness meter ── */
-  .readiness-wrap { margin: 28px auto 20px; display: flex; flex-direction: column; align-items: center; }
-  .readiness-ring { position: relative; width: 160px; height: 160px; }
-  .readiness-ring svg { width: 160px; height: 160px; transform: rotate(-90deg); }
-  .readiness-ring .ring-bg { fill: none; stroke: var(--cream-dark); stroke-width: 10; }
-  .readiness-ring .ring-fill { fill: none; stroke: var(--gold); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 471; stroke-dashoffset: 471; transition: stroke-dashoffset 1.8s ease; }
-  .readiness-pct { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 38px; font-weight: 900; color: var(--gold-dark); }
-  .readiness-label { font-size: 14px; font-weight: 600; color: var(--dark-mid); margin-top: 8px; }
-
-  /* ── Summary ── */
-  .summary-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 14px;
-    background: var(--cream);
-    border-radius: 10px;
-    margin-bottom: 8px;
-    font-size: 13px;
-  }
-  .summary-row .label { font-weight: 600; }
-  .summary-row .value { font-weight: 800; direction: ltr; color: var(--gold-dark); }
-
-  .lock-message {
-    background: var(--gold-bg);
-    border: 2px dashed var(--gold);
-    border-radius: 12px;
-    padding: 18px 16px;
-    text-align: center;
-    margin: 16px 0;
-  }
-  .lock-message .lock-icon { font-size: 32px; margin-bottom: 8px; }
-  .lock-message .lock-title { font-size: 15px; font-weight: 800; color: var(--gold-dark); margin-bottom: 6px; }
-  .lock-message .lock-desc { font-size: 13px; color: var(--dark-mid); line-height: 1.6; }
-
-  .cta-card {
-    background: var(--navy);
-    border-radius: var(--radius);
-    padding: 28px 20px;
-    text-align: center;
-    margin-top: 16px;
-  }
-  .cta-card h3 { color: var(--gold); font-size: 20px; font-weight: 800; margin-bottom: 8px; }
-  .cta-card p { color: rgba(255,255,255,.75); font-size: 14px; margin-bottom: 18px; line-height: 1.6; }
-  .cta-btn {
-    display: inline-block;
-    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-    color: var(--navy);
-    padding: 16px 38px;
-    border-radius: 50px;
-    font-size: 16px;
-    font-weight: 800;
-    text-decoration: none;
-    font-family: 'Heebo';
-    border: none;
-    cursor: pointer;
-  }
-
-  /* ── Loading / Error ── */
-  .loading-screen { text-align: center; padding: 60px 20px; }
-  .loading-screen .spinner {
-    width: 48px; height: 48px;
-    border: 4px solid var(--cream-dark);
-    border-top-color: var(--gold);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 16px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-screen p { font-size: 15px; color: var(--dark-mid); font-weight: 600; }
-
-  .error-screen { text-align: center; padding: 40px 20px; display: none; }
-  .error-screen .err-icon { font-size: 48px; margin-bottom: 12px; }
-  .error-screen h2 { font-size: 18px; margin-bottom: 8px; }
-  .error-screen p { font-size: 14px; color: var(--dark-mid); }
-</style>
+  <link rel="stylesheet" href="day4/styles.css" />
+  <link rel="icon" type="image/png" href="day4/assets/logo-mark.png">
 </head>
 <body>
 
-<div class="header">
-  <div class="header-logo">המקפצה הפיננסית</div>
-  <div class="header-badge">יום 4 מתוך 4</div>
-</div>
-
-<div class="container">
-
-  <!-- Progress dots: 3 pages -->
-  <div class="progress" id="progressBar">
-    <div class="prog-step"><div class="prog-dot active" id="pd-0">1</div><div class="prog-label">פנסיה</div></div>
-    <div class="prog-line" id="pl-0"></div>
-    <div class="prog-step"><div class="prog-dot" id="pd-1">2</div><div class="prog-label">החמצן</div></div>
-    <div class="prog-line" id="pl-1"></div>
-    <div class="prog-step"><div class="prog-dot" id="pd-2">3</div><div class="prog-label">סיכום</div></div>
+  <!-- Background decoration -->
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow--top"></div>
+    <div class="bg-glow bg-glow--bottom"></div>
   </div>
 
-  <!-- Loading screen -->
-  <div class="loading-screen" id="loadingScreen">
-    <div class="spinner"></div>
-    <p>טוען את הנתונים שלך...</p>
-  </div>
+  <!-- Header -->
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <a href="/" class="brand" aria-label="FHINK AI">
+        <img src="day4/assets/logo.png" alt="FHINK AI · Financial Thinking Powered by AI" class="brand-logo" />
+      </a>
 
-  <!-- Error screen -->
-  <div class="error-screen" id="errorScreen">
-    <div class="err-icon">⚠️</div>
-    <h2>שגיאה בטעינת הנתונים</h2>
-    <p id="errorMsg">לא נמצאו נתונים. תוודא שהקישור תקין.</p>
-  </div>
-
-  <!-- ═══ PAGE 0: Pension Input ═══ -->
-  <div class="page" id="page-0">
-    <div class="hero-msg">
-      <h1>מבחן החמצן <span>שלב אחרון</span></h1>
-      <p>כדי לראות את ציר הזמן הפיננסי שלך, ספר לנו על הפנסיה הקיימת. כל קופות החיסכון לפנסיה ביחד.</p>
-    </div>
-
-    <div class="card">
-      <h3>📋 נתוני פנסיה</h3>
-
-      <div class="form-group">
-        <label>כמה כסף יש לך כיום בפנסיה ? (כל הקופות יחד)</label>
-        <input type="number" id="f_pension_balance" placeholder="100000" inputmode="numeric">
-        <div class="form-hint">הצבירה הנוכחית בכל הקרנות והגמלאות</div>
-      </div>
-
-      <div class="form-group">
-        <label>אחוז ההפקדה החודשית מהשכר</label>
-        <select id="f_contrib_rate">
-          <option value="0.185" selected>18.5% (חובה - שכיר)</option>
-          <option value="0.20">20% (חובה + השלמה)</option>
-          <option value="0.1276">12.76% (עצמאי)</option>
-        </select>
-        <div class="form-hint">סכום ההפרשה הכולל (עובד + מעסיק + פיצויים)</div>
-      </div>
-
-      <div class="form-group">
-        <label>מאיזה גיל אתה מפקיד ?</label>
-        <input type="number" id="f_start_age" placeholder="25" value="25" inputmode="numeric">
-      </div>
-
-      <div class="btn-row">
-        <button class="btn btn-next" onclick="goPage(1)">הראה לי את ציר החמצן &#8592;</button>
+      <div class="day-progress" id="dayProgress">
+        <div class="day-progress__top">
+          <span class="day-progress__label">יום 4 מתוך 4</span>
+          <span class="day-progress__title">הפנסיה שלך עובדת בשבילך</span>
+        </div>
+        <div class="day-progress__bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" aria-label="התקדמות באתגר">
+          <div class="day-progress__fill" style="width:100%"></div>
+        </div>
       </div>
     </div>
-  </div>
+  </header>
 
-  <!-- ═══ PAGE 1: The Two Lines Chart ═══ -->
-  <div class="page" id="page-1">
-    <div class="card">
-      <h2>ציר החמצן הפיננסי שלך</h2>
-      <div class="subtitle">שני קווים מספרים את כל הסיפור. הקו האדום זה איך שאתה היום. הקו הצהוב זה אחרי הפעולות שהתחייבת בהן באתגר.</div>
+  <main class="container" id="app">
 
-      <div class="oxy-stats" id="oxyStats"></div>
-    </div>
+    <!-- ============================================================
+         SCREEN 4.1 — OPENING (same structure as all days + webinar reminder)
+    ============================================================ -->
+    <section class="screen is-active" data-screen="opening" aria-labelledby="opening-title">
+      <div class="card card--center">
 
-    <div class="chart-card">
-      <div class="chart-wrapper">
-        <canvas id="oxygenChart"></canvas>
-        <div class="chart-lock-overlay">🔒 הקו הירוק נפתח בוובינר</div>
+        <div class="day-badge">
+          <span class="day-badge__dot" aria-hidden="true"></span>
+          <span>יום 4 מתוך 4 · Premium</span>
+          <svg class="day-badge__star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2L9.5 8L3 9l5 4.5L6.5 21L12 17.5L17.5 21L16 13.5L21 9l-6.5-1z"/></svg>
+        </div>
+
+        <h1 id="opening-title" class="title-xl">אני רוצה שהפנסיה שלי תעבוד בשבילי</h1>
+
+        <p class="equation">
+          <span data-male="היום נוודא שהפנסיה שלך עובדת בשבילך — הצעד האחרון לעבר"
+                data-female="היום נוודא שהפנסיה שלך עובדת בשבילך — הצעד האחרון לעבר">היום נוודא שהפנסיה שלך עובדת בשבילך — הצעד האחרון לעבר</span>
+          <strong class="accent-grad">עצמאות כלכלית</strong>
+        </p>
+
+        <p class="greet">
+          שלום <span class="greet-name" data-username>חבר</span>,
+          <span data-male="האם אתה מוכן לגרום לפנסיה שלך לעבוד בשבילך?"
+                data-female="האם את מוכנה לגרום לפנסיה שלך לעבוד בשבילך?">האם אתה מוכן לגרום לפנסיה שלך לעבוד בשבילך?</span>
+        </p>
+
+        <!-- Webinar reminder (per client note: on the opening screen) -->
+        <button type="button" class="webi-note" data-action="next" data-target="webinar">
+          <span class="webi-note__dot" aria-hidden="true"></span>
+          <span class="webi-note__text"><strong>הערב · 20:00</strong> וובינר חיתום האתגר — חי עם עמרי</span>
+          <span class="webi-note__cta">שריין מקום
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          </span>
+        </button>
+
+        <!-- 4-day roadmap -->
+        <div class="roadmap" role="list" aria-label="המסלול שלך">
+          <div class="roadmap__item is-done" role="listitem">
+            <div class="roadmap__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <div class="roadmap__day">יום 1</div>
+            <div class="roadmap__title">מיפוי פיננסי</div>
+            <div class="roadmap__status">הושלם</div>
+          </div>
+
+          <div class="roadmap__item is-done" role="listitem">
+            <div class="roadmap__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <div class="roadmap__day">יום 2</div>
+            <div class="roadmap__title">הקטנת הוצאות</div>
+            <div class="roadmap__status">הושלם</div>
+          </div>
+
+          <div class="roadmap__item is-done" role="listitem">
+            <div class="roadmap__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <div class="roadmap__day">יום 3</div>
+            <div class="roadmap__title">הגדלת הכנסה</div>
+            <div class="roadmap__status">הושלם</div>
+          </div>
+
+          <button type="button" class="roadmap__item is-active is-clickable" role="listitem"
+                  data-action="next" data-target="commitment" aria-label="התחל את יום 4 — השקעות ופנסיה">
+            <div class="roadmap__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L9.5 8L3 9l5 4.5L6.5 21L12 17.5L17.5 21L16 13.5L21 9l-6.5-1z"/>
+              </svg>
+            </div>
+            <div class="roadmap__day">יום 4</div>
+            <div class="roadmap__title">השקעות ופנסיה</div>
+            <div class="roadmap__status">
+              <span>לחץ להתחיל</span>
+              <svg class="roadmap__go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </div>
+          </button>
+        </div>
+
+        <!-- Intro videos — Omri motivates, Guy shows how -->
+        <div class="videos-intro" aria-hidden="true">
+          <span>לפני שמתחילים · שני הסברים קצרים</span>
+        </div>
+
+        <div class="video-grid video-grid--opening">
+          <button type="button" class="video-card" data-action="video-open" data-video-id="omri"
+                  data-video-title="הפנסיה — העץ שכבר שתלת · 3:10"
+                  aria-label="הסרטון של עמרי · 3:10 דקות">
+            <span class="video-card__poster video-card__poster--omri">
+              <img src="day4/assets/omri.png" alt="" class="video-card__photo" />
+              <span class="video-card__play" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <polygon points="9 7 18 12 9 17 9 7"></polygon>
+                </svg>
+              </span>
+              <span class="video-card__duration">3:10</span>
+              <span class="video-card__watched" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>נצפה</span>
+              </span>
+            </span>
+            <span class="video-card__body">
+              <span class="video-card__who">עמרי חן · דוקטורנט לכלכלה</span>
+              <span class="video-card__title">הפנסיה — העץ שכבר שתלת</span>
+              <span class="video-card__desc">הדחיפה ליום האחרון: למה דקות ספורות של סדר בפנסיה שוות מאות אלפי שקלים בפרישה.</span>
+            </span>
+          </button>
+
+          <button type="button" class="video-card" data-action="video-open" data-video-id="guy"
+                  data-video-title="איך משתמשים במערכת — יום 4 · 1:50"
+                  aria-label="הסרטון של גיא · 1:50 דקות">
+            <span class="video-card__poster video-card__poster--abstract">
+              <img src="day4/assets/logo-mark.png" alt="" class="video-card__mark" />
+              <span class="video-card__play" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <polygon points="9 7 18 12 9 17 9 7"></polygon>
+                </svg>
+              </span>
+              <span class="video-card__duration">1:50</span>
+              <span class="video-card__watched" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>נצפה</span>
+              </span>
+            </span>
+            <span class="video-card__body">
+              <span class="video-card__who">גיא · על המערכת</span>
+              <span class="video-card__title">איך משתמשים במערכת — יום 4</span>
+              <span class="video-card__desc">הדגמה קצרה: איפה מוצאים את נתוני המסלקה, ואיך ממלאים נכסים והתחייבויות.</span>
+            </span>
+          </button>
+        </div>
+
+        <div class="actions actions--center">
+          <button type="button" class="btn btn--primary btn--cta" data-action="next" data-target="commitment">
+            <span>התחל את יום 4</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <p class="consent">
+          <span data-male="בלחיצה על ״התחל את יום 4״ אתה מאשר את"
+                data-female="בלחיצה על ״התחל את יום 4״ את מאשרת את">בלחיצה על ״התחל את יום 4״ אתה מאשר את</span>
+          <button type="button" class="link-btn" data-action="legal-open" data-target="privacyModal">הסכם הגנת הפרטיות</button>
+          <span>ואת</span>
+          <button type="button" class="link-btn" data-action="legal-open" data-target="disclaimerModal">הגילוי הנאות — לא ייעוץ</button>
+        </p>
+
       </div>
-      <div class="chart-legend">
-        <div class="legend-item"><div class="legend-line red"></div><span>בקצב הנוכחי</span></div>
-        <div class="legend-item"><div class="legend-line yellow"></div><span>עם פעולות האתגר</span></div>
-        <div class="legend-item"><div class="legend-line green"></div><span>עצמאות מלאה (נעול)</span></div>
-      </div>
-    </div>
+    </section>
 
-    <div class="countdown-card">
-      <div class="cd-title">הוובינר ביום רביעי בשעה 20:00</div>
-      <div class="cd-subtitle">שם נפתח הקו הירוק והכלים לעצמאות פיננסית</div>
-      <div class="countdown-display" id="countdown1">
-        <div class="cd-unit"><div class="cd-num" id="cd1-d">00</div><div class="cd-label">ימים</div></div>
-        <div class="cd-unit"><div class="cd-num" id="cd1-h">00</div><div class="cd-label">שעות</div></div>
-        <div class="cd-unit"><div class="cd-num" id="cd1-m">00</div><div class="cd-label">דקות</div></div>
-        <div class="cd-unit"><div class="cd-num" id="cd1-s">00</div><div class="cd-label">שניות</div></div>
-      </div>
-    </div>
+    <!-- ============================================================
+         SCREEN 4.2 — COMMITMENT (Buffett · saving-for-the-future mode)
+    ============================================================ -->
+    <section class="screen" data-screen="commitment" aria-labelledby="commit-title">
+      <div class="card">
 
-    <div class="btn-row">
-      <button class="btn btn-back" onclick="goPage(0)">&#8594; חזרה</button>
-      <button class="btn btn-next" onclick="goPage(2)">לסיכום &#8592;</button>
-    </div>
-  </div>
-
-  <!-- ═══ PAGE 2: Final Summary ═══ -->
-  <div class="page" id="page-2">
-    <div class="card" style="text-align:center">
-      <h2>השלמת את המסע</h2>
-      <div class="subtitle">4 ימים, 4 החלטות, מציאות פיננסית חדשה.</div>
-
-      <div class="readiness-wrap">
-        <div class="readiness-ring">
-          <svg viewBox="0 0 160 160">
-            <circle class="ring-bg" cx="80" cy="80" r="75"/>
-            <circle class="ring-fill" id="ringFill" cx="80" cy="80" r="75"/>
+        <div class="quote-block">
+          <svg class="quote-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <path d="M11 9c-3.3 0-6 2.7-6 6v8h8v-8H8c0-1.6 1.3-3 3-3V9zm14 0c-3.3 0-6 2.7-6 6v8h8v-8h-5c0-1.6 1.3-3 3-3V9z"
+                  fill="currentColor" opacity="0.18"/>
           </svg>
-          <div class="readiness-pct" id="readinessPct">80%</div>
+          <p class="quote-text">
+            מישהו יושב בצילם של עצים היום, כי מישהו אחר <strong>שתל שם עץ</strong> לפני זמן רב.
+          </p>
+          <p class="quote-author">— וורן באפט</p>
         </div>
-        <div class="readiness-label">מוכנות פיננסית</div>
-      </div>
 
-      <div style="margin: 16px 0">
-        <div class="summary-row">
-          <span class="label">התחייבת לחסוך חודשי</span>
-          <span class="value" id="sumCommit">₪0</span>
+        <div class="commit-content">
+          <h2 id="commit-title" class="title-lg">
+            היום שותלים את העץ של עצמך העתידי.
+          </h2>
+          <p class="subtitle">
+            <span data-male="האם אתה מוכן" data-female="האם את מוכנה">האם אתה מוכן</span>
+            להקדיש היום 15 דקות כדי לשפר את המצב הכלכלי שלך?
+          </p>
+
+          <div class="commit-pills" role="list" aria-label="מה עושים היום">
+            <div class="commit-pill" role="listitem">
+              <span class="commit-pill__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+              </span>
+              <span>15 דקות</span>
+            </div>
+            <div class="commit-pill" role="listitem">
+              <span class="commit-pill__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+              </span>
+              <span>היעד: המרחק שלך לעצמאות כלכלית</span>
+            </div>
+            <div class="commit-pill" role="listitem">
+              <span class="commit-pill__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L9.5 8L3 9l5 4.5L6.5 21L12 17.5L17.5 21L16 13.5L21 9l-6.5-1z"/></svg>
+              </span>
+              <span>מד מוכנות 25%</span>
+            </div>
+          </div>
         </div>
-        <div class="summary-row">
-          <span class="label">חיסכון מצטבר עד הפנסיה</span>
-          <span class="value" id="sumCumulative">₪0</span>
+
+        <div class="actions actions--commit">
+          <button type="button" class="btn btn--ghost" data-action="postpone">
+            אעשה את זה בהמשך היום
+          </button>
+          <button type="button" class="btn btn--primary btn--cta" data-action="next" data-target="webinar">
+            <span data-male="כן, אני מוכן" data-female="כן, אני מוכנה">כן, אני מוכן</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
         </div>
-        <div class="summary-row">
-          <span class="label">תוספת לפנסיה (עם ריבית)</span>
-          <span class="value" id="sumCompound">₪0</span>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SCREEN 4.2b — WEBINAR (it's TONIGHT)
+    ============================================================ -->
+    <section class="screen" data-screen="webinar" aria-labelledby="webinar-title">
+      <div class="card">
+
+        <div class="calendar-visual" aria-hidden="true">
+          <div class="cal-card">
+            <div class="cal-card__header">
+              <span class="cal-card__day-name">יום רביעי</span>
+              <span class="cal-card__day-num">17</span>
+              <span class="cal-card__month">דצמבר 2026</span>
+            </div>
+            <div class="cal-card__body">
+              <div class="cal-card__event">
+                <span class="cal-card__time">20:00</span>
+                <span class="cal-card__title">וובינר חיתום האתגר</span>
+              </div>
+              <div class="cal-card__location">FHINK AI · אונליין · 90 דק׳ · עם עמרי חן</div>
+            </div>
+            <div class="cal-card__ribbon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>הערב!</span>
+            </div>
+          </div>
+        </div>
+
+        <h2 id="webinar-title" class="title-lg">הערב זה קורה: וובינר החיתום החי</h2>
+        <p class="subtitle">
+          4 ימים של עבודה מתחברים הערב לתמונה אחת — עמרי בשידור חי, שאלות ותשובות, והצעד הבא שלך.
+          וגם: גרף 50/30/20 במסך הסיכום נפתח רק למי שצופה.
+        </p>
+
+        <div class="webinar-confirmed" id="webinarConfirmedChip" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>כבר נרשמת — המקום שלך שמור. נתראה הערב.</span>
+        </div>
+
+        <div class="cal-actions">
+          <a class="cal-btn" href="#" data-action="cal-google" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <span>הוסף ליומן Google</span>
+          </a>
+          <a class="cal-btn" href="#" data-action="cal-ical" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>הורד ל-Apple / Outlook</span>
+          </a>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn btn--secondary" data-action="back">חזרה</button>
+          <button type="button" class="btn btn--primary" data-action="next" data-target="pension">
+            <span>אישרתי, נמשיך</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <div class="actions actions--center actions--tight">
+          <button type="button" class="btn btn--ghost" data-action="webinar-registered" data-target="pension">
+            כבר נרשמתי ומחכה לזה
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SCREEN 4.3 — YOUR PENSION (data from the pension clearing house)
+    ============================================================ -->
+    <section class="screen" data-screen="pension" aria-labelledby="pension-title">
+      <div class="card">
+
+        <div class="progress">
+          <div class="progress-meta">
+            <span class="progress-text">שלב 1 מתוך 4</span>
+            <span class="progress-percent">25%</span>
+          </div>
+          <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="25">
+            <div class="progress-fill" style="width:25%"></div>
+          </div>
+        </div>
+
+        <h2 id="pension-title" class="title-lg">הפנסיה שלך</h2>
+        <p class="subtitle">
+          30 שניות, נתונים מהמסלקה הפנסיונית — נוודא שהפנסיה העתידית באמת לוקחת אותך לעצמאות כלכלית.
+        </p>
+
+        <!-- Pulled from Day 1 -->
+        <div class="pulled">
+          <div class="pulled__chip" id="pulledChip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>שם, גיל ושכר נשאבים אוטומטית — לא שואלים שוב</span>
+          </div>
+          <div class="pulled__grid">
+            <div class="pulled-card">
+              <span class="pulled-card__label">השכר החודשי שלך (מיום 1)</span>
+              <span class="pulled-card__amount"><span>₪</span><span data-pen="salary">0</span></span>
+            </div>
+            <div class="pulled-card">
+              <span class="pulled-card__label">הגיל שלך (מהשאלון)</span>
+              <span class="pulled-card__amount"><span data-pen="age">34</span></span>
+            </div>
+          </div>
+        </div>
+
+        <form class="form" data-step="pension" novalidate>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="field-label" for="empRate">אחוז הפרשה לפנסיה (עובד)</label>
+              <div class="money-input">
+                <span class="money-input__currency" aria-hidden="true">%</span>
+                <input type="number" id="empRate" class="input input--money" placeholder="6" min="0" max="20" step="0.5" inputmode="decimal" />
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label" for="employerRate">הפרשת מעסיק</label>
+              <div class="money-input">
+                <span class="money-input__currency" aria-hidden="true">%</span>
+                <input type="number" id="employerRate" class="input input--money" placeholder="6.5" min="0" max="20" step="0.5" inputmode="decimal" />
+              </div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="field-label" for="fundType">סוג קרן</label>
+              <div class="select-wrap">
+                <select id="fundType" class="input select">
+                  <option value="" disabled selected>בחר סוג</option>
+                </select>
+                <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label" for="feeRate">דמי ניהול מהצבירה</label>
+              <div class="money-input">
+                <span class="money-input__currency" aria-hidden="true">%</span>
+                <input type="number" id="feeRate" class="input input--money" placeholder="0.6" min="0" max="2" step="0.05" inputmode="decimal" />
+              </div>
+              <div class="field-helper">מופיע בדוח השנתי או במסלקה. הממוצע בישראל ~0.6%.</div>
+            </div>
+          </div>
+
+          <div class="field field--money">
+            <label class="field-label" for="balance">
+              צבירה נוכחית
+              <span class="field-required" aria-hidden="true">*</span>
+            </label>
+            <div class="money-input">
+              <span class="money-input__currency" aria-hidden="true">₪</span>
+              <input type="number" id="balance" class="input input--money" placeholder="לדוגמה: 280,000" min="0" step="1000" inputmode="numeric" required />
+            </div>
+            <div class="field-helper">הסכום שכבר נצבר בקרן — מהמסלקה הפנסיונית או מהדוח השנתי.</div>
+          </div>
+
+        </form>
+
+        <div class="actions">
+          <button type="button" class="btn btn--secondary" data-action="back">חזרה</button>
+          <button type="button" class="btn btn--primary" data-action="next" data-target="pensionSummary">
+            <span>חשב את הפנסיה שלי</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SCREEN 4.4 — PENSION SUMMARY (age 67 picture)
+    ============================================================ -->
+    <section class="screen" data-screen="pensionSummary" aria-labelledby="pension-summary-title">
+      <div class="card">
+
+        <div class="progress">
+          <div class="progress-meta">
+            <span class="progress-text">שלב 2 מתוך 4</span>
+            <span class="progress-percent">50%</span>
+          </div>
+          <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+            <div class="progress-fill" style="width:50%"></div>
+          </div>
+        </div>
+
+        <h2 id="pension-summary-title" class="title-lg">הפנסיה הצפויה שלך בגיל 67</h2>
+        <p class="subtitle">
+          ככה נראה העץ שאתה שותל — לפי הנתונים שהזנת, בהנחת תשואה ממוצעת.
+        </p>
+
+        <!-- Big projected number -->
+        <div class="plan__goal">
+          <span class="plan__goal-label">הצבירה הצפויה בגיל 67</span>
+          <span class="plan__goal-amounts"><strong>₪<span data-pen="projected">0</span></strong></span>
+          <span class="plan__goal-hint">פנסיה חודשית צפויה: ₪<span data-pen="monthlyPension">0</span></span>
+        </div>
+
+        <!-- Pension facts grid -->
+        <div class="pen-grid">
+          <div class="pen-card">
+            <span class="pen-card__label">הפרשה חודשית</span>
+            <span class="pen-card__value">₪<span data-pen="monthlyContrib">0</span></span>
+            <span class="pen-card__hint">עובד + מעסיק</span>
+          </div>
+          <div class="pen-card">
+            <span class="pen-card__label">צבירה נוכחית</span>
+            <span class="pen-card__value">₪<span data-pen="balanceNow">0</span></span>
+            <span class="pen-card__hint">מהמסלקה</span>
+          </div>
+          <div class="pen-card">
+            <span class="pen-card__label">שנים עד פרישה</span>
+            <span class="pen-card__value"><span data-pen="yearsLeft">0</span></span>
+            <span class="pen-card__hint">עד גיל 67</span>
+          </div>
+          <div class="pen-card pen-card--fees">
+            <span class="pen-card__label">כמה דמי הניהול עולים לך?</span>
+            <span class="pen-card__value">₪<span data-pen="feesTotal">0</span></span>
+            <span class="pen-card__hint">מצטבר עד הפרישה · ₪<span data-pen="feesYear">0</span> השנה</span>
+          </div>
+        </div>
+
+        <!-- Fee insight -->
+        <div class="insight">
+          <div class="insight__header">
+            <span class="insight__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            </span>
+            <span class="insight__title">תובנת AI · הפנסיה שלך</span>
+          </div>
+          <p class="insight__text" id="pensionInsight">הנתונים מתעבדים...</p>
+        </div>
+
+        <div class="note-line">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="15.5" r="0.5" fill="currentColor"/></svg>
+          <span>חישוב להמחשה בלבד, בהנחת תשואה ממוצעת — לא תחזית ולא ייעוץ פנסיוני.</span>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn btn--secondary" data-action="back">חזרה</button>
+          <button type="button" class="btn btn--primary" data-action="next" data-target="networth">
+            <span>המשך</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SCREEN 4.5 — ASSETS vs LIABILITIES
+    ============================================================ -->
+    <section class="screen" data-screen="networth" aria-labelledby="networth-title">
+      <div class="card">
+
+        <div class="progress">
+          <div class="progress-meta">
+            <span class="progress-text">שלב 3 מתוך 4</span>
+            <span class="progress-percent">75%</span>
+          </div>
+          <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="75">
+            <div class="progress-fill" style="width:75%"></div>
+          </div>
+        </div>
+
+        <h2 id="networth-title" class="title-lg">נכסים מול התחייבויות</h2>
+        <p class="subtitle">
+          כמה אתה רחוק מעצמאות כלכלית? קודם ממפים את המשאבים — שורה לכל נכס, שורה לכל התחייבות.
+        </p>
+
+        <!-- Assets -->
+        <div class="additional-incomes nw-group">
+          <div class="additional-incomes__header">
+            <span class="additional-incomes__title">נכסים</span>
+            <span class="additional-incomes__hint">דירה, עו״ש, השקעות...</span>
+          </div>
+          <div class="additional-incomes__list" id="assetsList"></div>
+          <button type="button" class="btn-add" id="addAssetBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            <span>הוסף נכס</span>
+          </button>
+        </div>
+
+        <!-- Liabilities -->
+        <div class="additional-incomes nw-group">
+          <div class="additional-incomes__header">
+            <span class="additional-incomes__title">התחייבויות</span>
+            <span class="additional-incomes__hint">משכנתא, הלוואות...</span>
+          </div>
+          <div class="additional-incomes__list" id="liabilitiesList"></div>
+          <button type="button" class="btn-add" id="addLiabilityBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            <span>הוסף התחייבות</span>
+          </button>
+        </div>
+
+        <!-- Live net worth -->
+        <div class="live-total" id="networthTotal">
+          <span class="live-total__label">השווי הנקי שלך</span>
+          <span class="live-total__amount">
+            <span class="live-total__currency">₪</span><span data-nw="net">0</span>
+          </span>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn btn--secondary" data-action="back">חזרה</button>
+          <button type="button" class="btn btn--primary" data-action="next" data-target="summary">
+            <span>גלה כמה אתה רחוק</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SCREEN 4.6 — FINAL SUMMARY (distance to financial independence)
+    ============================================================ -->
+    <section class="screen" data-screen="summary" aria-labelledby="summary-title">
+      <div class="card">
+
+        <div class="progress">
+          <div class="progress-meta">
+            <span class="progress-text">שלב 4 מתוך 4</span>
+            <span class="progress-percent">100%</span>
+          </div>
+          <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+            <div class="progress-fill" style="width:100%"></div>
+          </div>
+        </div>
+
+        <h2 id="summary-title" class="title-lg">
+          <span class="greet-name" data-username>חבר</span>, כמה אתה רחוק מעצמאות כלכלית?
+        </h2>
+        <p class="subtitle">
+          ארבעה תרחישים על ציר אחד — לפי הנתונים שלך מכל ימי האתגר. קצר יותר = קרוב יותר.
+        </p>
+
+        <!-- The FI distance chart -->
+        <div class="fi" id="fiChart">
+          <!-- Scenario rows injected by JS -->
+        </div>
+
+        <!-- AI Insight -->
+        <div class="insight" id="aiInsight">
+          <div class="insight__header">
+            <span class="insight__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            </span>
+            <span class="insight__title">תובנת AI · יום 4</span>
+          </div>
+          <p class="insight__text" id="insightText">הנתונים מתעבדים...</p>
+        </div>
+
+        <!-- Readiness meter — full -->
+        <div class="readiness">
+          <div class="readiness__header">
+            <span class="readiness__label">מד המוכנות שלך</span>
+            <span class="readiness__percent">100%</span>
+          </div>
+          <div class="readiness__bar">
+            <div class="readiness__fill" style="width: 100%"></div>
+            <div class="readiness__milestones">
+              <div class="readiness__milestone is-reached" style="right: 25%" data-day="1"></div>
+              <div class="readiness__milestone is-reached" style="right: 50%" data-day="2"></div>
+              <div class="readiness__milestone is-reached" style="right: 75%" data-day="3"></div>
+              <div class="readiness__milestone is-reached" style="right: 100%" data-day="4"></div>
+            </div>
+          </div>
+          <div class="readiness__caption">מוכנות מלאה — השלמת את כל 4 הימים</div>
+        </div>
+
+        <!-- Tonight -->
+        <div class="next-day">
+          <div class="next-day__day">הערב · 20:00</div>
+          <h3 class="next-day__title">וובינר החיתום החי — ושם נפתח גם גרף 50/30/20.</h3>
+          <p class="next-day__text">
+            עמרי סוגר את המעגל בשידור חי: התמונה המלאה, שאלות ותשובות, והמודל שמקצר את הדרך.
+          </p>
+        </div>
+
+        <div class="note-line">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="15.5" r="0.5" fill="currentColor"/></svg>
+          <span>הדמיה חינוכית לפי הנחות מפושטות (תשואה ממוצעת, כלל 4%) — לא תחזית ולא ייעוץ.</span>
+        </div>
+
+        <div class="actions actions--center actions--summary">
+          <button type="button" class="btn btn--secondary" data-action="back" data-target="networth">
+            חזור לנכסים
+          </button>
+          <button type="button" class="btn btn--primary btn--cta" data-action="complete">
+            <span>סיימתי את האתגר</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         FINAL — CHALLENGE COMPLETED
+    ============================================================ -->
+    <section class="screen" data-screen="completed" aria-labelledby="completed-title">
+      <div class="card card--center card--done">
+        <div class="done-icon">
+          <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="40" cy="40" r="36" fill="none" stroke="#26A59A" stroke-width="3"
+                    stroke-dasharray="226" stroke-dashoffset="226"
+                    style="animation: drawCircle 700ms var(--ease) 100ms forwards;"/>
+            <polyline points="25 42 36 53 56 31" fill="none" stroke="#26A59A" stroke-width="4"
+                      stroke-linecap="round" stroke-linejoin="round"
+                      stroke-dasharray="60" stroke-dashoffset="60"
+                      style="animation: drawCheck 400ms var(--ease) 700ms forwards;"/>
+          </svg>
+        </div>
+        <h2 id="completed-title" class="title-xl">השלמת את אתגר 4 הימים</h2>
+        <p class="lead">
+          מיפית, קיזזת, בנית תוכנית הכנסה — והיום וידאת שגם הפנסיה עובדת בשבילך.
+          נתראה הערב ב-20:00 בוובינר החיתום.
+        </p>
+        <div class="done-extra">
+          <p>כל הנתונים והתוכניות שלך שמורים — אפשר לחזור אליהם בכל רגע.</p>
         </div>
       </div>
+    </section>
 
-      <div class="lock-message">
-        <div class="lock-icon">🔒</div>
-        <div class="lock-title">ה-20% האחרונים נפתחים בוובינר</div>
-        <div class="lock-desc">ביום רביעי בשעה 20:00 נפתח את שלב העצמאות המלאה ונראה איך הקו הירוק הופך למציאות. שמור את הזמן ביומן.</div>
+    <!-- ============================================================
+         POSTPONED
+    ============================================================ -->
+    <section class="screen" data-screen="postponed" aria-labelledby="postponed-title">
+      <div class="card card--center card--done">
+        <div class="done-icon done-icon--soft">
+          <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="40" cy="40" r="36" fill="none" stroke="#26A59A" stroke-width="3"
+                    stroke-dasharray="226" stroke-dashoffset="226"
+                    style="animation: drawCircle 700ms var(--ease) 100ms forwards;"/>
+            <path d="M40 24v18l12 7" fill="none" stroke="#26A59A" stroke-width="4"
+                  stroke-linecap="round" stroke-linejoin="round"
+                  stroke-dasharray="60" stroke-dashoffset="60"
+                  style="animation: drawCheck 500ms var(--ease) 700ms forwards;"/>
+          </svg>
+        </div>
+        <h2 id="postponed-title" class="title-xl">נשמר. אבל אל תפספס — הוובינר הערב.</h2>
+        <p class="lead">
+          נשלח לך תזכורת קצרה במייל ובוואטסאפ עם קישור שיחזיר אותך לבדיוק כאן.
+          יום 4 לוקח רק 15 דקות — וכדאי לסיים אותו לפני 20:00.
+        </p>
+        <div class="done-extra">
+          <p>השאר את הדף פתוח, או חזור דרך הקישור בתזכורת.</p>
+        </div>
+        <div class="actions actions--center">
+          <button type="button" class="btn btn--primary" data-action="next" data-target="commitment">
+            <span data-male="התחרטתי, אני ממשיך" data-female="התחרטתי, אני ממשיכה">התחרטתי, אני ממשיך</span>
+          </button>
+        </div>
       </div>
+    </section>
 
-      <div class="countdown-card">
-        <div class="cd-title">עוד מעט נתראה</div>
-        <div class="cd-subtitle">הוובינר מתחיל בעוד</div>
-        <div class="countdown-display" id="countdown2">
-          <div class="cd-unit"><div class="cd-num" id="cd2-d">00</div><div class="cd-label">ימים</div></div>
-          <div class="cd-unit"><div class="cd-num" id="cd2-h">00</div><div class="cd-label">שעות</div></div>
-          <div class="cd-unit"><div class="cd-num" id="cd2-m">00</div><div class="cd-label">דקות</div></div>
-          <div class="cd-unit"><div class="cd-num" id="cd2-s">00</div><div class="cd-label">שניות</div></div>
+    <!-- Privacy agreement popup (placeholder copy — final text from the lawyer) -->
+    <div class="modal" id="privacyModal" hidden role="dialog" aria-modal="true" aria-labelledby="privacyModalTitle">
+      <div class="modal__backdrop" data-action="legal-close"></div>
+      <div class="modal__card modal__card--legal" role="document">
+        <button type="button" class="modal__x" data-action="legal-close" aria-label="סגירה">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+            <line x1="6" y1="18" x2="18" y2="6"></line>
+          </svg>
+        </button>
+        <h3 id="privacyModalTitle" class="modal__title">הסכם הגנת הפרטיות</h3>
+        <div class="legal-pending">נוסח זמני להמחשה · יוחלף בנוסח המחייב שתספק עוה״ד</div>
+        <div class="legal-body">
+          <p><strong>איזה מידע נאסף?</strong> שם, פרטי התקשרות (טלפון ודוא״ל), מגדר, והנתונים הפיננסיים שתבחרו להזין במהלך האתגר (הכנסות, הוצאות, פנסיה, נכסים ויעדים).</p>
+          <p><strong>למה הוא משמש?</strong> להתאמה אישית של חוויית האתגר, לחישוב התובנות שלכם ולשליחת תזכורות שביקשתם. המידע אינו נמכר ואינו מועבר לצד שלישי ללא הסכמה מפורשת.</p>
+          <p><strong>אחסון ואבטחה.</strong> המידע נשמר במערכות מאובטחות. ניתן לבקש עיון, תיקון או מחיקה של המידע בכל עת בפנייה אלינו.</p>
+          <p><strong>הסכמה.</strong> המשך השימוש באתגר מהווה הסכמה לאמור במסמך זה.</p>
+        </div>
+        <div class="modal__actions">
+          <button type="button" class="btn btn--primary" data-action="legal-close">
+            <span>הבנתי, אפשר להמשיך</span>
+          </button>
         </div>
       </div>
     </div>
 
-    <div class="cta-card">
-      <h3>הוובינר שיפתח את הכל</h3>
-      <p>שלב העצמאות המלאה מחכה לך. הירשם עכשיו ותבטיח את המקום.</p>
-      <a class="cta-btn" href="#webinar" id="webinarLink">הירשם לוובינר עכשיו &#8592;</a>
-    </div>
-
-    <div class="btn-row">
-      <button class="btn btn-back" onclick="goPage(1)">&#8594; חזרה לציר</button>
-    </div>
-  </div>
-
-</div>
-
-<script>
-// ═══════════════════════════════════════════════════════════
-// Config
-// ═══════════════════════════════════════════════════════════
-const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI';
-
-// Pension constants (loaded from /pension-constants.json with hardcoded fallback)
-// Source: israeli-pension-advisor skill. Update yearly via JSON, no HTML changes needed.
-let PENSION_CEILING = 44000;
-let RETIREMENT_AGE = 67;
-let LIFE_EXPECTANCY = 90;
-let ANNUAL_RETURN = 0.06;
-
-async function loadPensionConstants() {
-  try {
-    const res = await fetch('pension-constants.json', { cache: 'no-cache' });
-    if (!res.ok) return;
-    const c = await res.json();
-    if (typeof c.PENSION_CEILING === 'number') PENSION_CEILING = c.PENSION_CEILING;
-    if (typeof c.RETIREMENT_AGE === 'number') RETIREMENT_AGE = c.RETIREMENT_AGE;
-    if (typeof c.LIFE_EXPECTANCY === 'number') LIFE_EXPECTANCY = c.LIFE_EXPECTANCY;
-    if (typeof c.ANNUAL_RETURN === 'number') ANNUAL_RETURN = c.ANNUAL_RETURN;
-  } catch (e) {
-    console.warn('pension-constants.json not loaded, using defaults:', e);
-  }
-}
-
-// Webinar URL placeholder
-const WEBINAR_URL = '#webinar-register';
-
-// ═══════════════════════════════════════════════════════════
-// State
-// ═══════════════════════════════════════════════════════════
-let pid = null;
-let participantData = null;
-let userAge = 35;
-let userIncome = 15000;
-let userName = 'משתתף';
-let monthlyExpense = 0;
-let savingsCommitment = 0;
-let oxygenChart = null;
-
-// ═══════════════════════════════════════════════════════════
-// Helpers
-// ═══════════════════════════════════════════════════════════
-function fmt(n) {
-  if (!isFinite(n) || isNaN(n)) return '₪0';
-  return '₪' + Math.round(n).toLocaleString('he-IL');
-}
-
-function pad2(n) { return String(n).padStart(2, '0'); }
-
-// ═══════════════════════════════════════════════════════════
-// Webinar date - next Wednesday at 20:00 Israel time
-// ═══════════════════════════════════════════════════════════
-function getNextWebinarDate() {
-  const now = new Date();
-  const target = new Date(now);
-  // Wednesday = 3 (Sunday = 0)
-  const daysUntilWed = ((3 - now.getDay()) + 7) % 7;
-  let addDays = daysUntilWed;
-  // If today is Wednesday and past 20:00, push to next week
-  if (daysUntilWed === 0 && now.getHours() >= 20) {
-    addDays = 7;
-  }
-  // If 0 days but before 20:00, keep today
-  target.setDate(now.getDate() + addDays);
-  target.setHours(20, 0, 0, 0);
-  return target;
-}
-
-const WEBINAR_DATE = getNextWebinarDate();
-
-// ═══════════════════════════════════════════════════════════
-// Load from Supabase
-// ═══════════════════════════════════════════════════════════
-async function loadFromSupabase(pid) {
-  const res = await fetch(`${SUPA_URL}/functions/v1/get-participant-v10?pid=${encodeURIComponent(pid)}`, {
-    headers: { 'Content-Type': 'application/json' }
-  });
-  if (res.status === 404) throw new Error('לא נמצאו נתונים');
-  if (!res.ok) throw new Error('שגיאה בטעינה מהשרת');
-  return await res.json();
-}
-
-// ═══════════════════════════════════════════════════════════
-// Calculate total monthly expenses from row
-// ═══════════════════════════════════════════════════════════
-function calcMonthlyExpense(row) {
-  let total = 0;
-
-  // Try expenses_detail JSON first
-  if (row.expenses_detail) {
-    try {
-      const detail = typeof row.expenses_detail === 'string' ? JSON.parse(row.expenses_detail) : row.expenses_detail;
-      if (detail && typeof detail === 'object') {
-        Object.entries(detail).forEach(([k, v]) => {
-          if (typeof v === 'number' && !k.endsWith('_desc')) {
-            total += v;
-          }
-        });
-        if (total > 0) return total;
-      }
-    } catch(e) { /* fall through */ }
-  }
-
-  // Legacy columns
-  const legacyKeys = [
-    'rent','arnona','utilities','telecom','car_insurance','loans','education',
-    'leasing','groceries','dining','coffee','transport','health','shopping','leisure','kids'
-  ];
-  legacyKeys.forEach(k => {
-    total += parseFloat(row[k] || 0) || 0;
-  });
-
-  return total;
-}
-
-// ═══════════════════════════════════════════════════════════
-// Pension projection logic (port from israeli-pension-advisor)
-// ═══════════════════════════════════════════════════════════
-function projectMonth(balance, income, contributionRate, currentAge, monthlyExpenseDraw) {
-  const insurable = Math.min(income, PENSION_CEILING);
-  const monthlyReturn = Math.pow(1 + ANNUAL_RETURN, 1/12) - 1;
-  let contribution;
-  if (currentAge < RETIREMENT_AGE) {
-    contribution = insurable * contributionRate;
-  } else {
-    contribution = -monthlyExpenseDraw;
-  }
-  return balance * (1 + monthlyReturn) + contribution;
-}
-
-// Project full trajectory from current age to age 90
-// Returns { years: [], balances: [], runOutAge: number|null }
-function projectTrajectory(startBalance, income, contribRate, startAge, monthlyExpenseDraw) {
-  const years = [];
-  const balances = [];
-  let balance = startBalance;
-  let runOutAge = null;
-
-  // Add starting point
-  years.push(startAge);
-  balances.push(Math.max(0, balance));
-
-  const totalMonths = (LIFE_EXPECTANCY - startAge) * 12;
-  for (let m = 1; m <= totalMonths; m++) {
-    const currentAgeFloat = startAge + (m / 12);
-    const currentAgeInt = Math.floor(currentAgeFloat);
-    balance = projectMonth(balance, income, contribRate, currentAgeInt, monthlyExpenseDraw);
-
-    if (balance < 0 && runOutAge === null) {
-      runOutAge = currentAgeFloat;
-      balance = 0;
-    } else if (balance < 0) {
-      balance = 0;
-    }
-
-    // Sample every 12 months (yearly)
-    if (m % 12 === 0) {
-      years.push(startAge + (m / 12));
-      balances.push(Math.max(0, balance));
-    }
-  }
-
-  return { years, balances, runOutAge };
-}
-
-// ═══════════════════════════════════════════════════════════
-// Build chart on Page 1
-// ═══════════════════════════════════════════════════════════
-function buildOxygenChart() {
-  const balance = parseFloat(document.getElementById('f_pension_balance').value) || 0;
-  const contribRate = parseFloat(document.getElementById('f_contrib_rate').value) || 0.185;
-
-  // Effective monthly expense as draw amount (covers retirement living)
-  // If no expense data, default to 50% of income
-  const drawAmount = monthlyExpense > 0 ? monthlyExpense : userIncome * 0.5;
-
-  // Status quo: current pension only
-  const statusQuo = projectTrajectory(balance, userIncome, contribRate, userAge, drawAmount);
-
-  // Yellow path: same trajectory + savings_commitment from day 2
-  // The commitment is invested monthly at same return until retirement, then drawn
-  const yellowDraw = drawAmount; // same expense baseline
-  const yellow = projectTrajectoryWithExtra(balance, userIncome, contribRate, userAge, yellowDraw, savingsCommitment);
-
-  // Green: locked - 1.6x more aggressive (visualization only)
-  const green = projectTrajectoryWithExtra(balance, userIncome, contribRate, userAge, yellowDraw, savingsCommitment * 4);
-
-  // Build labels (ages)
-  const labels = statusQuo.years.map(y => Math.round(y));
-
-  const ctx = document.getElementById('oxygenChart').getContext('2d');
-
-  if (oxygenChart) {
-    oxygenChart.destroy();
-  }
-
-  oxygenChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: 'בקצב הנוכחי',
-          data: statusQuo.balances,
-          borderColor: '#C0392B',
-          backgroundColor: 'rgba(192, 57, 43, 0.08)',
-          borderWidth: 3,
-          tension: 0.3,
-          pointRadius: 0,
-          pointHoverRadius: 5,
-          fill: false
-        },
-        {
-          label: 'עם פעולות האתגר',
-          data: yellow.balances,
-          borderColor: '#B8892E',
-          backgroundColor: 'rgba(184, 137, 46, 0.08)',
-          borderWidth: 3,
-          tension: 0.3,
-          pointRadius: 0,
-          pointHoverRadius: 5,
-          fill: false
-        },
-        {
-          label: 'עצמאות מלאה (נעול)',
-          data: green.balances,
-          borderColor: 'rgba(46, 125, 82, 0.4)',
-          backgroundColor: 'rgba(46, 125, 82, 0.04)',
-          borderWidth: 2,
-          borderDash: [6, 6],
-          tension: 0.3,
-          pointRadius: 0,
-          pointHoverRadius: 0,
-          fill: false
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: {
-        mode: 'index',
-        intersect: false
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          rtl: true,
-          textDirection: 'rtl',
-          backgroundColor: 'rgba(26, 39, 68, 0.95)',
-          titleColor: '#E8C77A',
-          bodyColor: '#fff',
-          padding: 10,
-          callbacks: {
-            title: function(ctx) {
-              return 'גיל ' + ctx[0].label;
-            },
-            label: function(ctx) {
-              return ctx.dataset.label + ': ' + fmt(ctx.parsed.y);
-            }
-          }
-        }
-      },
-      scales: {
-        x: {
-          title: { display: true, text: 'גיל', color: '#5C4E3C', font: { family: 'Heebo', size: 11, weight: '600' } },
-          ticks: {
-            color: '#5C4E3C',
-            font: { family: 'Heebo', size: 10 },
-            maxRotation: 0,
-            autoSkip: true,
-            maxTicksLimit: 8
-          },
-          grid: { color: 'rgba(230, 213, 195, 0.5)' }
-        },
-        y: {
-          title: { display: true, text: 'יתרה (₪)', color: '#5C4E3C', font: { family: 'Heebo', size: 11, weight: '600' } },
-          ticks: {
-            color: '#5C4E3C',
-            font: { family: 'Heebo', size: 10 },
-            callback: function(value) {
-              if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
-              if (value >= 1000) return Math.round(value / 1000) + 'K';
-              return value;
-            }
-          },
-          grid: { color: 'rgba(230, 213, 195, 0.5)' },
-          beginAtZero: true
-        }
-      }
-    }
-  });
-
-  // Update stats cards
-  buildOxyStats(statusQuo, yellow);
-}
-
-// Project with extra monthly contribution from challenge actions
-function projectTrajectoryWithExtra(startBalance, income, contribRate, startAge, monthlyExpenseDraw, extraMonthly) {
-  const years = [];
-  const balances = [];
-  let balance = startBalance;
-
-  years.push(startAge);
-  balances.push(Math.max(0, balance));
-
-  const monthlyReturn = Math.pow(1 + ANNUAL_RETURN, 1/12) - 1;
-  const insurable = Math.min(income, PENSION_CEILING);
-
-  const totalMonths = (LIFE_EXPECTANCY - startAge) * 12;
-  for (let m = 1; m <= totalMonths; m++) {
-    const currentAgeFloat = startAge + (m / 12);
-    const currentAgeInt = Math.floor(currentAgeFloat);
-
-    let contribution;
-    if (currentAgeInt < RETIREMENT_AGE) {
-      contribution = (insurable * contribRate) + extraMonthly;
-    } else {
-      // After retirement: stop adding, draw for living, but extra savings give cushion
-      contribution = -monthlyExpenseDraw;
-    }
-
-    balance = balance * (1 + monthlyReturn) + contribution;
-    if (balance < 0) balance = 0;
-
-    if (m % 12 === 0) {
-      years.push(startAge + (m / 12));
-      balances.push(Math.max(0, balance));
-    }
-  }
-
-  // Find run out age
-  let runOutAge = null;
-  for (let i = 0; i < balances.length; i++) {
-    if (balances[i] <= 0 && years[i] > RETIREMENT_AGE) {
-      runOutAge = years[i];
-      break;
-    }
-  }
-
-  return { years, balances, runOutAge };
-}
-
-// ═══════════════════════════════════════════════════════════
-// Build oxygen stats above chart
-// ═══════════════════════════════════════════════════════════
-function buildOxyStats(statusQuo, yellow) {
-  const redMsg = statusQuo.runOutAge
-    ? `החמצן ייגמר בגיל ${Math.round(statusQuo.runOutAge)}`
-    : `מספיק עד גיל ${LIFE_EXPECTANCY}`;
-
-  const yellowMsg = yellow.runOutAge
-    ? `החמצן מספיק עד גיל ${Math.round(yellow.runOutAge)}`
-    : `מספיק עד גיל ${LIFE_EXPECTANCY}+`;
-
-  document.getElementById('oxyStats').innerHTML = `
-    <div class="oxy-stat red">
-      <div class="oxy-icon">🔴</div>
-      <div class="oxy-info">
-        <div class="oxy-label">בקצב הנוכחי</div>
-        <div class="oxy-value">${redMsg}</div>
+    <!-- Non-advice disclaimer popup (placeholder copy — final text from the lawyer) -->
+    <div class="modal" id="disclaimerModal" hidden role="dialog" aria-modal="true" aria-labelledby="disclaimerModalTitle">
+      <div class="modal__backdrop" data-action="legal-close"></div>
+      <div class="modal__card modal__card--legal" role="document">
+        <button type="button" class="modal__x" data-action="legal-close" aria-label="סגירה">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+            <line x1="6" y1="18" x2="18" y2="6"></line>
+          </svg>
+        </button>
+        <h3 id="disclaimerModalTitle" class="modal__title">גילוי נאות — לא ייעוץ</h3>
+        <div class="legal-pending">נוסח זמני להמחשה · יוחלף בנוסח המחייב שתספק עוה״ד</div>
+        <div class="legal-body">
+          <p>התכנים באתגר FHINK AI הם <strong>תוכן חינוכי והעשרתי בלבד</strong>, ואינם מהווים ייעוץ השקעות, ייעוץ פנסיוני, ייעוץ מס או ייעוץ משכנתאות המותאם לנתונים ולצרכים האישיים שלכם.</p>
+          <p>אין בתכנים <strong>המלצה לקנייה או מכירה של ניירות ערך</strong> או מוצר פיננסי כלשהו. תשואות עבר אינן מבטיחות תשואות עתיד.</p>
+          <p>כל החלטה פיננסית היא באחריותכם בלבד. מומלץ להתייעץ עם בעל רישיון מתאים לפני ביצוע פעולות בעלות השלכות כלכליות.</p>
+        </div>
+        <div class="modal__actions">
+          <button type="button" class="btn btn--primary" data-action="legal-close">
+            <span>הבנתי, אפשר להמשיך</span>
+          </button>
+        </div>
       </div>
     </div>
-    <div class="oxy-stat yellow">
-      <div class="oxy-icon">🟡</div>
-      <div class="oxy-info">
-        <div class="oxy-label">עם פעולות האתגר (₪${savingsCommitment.toLocaleString('he-IL')}/חודש)</div>
-        <div class="oxy-value">${yellowMsg}</div>
+
+    <!-- Video placeholder popup -->
+    <div class="modal" id="videoModal" hidden role="dialog" aria-modal="true" aria-labelledby="videoModalTitle">
+      <div class="modal__backdrop" data-action="video-close"></div>
+      <div class="modal__card modal__card--video" role="document">
+        <button type="button" class="modal__x" data-action="video-close" aria-label="סגירה">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+            <line x1="6" y1="18" x2="18" y2="6"></line>
+          </svg>
+        </button>
+        <h3 id="videoModalTitle" class="modal__title">הסרטון</h3>
+        <div class="video-ph">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"></polygon>
+          </svg>
+          <p>הסרטון יחובר כאן בגרסה החיה.<br>הנגן שומר על עיצוב מינימלי — כותרת ומשך זמן מוצגים מראש.</p>
+        </div>
+        <div class="modal__actions">
+          <button type="button" class="btn btn--primary" data-action="video-close">
+            <span>הבנתי, נמשיך</span>
+          </button>
+        </div>
       </div>
     </div>
-    <div class="oxy-stat green-locked">
-      <div class="oxy-icon">🟢</div>
-      <div class="oxy-info">
-        <div class="oxy-label">עצמאות מלאה</div>
-        <div class="oxy-value">פתח בוובינר ביום רביעי</div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="footer-brand__name">FHINK AI</span>
+        <span class="footer-brand__sep" aria-hidden="true">·</span>
+        <span class="footer-brand__tag">Financial Thinking <em>Powered by AI</em></span>
       </div>
-      <div class="lock-tag">🔒 נעול</div>
+      <div class="footer-legal">
+        <button type="button" class="link-btn" data-action="legal-open" data-target="privacyModal">הגנת הפרטיות</button>
+        <span aria-hidden="true">·</span>
+        <button type="button" class="link-btn" data-action="legal-open" data-target="disclaimerModal">גילוי נאות</button>
+      </div>
+      <div class="footer-meta">יום 4 · הפנסיה שלך עובדת בשבילך</div>
     </div>
-  `;
-}
+    <div class="footer-credit">
+      עיצוב גרפי:
+      <a class="footer-credit__link" href="https://www.asaf.studio" target="_blank" rel="noopener noreferrer">סטודיו אסף יפת · www.asaf.studio</a>
+    </div>
+  </footer>
 
-// ═══════════════════════════════════════════════════════════
-// Build summary on Page 2
-// ═══════════════════════════════════════════════════════════
-function buildSummary() {
-  const yearsToRetire = Math.max(1, RETIREMENT_AGE - userAge);
-  const cumulative = savingsCommitment * 12 * yearsToRetire;
-
-  // Compound: monthly contribution at 6% annual until retirement
-  const r = ANNUAL_RETURN / 12;
-  const n = yearsToRetire * 12;
-  const compound = savingsCommitment * ((Math.pow(1 + r, n) - 1) / r);
-
-  document.getElementById('sumCommit').textContent = fmt(savingsCommitment);
-  document.getElementById('sumCumulative').textContent = fmt(cumulative);
-  document.getElementById('sumCompound').textContent = fmt(compound);
-
-  // Animate readiness ring to 80%
-  // circumference = 2 * PI * 75 ≈ 471.2
-  // 80% fill = 471.2 * 0.2 = 94.24 dashoffset
-  setTimeout(() => {
-    document.getElementById('ringFill').style.strokeDashoffset = '94.24';
-  }, 300);
-
-  // Set webinar link
-  document.getElementById('webinarLink').href = WEBINAR_URL;
-}
-
-// ═══════════════════════════════════════════════════════════
-// Countdown logic
-// ═══════════════════════════════════════════════════════════
-function updateCountdowns() {
-  const now = Date.now();
-  const target = WEBINAR_DATE.getTime();
-  const diff = Math.max(0, target - now);
-
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-  const mins = Math.floor((diff / (1000 * 60)) % 60);
-  const secs = Math.floor((diff / 1000) % 60);
-
-  const ids = [
-    ['cd1-d', 'cd1-h', 'cd1-m', 'cd1-s'],
-    ['cd2-d', 'cd2-h', 'cd2-m', 'cd2-s']
-  ];
-  ids.forEach(([d, h, m, s]) => {
-    const dEl = document.getElementById(d);
-    const hEl = document.getElementById(h);
-    const mEl = document.getElementById(m);
-    const sEl = document.getElementById(s);
-    if (dEl) dEl.textContent = pad2(days);
-    if (hEl) hEl.textContent = pad2(hours);
-    if (mEl) mEl.textContent = pad2(mins);
-    if (sEl) sEl.textContent = pad2(secs);
-  });
-}
-
-setInterval(updateCountdowns, 1000);
-
-// ═══════════════════════════════════════════════════════════
-// Navigation
-// ═══════════════════════════════════════════════════════════
-let currentPage = 0;
-
-function goPage(n) {
-  // Validate page 0 -> 1
-  if (n === 1 && currentPage === 0) {
-    const balance = document.getElementById('f_pension_balance').value;
-    if (!balance || parseFloat(balance) < 0) {
-      alert('תמלא את הצבירה הקיימת (אפשר 0 אם אין)');
-      document.getElementById('f_pension_balance').focus();
-      return;
-    }
-  }
-
-  // Build content on navigation
-  if (n === 1) {
-    setTimeout(() => buildOxygenChart(), 100);
-  }
-  if (n === 2) {
-    buildSummary();
-  }
-
-  document.getElementById('page-' + currentPage).classList.remove('active');
-  document.getElementById('page-' + n).classList.add('active');
-
-  // Update progress dots (0-2)
-  for (let i = 0; i <= 2; i++) {
-    const dot = document.getElementById('pd-' + i);
-    const line = document.getElementById('pl-' + i);
-    if (dot) dot.classList.remove('active', 'done');
-    if (line) line.classList.remove('done');
-    if (i < n) {
-      if (dot) { dot.classList.add('done'); dot.textContent = '✓'; }
-      if (line) line.classList.add('done');
-    } else if (i === n) {
-      if (dot) { dot.classList.add('active'); dot.textContent = (i + 1); }
-    } else {
-      if (dot) dot.textContent = (i + 1);
-    }
-  }
-
-  currentPage = n;
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// ═══════════════════════════════════════════════════════════
-// Day Unlock Check
-// ═══════════════════════════════════════════════════════════
-async function checkDayUnlock(pid, dayNumber) {
-  try {
-    const res = await fetch(
-      `https://vuvavjmbvdqnwtleudqh.supabase.co/functions/v1/check-day-unlock?pid=${encodeURIComponent(pid)}&day=${dayNumber}`,
-      { headers: { 'Content-Type': 'application/json' } }
-    );
-    if (!res.ok) {
-      // If 404 (no participant), treat as unlocked - let normal flow handle missing data
-      return { unlocked: true };
-    }
-    return await res.json();
-  } catch(e) {
-    console.warn('Unlock check failed, allowing access:', e);
-    return { unlocked: true };
-  }
-}
-
-function showLockedScreen(unlockData, dayNumber) {
-  // Hide all existing content
-  document.body.innerHTML = `
-    <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#FDF8F0;font-family:Heebo,sans-serif;direction:rtl;padding:20px;">
-      <div style="max-width:480px;text-align:center;background:#fff;border-radius:20px;padding:40px 28px;box-shadow:0 4px 24px rgba(0,0,0,.08);">
-        <div style="font-size:64px;margin-bottom:16px;">🔒</div>
-        <h1 style="font-size:26px;font-weight:800;color:#2C2419;margin-bottom:12px;">יום ${dayNumber} ייפתח בעוד</h1>
-        <div id="lockCountdown" style="font-size:36px;font-weight:900;color:#D4A853;font-family:'JetBrains Mono',monospace;margin:24px 0;letter-spacing:2px;">--:--:--</div>
-        <p style="color:#5C4E3C;font-size:14px;margin-bottom:8px;">פתיחה: <strong id="lockUnlockDate"></strong></p>
-        <p style="color:#5C4E3C;font-size:13px;line-height:1.7;margin-top:20px;">המסע מתבצע יום אחרי יום, כדי שכל יום יישב טוב לפני שעוברים הלאה.</p>
-        <a id="lockBackLink" href="day${dayNumber - 1}.html" style="display:inline-block;margin-top:20px;color:#B8892E;font-weight:600;text-decoration:none;font-size:13px;">← חזרה ליום ${dayNumber - 1}</a>
-      </div>
-    </div>`;
-
-  // Format unlock date
-  const unlockAt = new Date(unlockData.unlockAt);
-  document.getElementById('lockUnlockDate').textContent = unlockAt.toLocaleString('he-IL', {
-    day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Jerusalem'
-  });
-
-  // Update back link with pid if available
-  const params = new URLSearchParams(location.search);
-  const pid = params.get('pid') || localStorage.getItem('challenge_pid');
-  if (pid) {
-    document.getElementById('lockBackLink').href = `day${dayNumber - 1}.html?pid=${pid}`;
-  }
-
-  // Live countdown
-  const targetTime = unlockAt.getTime();
-  const updateCountdown = () => {
-    const now = Date.now();
-    const diff = Math.max(0, targetTime - now);
-    if (diff === 0) {
-      location.reload();
-      return;
-    }
-    const days = Math.floor(diff / (24*3600*1000));
-    const hours = Math.floor((diff % (24*3600*1000)) / (3600*1000));
-    const minutes = Math.floor((diff % (3600*1000)) / (60*1000));
-    const seconds = Math.floor((diff % (60*1000)) / 1000);
-    const display = days > 0
-      ? `${days} ימים, ${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`
-      : `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
-    document.getElementById('lockCountdown').textContent = display;
-  };
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
-}
-
-// Wraps init logic with unlock check. Call this instead of original init.
-async function unlockGate(dayNumber, originalInitFn) {
-  const params = new URLSearchParams(location.search);
-  const bypass = params.get('bypass') === '1';
-  if (bypass) {
-    originalInitFn();
-    return;
-  }
-  const pid = params.get('pid') || localStorage.getItem('challenge_pid');
-  if (!pid) {
-    // No pid - let original logic handle (it will show error screen)
-    originalInitFn();
-    return;
-  }
-  const unlockData = await checkDayUnlock(pid, dayNumber);
-  if (!unlockData.unlocked) {
-    showLockedScreen(unlockData, dayNumber);
-    return;
-  }
-  originalInitFn();
-}
-
-// ═══════════════════════════════════════════════════════════
-// Init - load participant from URL pid or localStorage
-// ═══════════════════════════════════════════════════════════
-async function init() {
-  // Load pension constants from JSON (with hardcoded fallback if fails)
-  await loadPensionConstants();
-
-  const params = new URLSearchParams(window.location.search);
-  pid = params.get('pid') || localStorage.getItem('challenge_pid');
-
-  if (!pid) {
-    document.getElementById('loadingScreen').style.display = 'none';
-    document.getElementById('errorScreen').style.display = 'block';
-    document.getElementById('errorMsg').textContent = 'לא נמצא מזהה משתתף. תחזור ליום 1 ותמלא את השאלון.';
-    document.getElementById('progressBar').style.display = 'none';
-    return;
-  }
-
-  try {
-    const row = await loadFromSupabase(pid);
-    participantData = row;
-    userAge = parseInt(row.age) || 35;
-    userIncome = parseFloat(row.income || 0) + parseFloat(row.income_extra || 0);
-    if (userIncome <= 0) userIncome = 15000;
-    userName = row.name || 'משתתף';
-    monthlyExpense = calcMonthlyExpense(row);
-    savingsCommitment = parseFloat(row.savings_commitment || 0) || 0;
-
-    // Hide loading, show page 0
-    document.getElementById('loadingScreen').style.display = 'none';
-    document.getElementById('page-0').classList.add('active');
-
-    // Pre-fill form defaults based on job_type
-    if (row.job_type === 'self_employed') {
-      document.getElementById('f_contrib_rate').value = '0.1276';
-    }
-
-    // Initial countdown render
-    updateCountdowns();
-  } catch (err) {
-    document.getElementById('loadingScreen').style.display = 'none';
-    document.getElementById('errorScreen').style.display = 'block';
-    document.getElementById('errorMsg').textContent = err.message;
-    document.getElementById('progressBar').style.display = 'none';
-  }
-}
-
-document.addEventListener('DOMContentLoaded', () => unlockGate(4, init));
-</script>
-
-  <a href="https://wa.me/972546232063?text=%D7%94%D7%99%D7%99%2C%20%D7%9E%D7%A9%D7%94%D7%95%20%D7%91%D7%94%D7%AA%D7%A0%D7%A1%D7%95%D7%AA%20%D7%9C%D7%90%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9C%D7%99" class="wa-support-float" target="_blank" rel="noopener noreferrer">
-    <svg viewBox="0 0 24 24" fill="currentColor">
-      <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.717-1.458L0 24zm6.59-4.846c1.6.95 3.167 1.455 4.767 1.456 5.405 0 9.803-4.394 9.806-9.794.002-2.615-1.012-5.074-2.859-6.924C16.463 2.042 14.01 1.026 11.998 1.026 6.596 1.026 2.201 5.421 2.198 10.823c-.001 1.714.453 3.39 1.316 4.869l-.98 3.577 3.665-.961zm10.407-3.414c-.28-.14-1.65-.814-1.906-.907-.256-.093-.443-.14-.63.14-.187.28-.724.907-.887 1.093-.163.187-.327.21-.607.07-.28-.14-1.18-.435-2.25-1.39-.83-.74-1.39-1.655-1.553-1.936-.163-.28-.018-.43.122-.57.126-.127.28-.327.42-.49.14-.163.187-.28.28-.467.093-.187.047-.35-.023-.49-.07-.14-.63-1.52-.86-2.07-.225-.54-.472-.46-.645-.47-.167-.008-.36-.01-.553-.01-.193 0-.508.073-.773.36-.265.287-1.01 1.013-1.01 2.47 0 1.455 1.06 2.864 1.208 3.06.147.197 2.085 3.182 5.05 4.464.705.305 1.256.487 1.683.623.71.226 1.356.194 1.867.118.57-.085 1.72-.704 1.96-1.385.24-.683.24-1.266.168-1.385-.072-.12-.264-.19-.544-.33z"/>
-    </svg>
-    <span class="wa-support-text">לא עובד ? תדווחו לנו</span>
-  </a>
-
-  <style>
-    .wa-support-float {
-      position: fixed;
-      bottom: 24px;
-      left: 24px;
-      background-color: #25d366;
-      color: #fff;
-      border-radius: 50px;
-      padding: 10px 18px;
-      font-family: 'Heebo', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      text-decoration: none;
-      transition: transform 0.2s ease, background-color 0.2s ease;
-      direction: rtl;
-    }
-    .wa-support-float:hover {
-      background-color: #20ba56;
-      transform: scale(1.05);
-      color: #fff;
-      text-decoration: none;
-    }
-    .wa-support-float svg {
-      width: 20px;
-      height: 20px;
-      display: block;
-    }
-    .wa-support-text {
-      white-space: nowrap;
-    }
-    @media (max-width: 480px) {
-      .wa-support-float {
-        bottom: 16px;
-        left: 16px;
-        padding: 8px 14px;
-        font-size: 13px;
-      }
-      .wa-support-float svg {
-        width: 18px;
-        height: 18px;
-      }
-    }
-  </style>
-
+  <script src="day4/data.js"></script>
+  <script src="day4.js"></script>
 </body>
 </html>

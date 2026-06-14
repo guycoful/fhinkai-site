@@ -23,15 +23,6 @@
     apiEndpoint: '/api/day1',           // ← wire by Claude Code
   };
 
-  const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
-  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI';
-  const PILOT_UNLOCK_ISO = '2026-06-14T06:00:00+03:00';
-  const VIDEO_MAP = {
-    omri: '78550d3c-134c-4e1c-b07e-6edc9527fee5',
-    guy: null,
-  };
-  let originalVideoPhHTML = '';
-
   const SCREEN_ORDER = ['opening', 'commitment', 'calendar', 'basics', 'expenses', 'summary', 'completed'];
   const ACTIVE_CONSENT = false; // ← flip to true if אילת requires active consent
   const TERMINAL_SCREENS = new Set(['completed', 'postponed']);
@@ -44,8 +35,6 @@
   document.addEventListener('DOMContentLoaded', init);
 
   function init() {
-    if (!allowEarlyAccess()) return;
-    captureVideoPlaceholder();
     applyUrlParams();
     state.meta.watched = state.meta.watched || {};
     applyUserContext();
@@ -58,7 +47,6 @@
     bindModal();
     refreshAllTotals();
     showScreen(state.currentScreen || 'opening');
-    wireGoToDay2();
   }
 
   // ============================================================
@@ -238,7 +226,6 @@
         case 'video-open': {
           const titleEl = document.getElementById('videoModalTitle');
           if (titleEl) titleEl.textContent = btn.dataset.videoTitle || 'הסרטון';
-          renderVideoPlayer(btn.dataset.videoId);
           openModalById('videoModal');
           if (btn.dataset.videoId) {
             state.meta.watched = state.meta.watched || {};
@@ -749,43 +736,9 @@
       if (e.key !== 'Escape') return;
       ['privacyModal', 'disclaimerModal', 'videoModal'].forEach(id => {
         const mm = document.getElementById(id);
-        if (mm && !mm.hidden) closeModalById(id);
+        if (mm && !mm.hidden) { mm.hidden = true; document.body.style.overflow = ''; }
       });
     });
-  }
-
-  function captureVideoPlaceholder() {
-    const videoPhEl = document.querySelector('#videoModal .video-ph');
-    if (videoPhEl) originalVideoPhHTML = videoPhEl.innerHTML;
-  }
-
-  function renderVideoPlayer(videoId) {
-    const videoPhEl = document.querySelector('#videoModal .video-ph');
-    if (!videoPhEl) return;
-
-    const videoGuid = VIDEO_MAP[videoId];
-    videoPhEl.style.padding = '0';
-    videoPhEl.style.position = 'relative';
-    videoPhEl.style.overflow = 'hidden';
-    videoPhEl.innerHTML = videoGuid
-      ? `<iframe src="https://player.mediadelivery.net/embed/550242/${videoGuid}?autoplay=true"
-          title="Bunny video player"
-          loading="lazy"
-          style="border: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
-          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
-          allowfullscreen="true"></iframe>`
-      : `<div style="padding: 24px; text-align: center; color: rgba(255,255,255,0.75);">
-          <p>סרטון ההדרכה הטכני של גיא יעלה בקרוב לקראת פתיחת האתגר !</p>
-        </div>`;
-  }
-
-  function resetVideoPlaceholder() {
-    const videoPhEl = document.querySelector('#videoModal .video-ph');
-    if (!videoPhEl) return;
-    videoPhEl.innerHTML = originalVideoPhHTML;
-    videoPhEl.style.padding = '';
-    videoPhEl.style.position = '';
-    videoPhEl.style.overflow = '';
   }
 
   function openModalById(id) {
@@ -798,7 +751,6 @@
   function closeModalById(id) {
     const m = document.getElementById(id);
     if (!m) return;
-    if (id === 'videoModal') resetVideoPlaceholder();
     m.hidden = true;
     document.body.style.overflow = '';
   }
@@ -834,10 +786,7 @@
 
     // Supabase user id — arrives in links between pages, never typed by the user
     const pid = params.get('pid');
-    if (pid) {
-      state.user.pid = pid;
-      try { localStorage.setItem('challenge_pid', pid); } catch (_) {}
-    }
+    if (pid) state.user.pid = pid;
 
     const popup = params.get('popup');
     if (popup) setTimeout(() => openModalById(popup), 300);
@@ -876,52 +825,6 @@
     }
 
     showScreen('completed');
-    wireGoToDay2();
-  }
-
-  function wireGoToDay2() {
-    const btn = document.getElementById('goToDay2Btn');
-    if (!btn || btn.dataset.bound === '1') return;
-    btn.dataset.bound = '1';
-    btn.addEventListener('click', () => {
-      const pid = localStorage.getItem('challenge_pid');
-      const params = new URLSearchParams(window.location.search);
-      const bypass = params.get('bypass');
-      let url = 'day2.html';
-      if (pid) url += '?pid=' + encodeURIComponent(pid);
-      if (bypass === '1') url += (pid ? '&' : '?') + 'bypass=1';
-      window.location.href = url;
-    });
-  }
-
-  function allowEarlyAccess() {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('bypass') === '1') return true;
-    const cohort = (params.get('cohort') || 'pilot').toLowerCase();
-    const unlockMap = {
-      pilot: PILOT_UNLOCK_ISO,
-    };
-    const unlockIso = unlockMap[cohort] || PILOT_UNLOCK_ISO;
-    if (Date.now() >= new Date(unlockIso).getTime()) return true;
-    showLockedOverlay(unlockIso);
-    return false;
-  }
-
-  function showLockedOverlay(unlockIso) {
-    const unlockAt = new Date(unlockIso);
-    const unlockLabel = unlockAt.toLocaleString('he-IL', {
-      dateStyle: 'full',
-      timeStyle: 'short',
-      timeZone: 'Asia/Jerusalem',
-    });
-    document.body.innerHTML = `
-      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f8f2e8;padding:24px;direction:rtl;font-family:Heebo,sans-serif;">
-        <div style="max-width:520px;width:100%;background:#fff;border-radius:28px;padding:40px 28px;box-shadow:0 16px 60px rgba(0,0,0,.12);text-align:center;">
-          <div style="font-size:56px;line-height:1;margin-bottom:12px;">🔒</div>
-          <h1 style="font-size:28px;line-height:1.2;margin:0 0 12px;color:#231d15;font-weight:800;">יום 1 עדיין נעול</h1>
-          <p style="margin:0;color:#5d5143;font-size:16px;line-height:1.8;">הפתיחה לצוות הפיילוט נקבעה ל-${unlockLabel}. אם קיבלת bypass=1, הדף ייפתח מייד.</p>
-        </div>
-      </div>`;
   }
 
   async function postDay1() {
@@ -929,89 +832,13 @@
       console.log('[FHINK] dev mode — would POST', state);
       return { ok: true, mocked: true };
     }
-
-    const payload = buildSupabasePayload();
-    const res = await fetch(SUPA_URL + '/functions/v1/create-participant-v10', {
+    const res = await fetch(CONFIG.apiEndpoint, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'apikey': SUPA_KEY,
-        'Authorization': 'Bearer ' + SUPA_KEY,
-      },
-      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(state),
     });
-    if (!res.ok) {
-      const errBody = await res.text();
-      console.error('Edge function error:', errBody);
-      throw new Error(`HTTP ${res.status}`);
-    }
-    const data = await res.json();
-    const pid = data?.id || data?.pid;
-    if (pid) {
-      try { localStorage.setItem('challenge_pid', pid); } catch (_) {}
-      state.user.pid = pid;
-    }
-    return data;
-  }
-
-  function buildSupabasePayload() {
-    const lead = JSON.parse(localStorage.getItem(CONFIG.leadStorageKey) || '{}') || {};
-    const ready = JSON.parse(localStorage.getItem('fhink:opening-questionnaire') || '{}') || {};
-
-    return {
-      name: lead.fullName || lead.name || ready.fullName || state.user.fullName || '',
-      age: parseInt(ready.age, 10) || 0,
-      job_type: ready.employment || '',
-      income: parseFloat(state.basics.salary) || 0,
-      income_extra: (state.basics.additionalIncomes || []).reduce((acc, inc) => acc + (parseFloat(inc.amount) || 0), 0),
-      email: lead.email || ready.email || '',
-      phone: lead.phone || ready.phone || '',
-      rent: getExpenseAmount('household', 'rent_mortgage'),
-      arnona: getExpenseAmount('household', 'other'),
-      utilities: getExpenseAmount('household', 'electricity') + getExpenseAmount('household', 'water') + getExpenseAmount('household', 'gas') + getExpenseAmount('household', 'house_committee'),
-      telecom: getExpenseAmount('comms', 'phone') + getExpenseAmount('comms', 'internet') + getExpenseAmount('comms', 'tv') + getExpenseAmount('comms', 'streaming'),
-      car_insurance: getExpenseAmount('insurance', 'car_insurance'),
-      loans: getExpenseAmount('loans', 'bank_loans') + getExpenseAmount('loans', 'credit_cards') + getExpenseAmount('loans', 'private_loans'),
-      education: getExpenseAmount('education', 'kindergarten') + getExpenseAmount('education', 'afternoon') + getExpenseAmount('education', 'tuition'),
-      leasing: getExpenseAmount('transport', 'leasing'),
-      groceries: getExpenseAmount('food', 'supermarket'),
-      dining: getExpenseAmount('food', 'restaurants'),
-      coffee: getExpenseAmount('food', 'coffee') + getExpenseAmount('food', 'delivery'),
-      transport: getExpenseAmount('transport', 'fuel') + getExpenseAmount('transport', 'public') + getExpenseAmount('transport', 'parking'),
-      health: getExpenseAmount('health', 'health_fund') + getExpenseAmount('health', 'medicine') + getExpenseAmount('health', 'dental') + getExpenseAmount('health', 'optics'),
-      shopping: getExpenseAmount('leisure', 'shopping'),
-      leisure: getExpenseAmount('leisure', 'entertainment') + getExpenseAmount('leisure', 'vacations') + getExpenseAmount('leisure', 'hobbies'),
-      kids: getExpenseAmount('classes', 'kids_classes') + getExpenseAmount('classes', 'fitness'),
-      pension_extra: getExpenseAmount('investments', 'extra_pension'),
-      keren_hishtalmut: getExpenseAmount('investments', 'training_fund'),
-      gemel_invest: getExpenseAmount('investments', 'investments'),
-      child_savings: getExpenseAmount('investments', 'kids_savings'),
-      general_savings: getExpenseAmount('investments', 'general_savings'),
-      expenses_detail: JSON.stringify(buildExpensesDetailJSON()),
-      cohort: (new URLSearchParams(window.location.search).get('cohort') || lead.cohort || 'pilot').toLowerCase(),
-      source: new URLSearchParams(window.location.search).get('src') || lead.source || '',
-    };
-  }
-
-  function buildExpensesDetailJSON() {
-    const detail = {};
-    Object.keys(state.expenses || {}).forEach(catId => {
-      Object.keys(state.expenses[catId] || {}).forEach(itemId => {
-        const itemVal = state.expenses[catId][itemId] || {};
-        const amt = parseFloat(itemVal.amount) || 0;
-        if (amt > 0) {
-          detail[itemId] = amt;
-          if (itemVal.otherDetail && itemVal.otherDetail.trim()) {
-            detail[itemId + '_desc'] = itemVal.otherDetail.trim();
-          }
-        }
-      });
-    });
-    return detail;
-  }
-
-  function getExpenseAmount(catId, itemId) {
-    return parseFloat(state.expenses?.[catId]?.[itemId]?.amount) || 0;
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
   }
 
   // ============================================================
