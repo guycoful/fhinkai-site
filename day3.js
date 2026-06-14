@@ -1085,9 +1085,9 @@
   function bindCalendarLinks() {
     // Placeholder values — wire real meeting details from backend later.
     const webinar = {
-      title: 'וובינר חיתום אתגר FHINK AI',
-      start: '20261217T170000Z',  // ISO UTC — placeholder
-      end:   '20261217T183000Z',
+      title: 'וובינר סיכום אתגר FHINK AI',
+      start: '20260624T170000Z',  // ISO UTC — placeholder
+      end:   '20260624T183000Z',
       details: 'וובינר סיכום של אתגר 4 הימים, בו נחבר את כל מה שלמדת ונפתח את הצעד הבא.',
       location: 'אונליין',
     };
