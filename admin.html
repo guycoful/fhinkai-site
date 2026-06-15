@@ -48,6 +48,11 @@
   .badge { display: inline-block; padding: 2px 10px; border-radius: 50px; font-size: 11px; font-weight: 600; }
   .badge-sent { background: var(--green-light); color: var(--green); }
   .badge-pending { background: var(--gold-bg); color: var(--gold-dark); }
+  .badge-replied { background: #E3F2FD; color: #1E88E5; }
+  .badge-read { background: #E8F5E9; color: #2E7D52; }
+  .badge-delivered { background: #E0F2F1; color: #00796B; }
+  .badge-blocked { background: #FFEBEE; color: #C0392B; }
+  .badge-sending { background: #FFFDE7; color: #F57F17; }
   .btn-sm { padding: 4px 12px; font-size: 11px; border-radius: 50px; border: 1px solid var(--cream-dark); background: var(--white); cursor: pointer; font-family: 'Heebo'; font-weight: 600; }
   .btn-sm:hover { background: var(--cream); }
 
@@ -146,6 +151,7 @@
           <th>הוצאות</th>
           <th>חסכונות</th>
           <th>יתרה</th>
+          <th>וואטסאפ</th>
           <th>ניתוח</th>
           <th>תאריך</th>
           <th>מקור</th>
@@ -178,7 +184,7 @@
     <div class="table-wrap">
       <div class="loading" id="leadsLoading">טוען נרשמים...</div>
       <table id="leadsTable" style="display:none">
-        <thead><tr><th>שם</th><th>טלפון</th><th>מייל</th><th>מקור</th><th>קוהורט</th><th>תאריך</th><th>סטטוס</th></tr></thead>
+        <thead><tr><th>שם</th><th>טלפון</th><th>מייל</th><th>מקור</th><th>קוהורט</th><th>תאריך</th><th>וואטסאפ</th><th>סטטוס</th></tr></thead>
         <tbody id="leadsBody"></tbody>
       </table>
     </div>
@@ -217,6 +223,21 @@ function doLogin() {
 
 function fmt(n) { return '₪' + Math.round(n || 0).toLocaleString('he-IL'); }
 function fmtDate(d) { if (!d) return '-'; const dt = new Date(d); return dt.toLocaleDateString('he-IL'); }
+
+function getWhatsappBadge(status, body, date) {
+  let cls = 'badge-pending';
+  let txt = 'ממתין';
+  
+  if (status === 'replied') { cls = 'badge-replied'; txt = 'הגיב'; }
+  else if (status === 'read') { cls = 'badge-read'; txt = 'קרא'; }
+  else if (status === 'delivered') { cls = 'badge-delivered'; txt = 'התקבל'; }
+  else if (status === 'sent') { cls = 'badge-sent'; txt = 'נשלח'; }
+  else if (status === 'sending') { cls = 'badge-sending'; txt = 'בדרך'; }
+  else if (status === 'blocked') { cls = 'badge-blocked'; txt = 'חסם/שגיאה'; }
+
+  const titleAttr = body ? `title="${body.replace(/"/g, '&quot;')} (${fmtDate(date)})"` : '';
+  return `<span class="badge ${cls}" ${titleAttr} style="cursor:pointer">${txt}</span>`;
+}
 
 // Unlock buttons
 const currentUnlock = parseInt(localStorage.getItem('challenge_unlock') || '1');
@@ -294,6 +315,7 @@ function renderParticipants() {
       : '<span class="badge badge-pending">ממתין</span>';
 
     const tr = document.createElement('tr');
+    const waBadge = getWhatsappBadge(r.whatsapp_status, r.whatsapp_last_body, r.whatsapp_last_date);
     tr.innerHTML = `
       <td><strong>${r.name || '-'}</strong></td>
       <td>${r.age || '-'}</td>
@@ -301,6 +323,7 @@ function renderParticipants() {
       <td>${fmt(totalExp)}</td>
       <td>${fmt(r.total_savings)}</td>
       <td class="${balClass}">${fmt(r.balance)}</td>
+      <td>${waBadge}</td>
       <td>${sentBadge}</td>
       <td>${fmtDate(r.created_at)}</td>
       <td>${r.lead_source || '-'}</td>
@@ -387,6 +410,7 @@ function renderLeads() {
     const badge = r.is_test
       ? '<span class="badge badge-test">טסט</span>'
       : '<span class="badge badge-sent">נרשם</span>';
+    const waBadge = getWhatsappBadge(r.whatsapp_status, r.whatsapp_last_body, r.whatsapp_last_date);
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td><strong>${r.name || '-'}</strong></td>
@@ -395,6 +419,7 @@ function renderLeads() {
       <td>${r.source || '-'}</td>
       <td>${r.cohort || '-'}</td>
       <td>${fmtDate(r.created_at)}</td>
+      <td>${waBadge}</td>
       <td>${badge}</td>`;
     tb.appendChild(tr);
   });
