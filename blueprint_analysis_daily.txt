@@ -1,0 +1,18 @@
+Make Scenario Modules (daily_recipients):
+Module ID: 1, Name: util:BasicScheduler
+Module ID: 2, Name: http:ActionSendData
+  HTTP Request URL: https://vuvavjmbvdqnwtleudqh.supabase.co/functions/v1/daily-recipients
+  Method: get
+  Headers: [{'name': 'x-recipients-token', 'value': 'drcp_b3b0509bfaddb39a3186891b4a57665d40e4847a238f69b6'}]
+Module ID: 3, Name: builtin:BasicAggregator
+Module ID: 4, Name: builtin:BasicRouter
+  Route #1:
+    Module ID: 5, Name: builtin:BasicIterator
+    Module ID: 6, Name: green-api:SendMessage
+      Green API SendMessage parameters: {'ChatId': '{{replace(5.phone; "/^0/"; "972")}}@c.us', 'message': '{{5.message}}', 'linkPreview': True}
+    Module ID: 7, Name: http:ActionSendData
+      HTTP Request URL: https://vuvavjmbvdqnwtleudqh.supabase.co/functions/v1/mark-reminder-sent
+      Method: post
+      Headers: [{'name': 'Content-Type', 'value': 'application/json'}, {'name': 'x-recipients-token', 'value': 'drcp_b3b0509bfaddb39a3186891b4a57665d40e4847a238f69b6'}]
+      Body Data: {"pid":"{{5.pid}}","day_number":{{5.day_number}}}
+    Module ID: 8, Name: util:Sleep

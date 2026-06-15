@@ -1,0 +1,26 @@
+Make Scenario Modules (Recursive with Routes):
+Module ID: 1, Name: gateway:CustomWebHook
+Module ID: 4, Name: responder-live:subscribeToList
+Module ID: 5, Name: builtin:BasicRouter
+  Route #1:
+    Module ID: 2, Name: http:ActionSendData
+      HTTP Request URL: https://api.green-api.com/waInstance7107621152/sendMessage/d668db985bdf46aaa94042bddac0a9846f79f91be75346c589
+      Method: post
+      Headers: []
+      Body Data: {"chatId": "{{replace(1.record.phone; \"/^0/\"; \"972\")}}@c.us", "message": "היי {{1.record.name}} 👋\n\nאיזה כיף שהצטרפת ל- *FhinkAI*! 🚀\n\nבוא נדבר תאכלס - מה באמת חוסם אותך מלהתקדם כלכלית?\n❓ פחד להפסיד כסף?\n❓ המחשבה שאין מספיק הון כדי להשקיע?\n❓ או שפשוט אין זמן לעשות סדר בבלאגן?\n\nבדיוק בשביל
+    Module ID: 3, Name: http:ActionSendData
+      HTTP Request URL: https://vuvavjmbvdqnwtleudqh.supabase.co/functions/v1/mark-lead-sent
+      Method: post
+      Headers: [{'name': 'apikey', 'value': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI'}, {'name': 'Authorization', 'value': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI'}]
+      Body Data: {"id": "{{1.record.id}}"}
+  Route #2:
+    Module ID: 6, Name: http:ActionSendData
+      HTTP Request URL: https://api.green-api.com/waInstance7107621152/sendMessage/d668db985bdf46aaa94042bddac0a9846f79f91be75346c589
+      Method: post
+      Headers: []
+      Body Data: {"chatId": "{{replace(1.record.phone; \"/^0/\"; \"972\")}}@c.us", "message": "היי {{1.record.name}} 👋\n\nאיזה כיף שהצטרפת ל- *FhinkAI*! 🚀\n\nבוא נדבר תאכלס - מה באמת חוסם אותך מלהתקדם כלכלית?\n❓ פחד להפסיד כסף?\n❓ המחשבה שאין מספיק הון כדי להשקיע?\n❓ או שפשוט אין זמן לעשות סדר בבלאגן?\n\nבדיוק בשביל
+    Module ID: 7, Name: http:ActionSendData
+      HTTP Request URL: https://vuvavjmbvdqnwtleudqh.supabase.co/functions/v1/mark-lead-sent
+      Method: post
+      Headers: [{'name': 'apikey', 'value': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI'}, {'name': 'Authorization', 'value': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI'}]
+      Body Data: {"id": "{{1.record.id}}"}
