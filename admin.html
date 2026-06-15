@@ -152,6 +152,7 @@
           <th>חסכונות</th>
           <th>יתרה</th>
           <th>וואטסאפ</th>
+          <th>הודעה אחרונה</th>
           <th>ניתוח</th>
           <th>תאריך</th>
           <th>מקור</th>
@@ -184,7 +185,7 @@
     <div class="table-wrap">
       <div class="loading" id="leadsLoading">טוען נרשמים...</div>
       <table id="leadsTable" style="display:none">
-        <thead><tr><th>שם</th><th>טלפון</th><th>מייל</th><th>מקור</th><th>קוהורט</th><th>תאריך</th><th>וואטסאפ</th><th>סטטוס</th></tr></thead>
+        <thead><tr><th>שם</th><th>טלפון</th><th>מייל</th><th>מקור</th><th>קוהורט</th><th>תאריך</th><th>וואטסאפ</th><th>הודעה אחרונה</th><th>סטטוס</th></tr></thead>
         <tbody id="leadsBody"></tbody>
       </table>
     </div>
@@ -316,6 +317,12 @@ function renderParticipants() {
 
     const tr = document.createElement('tr');
     const waBadge = getWhatsappBadge(r.whatsapp_status, r.whatsapp_last_body, r.whatsapp_last_date);
+    const cleanBody = r.whatsapp_last_body ? r.whatsapp_last_body.replace(/\n/g, ' ') : '';
+    const bodyDisplay = cleanBody ? (cleanBody.length > 25 ? cleanBody.substring(0, 25) + '...' : cleanBody) : '-';
+    const bodyTitle = r.whatsapp_last_body ? r.whatsapp_last_body.replace(/"/g, '&quot;') : '';
+    const waBodyHtml = r.whatsapp_last_body 
+      ? `<span title="${bodyTitle}" style="cursor:pointer; text-decoration: underline dotted var(--dark-mid);" onclick="alert(this.title)">${bodyDisplay}</span>`
+      : '-';
     tr.innerHTML = `
       <td><strong>${r.name || '-'}</strong></td>
       <td>${r.age || '-'}</td>
@@ -324,6 +331,7 @@ function renderParticipants() {
       <td>${fmt(r.total_savings)}</td>
       <td class="${balClass}">${fmt(r.balance)}</td>
       <td>${waBadge}</td>
+      <td>${waBodyHtml}</td>
       <td>${sentBadge}</td>
       <td>${fmtDate(r.created_at)}</td>
       <td>${r.lead_source || '-'}</td>
@@ -411,6 +419,12 @@ function renderLeads() {
       ? '<span class="badge badge-test">טסט</span>'
       : '<span class="badge badge-sent">נרשם</span>';
     const waBadge = getWhatsappBadge(r.whatsapp_status, r.whatsapp_last_body, r.whatsapp_last_date);
+    const cleanBody = r.whatsapp_last_body ? r.whatsapp_last_body.replace(/\n/g, ' ') : '';
+    const bodyDisplay = cleanBody ? (cleanBody.length > 25 ? cleanBody.substring(0, 25) + '...' : cleanBody) : '-';
+    const bodyTitle = r.whatsapp_last_body ? r.whatsapp_last_body.replace(/"/g, '&quot;') : '';
+    const waBodyHtml = r.whatsapp_last_body 
+      ? `<span title="${bodyTitle}" style="cursor:pointer; text-decoration: underline dotted var(--dark-mid);" onclick="alert(this.title)">${bodyDisplay}</span>`
+      : '-';
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td><strong>${r.name || '-'}</strong></td>
@@ -420,6 +434,7 @@ function renderLeads() {
       <td>${r.cohort || '-'}</td>
       <td>${fmtDate(r.created_at)}</td>
       <td>${waBadge}</td>
+      <td>${waBodyHtml}</td>
       <td>${badge}</td>`;
     tb.appendChild(tr);
   });
