@@ -10,7 +10,7 @@ const CORS = {
 // Day-1 unlock time (stored as challenge_start_at)
 // pilot postponed from 2026-06-07 → 2026-06-14 (postponed by Omri on 6.6: warmup phase extended)
 const COHORT_START: Record<string, string> = {
-  'pilot': '2026-06-14T06:00:00+03:00',
+  'pilot': '2026-06-21T06:00:00+03:00',
   'rehearsal': '2026-05-20T06:00:00+03:00',
   'lms': '2026-05-20T11:30:00+03:00',
 };

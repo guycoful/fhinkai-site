@@ -25,7 +25,7 @@
 
   const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
   const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI';
-  const PILOT_UNLOCK_ISO = '2026-06-14T06:00:00+03:00';
+  const PILOT_UNLOCK_ISO = '2026-06-21T06:00:00+03:00';
   const VIDEO_MAP = {
     omri: '78550d3c-134c-4e1c-b07e-6edc9527fee5',
     guy: null,

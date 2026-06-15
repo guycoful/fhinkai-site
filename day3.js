@@ -26,7 +26,7 @@
   const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
   const CHAT_ENDPOINT = `${SUPA_URL}/functions/v1/chat-agent-v10`;
   const MAX_TURNS = 15;
-  const PILOT_UNLOCK_ISO = '2026-06-14T06:00:00+03:00';
+  const PILOT_UNLOCK_ISO = '2026-06-21T06:00:00+03:00';
   const VIDEO_MAP = {
     omri: 'b7c161d5-d36b-49d0-a5e1-e84663f74439',
     guy: null,
