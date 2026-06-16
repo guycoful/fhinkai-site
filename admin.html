@@ -187,7 +187,7 @@
     <div class="table-wrap">
       <div class="loading" id="leadsLoading">טוען נרשמים...</div>
       <table id="leadsTable" style="display:none">
-        <thead><tr><th>שם</th><th>טלפון</th><th>מייל</th><th>מקור</th><th>קוהורט</th><th>תאריך</th><th>וואטסאפ</th><th>הודעה אחרונה</th><th>סטטוס</th></tr></thead>
+        <thead><tr><th>שם</th><th>טלפון</th><th>מייל</th><th>מקור</th><th>קוהורט</th><th>תאריך</th><th>וואטסאפ</th><th>הודעה אחרונה</th><th>PID / משתתף</th><th>סטטוס</th></tr></thead>
         <tbody id="leadsBody"></tbody>
       </table>
     </div>
@@ -435,6 +435,9 @@ function renderLeads() {
     const waBodyHtml = r.whatsapp_last_body 
       ? `<span title="${bodyTitle}" style="cursor:pointer; text-decoration: underline dotted var(--dark-mid);" onclick="alert(this.title)">${bodyDisplay}</span>`
       : '-';
+    const participantHtml = r.participant_pid
+      ? `<span class="pid-code" title="${r.participant_pid}">${r.participant_pid}</span><br><button class="btn-sm" onclick="copyPid('${r.participant_pid}')">העתק PID</button>`
+      : '<span class="badge badge-pending">אין עדיין</span>';
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td><strong>${r.name || '-'}</strong></td>
@@ -445,6 +448,7 @@ function renderLeads() {
       <td>${fmtDate(r.created_at)}</td>
       <td>${waBadge}</td>
       <td>${waBodyHtml}</td>
+      <td>${participantHtml}</td>
       <td>${badge}</td>`;
     tb.appendChild(tr);
   });
