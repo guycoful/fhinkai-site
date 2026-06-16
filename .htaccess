@@ -2,6 +2,9 @@
 RewriteEngine On
 RewriteCond %{HTTPS} !=on
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE]
+
+# Redirect fallback-link to Google Drive folder
+RewriteRule ^fallback-link/?$ "https://drive.google.com/drive/folders/1Rp7NRyctesBU9gLMqw8F4VEeQvmsfh8p?usp=drive_link" [L,R=302,NE]
 RewriteRule ^(landing|READY)/?$ - [E=FHINK_FLOW_HTML:1]
 RewriteRule ^(landing|READY)/index\.html$ - [E=FHINK_FLOW_HTML:1]
 RewriteRule ^(landing|READY)/script\.js$ - [E=FHINK_FLOW_JS:1]
