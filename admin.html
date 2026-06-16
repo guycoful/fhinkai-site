@@ -38,7 +38,7 @@
 
   /* Table */
   .table-wrap { background: var(--white); border: 1px solid var(--cream-dark); border-radius: 12px; overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 800px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 920px; }
   thead { background: var(--cream); }
   th { padding: 12px 10px; font-weight: 700; font-size: 11px; color: var(--dark-mid); text-transform: uppercase; letter-spacing: .5px; text-align: right; white-space: nowrap; }
   td { padding: 10px; border-top: 1px solid var(--cream); vertical-align: middle; }
@@ -55,6 +55,7 @@
   .badge-sending { background: #FFFDE7; color: #F57F17; }
   .btn-sm { padding: 4px 12px; font-size: 11px; border-radius: 50px; border: 1px solid var(--cream-dark); background: var(--white); cursor: pointer; font-family: 'Heebo'; font-weight: 600; }
   .btn-sm:hover { background: var(--cream); }
+  .pid-code { direction: ltr; unicode-bidi: bidi-override; font-family: monospace; font-size: 11px; color: var(--dark-mid); white-space: nowrap; }
 
   .empty-state { text-align: center; padding: 60px 20px; color: var(--dark-mid); }
   .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
@@ -156,6 +157,7 @@
           <th>ניתוח</th>
           <th>תאריך</th>
           <th>מקור</th>
+          <th>PID</th>
           <th>פעולות</th>
         </tr>
       </thead>
@@ -335,9 +337,11 @@ function renderParticipants() {
       <td>${sentBadge}</td>
       <td>${fmtDate(r.created_at)}</td>
       <td>${r.lead_source || '-'}</td>
+      <td><span class="pid-code" title="${r.id || ''}">${r.id || '-'}</span></td>
       <td>
         <button class="btn-sm" onclick="window.open('day2.html?pid=${r.id}')">צפה</button>
         <button class="btn-sm" onclick="copyLink('${r.id}')">העתק לינק</button>
+        <button class="btn-sm" onclick="copyPid('${r.id}')">העתק PID</button>
       </td>`;
     tbody.appendChild(tr);
   });
@@ -349,6 +353,12 @@ function copyLink(pid) {
   const url = window.location.origin + '/day2.html?pid=' + pid;
   navigator.clipboard.writeText(url).then(() => alert('הלינק הועתק!')).catch(() => {
     prompt('העתק:', url);
+  });
+}
+
+function copyPid(pid) {
+  navigator.clipboard.writeText(pid).then(() => alert('ה-PID הועתק!')).catch(() => {
+    prompt('העתק PID:', pid);
   });
 }
 
