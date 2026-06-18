@@ -897,7 +897,8 @@
   function allowEarlyAccess() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('bypass') === '1') return true;
-    const cohort = (params.get('cohort') || 'pilot').toLowerCase();
+    const cohort = (params.get('cohort') || localStorage.getItem('challenge_cohort') || 'pilot').toLowerCase();
+    if (cohort === 'lms') { try { localStorage.setItem('challenge_cohort', 'lms'); } catch (e) {} return true; } // LMS course: all days open immediately
     const unlockMap = {
       pilot: PILOT_UNLOCK_ISO,
     };

@@ -680,11 +680,14 @@
     // ─── UNLOCK LEVEL ───
     const isAdmin = getParam('admin') === 'true';
     const isBypass = getParam('bypass') === '1';
+    const cohort = (getParam('cohort') || localStorage.getItem('challenge_cohort') || 'pilot').toLowerCase();
+    const isLms = cohort === 'lms';
+    if (isLms) { try { localStorage.setItem('challenge_cohort', 'lms'); } catch (e) {} } // LMS course: all days open immediately
     const urlUnlock = parseInt(getParam('unlock') || '0', 10);
     const storedUnlock = parseInt(localStorage.getItem('challenge_unlock') || '0', 10);
 
     let unlockLevel = Math.max(urlUnlock, storedUnlock, 1); // default: day 1 always open
-    if (isBypass) {
+    if (isBypass || isLms) {
       unlockLevel = 4;
     }
 
