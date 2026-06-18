@@ -804,6 +804,20 @@
     return res.json();
   }
 
+  function appendErrorBubble(text, onRetry) {
+    const messagesEl = document.getElementById('chatMessages');
+    if (!messagesEl) return;
+    const b = document.createElement('div');
+    b.className = 'bubble bubble--agent';
+    b.textContent = (text || 'בעיית רשת') + ' (לחצו כאן לניסיון חוזר)';
+    if (typeof onRetry === 'function') {
+      b.style.cursor = 'pointer';
+      b.addEventListener('click', () => { b.remove(); onRetry(); }, { once: true });
+    }
+    messagesEl.appendChild(b);
+    if (typeof scrollChat === 'function') scrollChat();
+  }
+
   function addBubble(role, text, instant) {
     const messagesEl = document.getElementById('chatMessages');
     if (!messagesEl) return;

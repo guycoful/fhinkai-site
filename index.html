@@ -757,6 +757,7 @@
         const urlObj = new URL(base, window.location.origin);
         if (pid) urlObj.searchParams.set('pid', pid);
         if (isBypass) urlObj.searchParams.set('bypass', '1');
+        if (isLms) urlObj.searchParams.set('cohort', 'lms');
         card.setAttribute('href', urlObj.pathname + urlObj.search);
       }
     }

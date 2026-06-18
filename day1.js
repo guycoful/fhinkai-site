@@ -875,6 +875,13 @@
       console.warn('[FHINK] Day1 sync failed:', err);
     }
 
+    const pid = state.user.pid || localStorage.getItem('challenge_pid');
+    if (!pid && window.location.protocol !== 'file:') {
+      // Sync failed and no pid — do NOT advance, the next days need it. Let the user retry.
+      alert('הייתה תקלה בשמירת הנתונים. בדקו את החיבור לאינטרנט ולחצו שוב על "סיום".');
+      return;
+    }
+
     showScreen('completed');
     wireGoToDay2();
   }
@@ -887,9 +894,12 @@
       const pid = localStorage.getItem('challenge_pid');
       const params = new URLSearchParams(window.location.search);
       const bypass = params.get('bypass');
-      let url = 'day2.html';
-      if (pid) url += '?pid=' + encodeURIComponent(pid);
-      if (bypass === '1') url += (pid ? '&' : '?') + 'bypass=1';
+      const cohort = (params.get('cohort') || localStorage.getItem('challenge_cohort') || '').toLowerCase();
+      const qs = [];
+      if (pid) qs.push('pid=' + encodeURIComponent(pid));
+      if (bypass === '1') qs.push('bypass=1');
+      if (cohort === 'lms') qs.push('cohort=lms');
+      const url = 'day2.html' + (qs.length ? '?' + qs.join('&') : '');
       window.location.href = url;
     });
   }
