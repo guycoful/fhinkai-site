@@ -869,14 +869,18 @@
     state.meta.completedAt = new Date().toISOString();
     saveState();
 
+    let synced = false;
     try {
       await postDay1();
+      synced = true;
     } catch (err) {
       console.warn('[FHINK] Day1 sync failed:', err);
     }
 
     const pid = state.user.pid || localStorage.getItem('challenge_pid');
-    if (!pid && window.location.protocol !== 'file:') {
+    // Only block when the sync actually FAILED and we have no pid. A 200 with no
+    // pid (data saved) must not trap the user — advance instead of deadlocking.
+    if (!synced && !pid && window.location.protocol !== 'file:') {
       // Sync failed and no pid — do NOT advance, the next days need it. Let the user retry.
       alert('הייתה תקלה בשמירת הנתונים. בדקו את החיבור לאינטרנט ולחצו שוב על "סיום".');
       return;

@@ -773,9 +773,10 @@
       turnsCount = state.chat.round;
       updateRound();
       saveState();
-      appendErrorBubble(err.message || 'בעיית רשת', () => {
-        handleAnswer(message, message);
-      });
+      // No auto-retry callback: the catch above already popped the message and
+      // decremented the round, so the input bar is ready. Re-sending via
+      // handleAnswer would double-count the turn and double-POST. User retypes.
+      appendErrorBubble(err.message || 'אירעה תקלה, נסו לשלוח את ההודעה שוב');
     }
   }
 
