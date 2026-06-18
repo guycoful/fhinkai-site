@@ -57,6 +57,10 @@
     enableActiveConsent();
     bindModal();
     refreshAllTotals();
+    // אם משתמש חוזר נמצא באמצע הזרימה בלי שאישר הסכמה (state ישן), להחזיר למסך הפתיחה כדי לעבור דרך תיבת ההסכמה
+    if (state.currentScreen && state.currentScreen !== 'opening' && !TERMINAL_SCREENS.has(state.currentScreen) && !state.meta.consentGiven) {
+      state.currentScreen = 'opening';
+    }
     showScreen(state.currentScreen || 'opening');
     wireGoToDay2();
   }
@@ -81,6 +85,7 @@
         completedAt: null,
         watched: {},            // videoId -> true
         consentGiven: false,
+        consentMarketing: false,
       },
     };
   }
@@ -209,6 +214,11 @@
 
       switch (action) {
         case 'next':
+          if (currentScreen === 'opening' && !state.meta.consentGiven) {
+            const ecOpen = document.getElementById('errConsent');
+            if (ecOpen) ecOpen.hidden = false;
+            return;
+          }
           if (currentScreen === 'basics' && !validateBasics()) return;
           if (currentScreen === 'expenses') {
             if (!validateExpensesOther()) return;
@@ -1005,6 +1015,9 @@
       expenses_detail: JSON.stringify(buildExpensesDetailJSON()),
       cohort: (new URLSearchParams(window.location.search).get('cohort') || lead.cohort || 'pilot').toLowerCase(),
       source: new URLSearchParams(window.location.search).get('src') || lead.source || '',
+      privacy_consent: !!state.meta.consentGiven,
+      marketing_consent: !!state.meta.consentMarketing,
+      consent_text_version: '2026-06-18',
     };
   }
 
@@ -1034,33 +1047,25 @@
   // the lawyer requires an explicit checkbox before starting
   // ============================================================
   function enableActiveConsent() {
-    if (!ACTIVE_CONSENT) return;
-    const line = document.querySelector('.consent');
-    if (!line) return;
+    const privacy = document.getElementById('consentPrivacy');
+    if (!privacy) return;
+    const marketing = document.getElementById('consentMarketing');
+    const errConsent = document.getElementById('errConsent');
     const cta = document.querySelector('.screen[data-screen="opening"] .actions .btn--primary');
-    line.classList.add('consent--active');
 
-    const label = document.createElement('label');
-    label.className = 'consent__check';
-    const box = document.createElement('input');
-    box.type = 'checkbox';
-    box.id = 'consentBox';
-    box.checked = !!state.meta.consentGiven;
-    label.appendChild(box);
-    line.prepend(label);
-
-    const lead = line.querySelector('[data-male]');
-    if (lead) {
-      lead.textContent = state.user.gender === 'female' ? 'אני מאשרת את' : 'אני מאשר את';
-    }
+    privacy.checked = !!state.meta.consentGiven;
+    if (marketing) marketing.checked = !!state.meta.consentMarketing;
 
     const sync = () => {
-      state.meta.consentGiven = box.checked;
-      if (cta) cta.disabled = !box.checked;
-      document.querySelectorAll('button.roadmap__item.is-clickable').forEach(b => { b.disabled = !box.checked; });
+      state.meta.consentGiven = privacy.checked;
+      if (marketing) state.meta.consentMarketing = marketing.checked;
+      if (cta) cta.disabled = !privacy.checked;
+      document.querySelectorAll('button.roadmap__item.is-clickable').forEach(b => { b.disabled = !privacy.checked; });
+      if (privacy.checked && errConsent) errConsent.hidden = true;
       autosave();
     };
-    box.addEventListener('change', sync);
+    privacy.addEventListener('change', sync);
+    if (marketing) marketing.addEventListener('change', sync);
     sync();
   }
 

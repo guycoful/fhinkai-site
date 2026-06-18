@@ -150,7 +150,8 @@ Deno.serve(async (req: Request) => {
       'groceries','dining','coffee','transport','health','shopping','leisure','kids',
       'pension_extra','keren_hishtalmut','gemel_invest','child_savings','general_savings',
       'annual_insurance','emergency_fund','annual_subs',
-      'expenses_detail','agent_type','source'
+      'expenses_detail','agent_type','source',
+      'privacy_consent','marketing_consent','consent_text_version'
     ];
     const row: Record<string, unknown> = {
       cohort,
@@ -158,6 +159,19 @@ Deno.serve(async (req: Request) => {
     };
     for (const k of allowed) {
       if (body[k] !== undefined) row[k] = body[k];
+    }
+    if (body.privacy_consent === true) row.consent_at = new Date().toISOString();
+
+    // Normalize job_type to satisfy DB check constraint (ported from deployed v23)
+    const jt = (row.job_type as string || '').trim();
+    if (jt === 'שכיר/ה' || jt === 'שכיר' || jt === 'שכירה' || jt === 'employee') {
+      row.job_type = 'employee';
+    } else if (jt === 'עצמאי/ת' || jt === 'עצמאי' || jt === 'self_employed') {
+      row.job_type = 'self_employed';
+    } else if (jt === 'שכיר/ה ועצמאי/ת' || jt === 'hybrid') {
+      row.job_type = 'hybrid';
+    } else {
+      row.job_type = null;
     }
 
     const { data, error } = await supabase

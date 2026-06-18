@@ -109,7 +109,7 @@
         </div>
 
         <p class="helper helper--center">
-          3 דקות · ללא הרשמה · המידע נשמר אצלך בלבד
+          3 דקות · המידע נשמר ומעובד בהתאם ל<a href="/privacy/" target="_blank" rel="noopener">מדיניות הפרטיות</a>
         </p>
       </div>
     </section>
@@ -585,6 +585,18 @@
 
         </form>
 
+        <div class="consent-group" style="margin:4px 0 18px;display:flex;flex-direction:column;gap:12px;text-align:right;">
+          <label style="display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.6;cursor:pointer;color:#2c3e3c;">
+            <input type="checkbox" id="consentPrivacy" style="margin-top:4px;width:18px;height:18px;flex-shrink:0;accent-color:#26A59A;" />
+            <span>קראתי את <a href="/privacy/" target="_blank" rel="noopener" style="color:#1d837b;font-weight:600;">מדיניות הפרטיות</a> ואני מסכים/ה לאיסוף, שמירה ועיבוד המידע האישי שמסרתי לצורך מתן השירות, התאמת התכנים, יצירת קשר ותפעול המערכת, כמפורט במדיניות הפרטיות.</span>
+          </label>
+          <div class="field-error" id="errConsent" hidden style="color:#c0392b;font-size:13px;">כדי להמשיך יש לאשר את מדיניות הפרטיות</div>
+          <label style="display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.6;cursor:pointer;color:#2c3e3c;">
+            <input type="checkbox" id="consentMarketing" style="margin-top:4px;width:18px;height:18px;flex-shrink:0;accent-color:#26A59A;" />
+            <span>אני מאשר/ת ל-FhinkAI לשלוח לי עדכונים, תכנים מקצועיים, הצעות, הטבות ומידע שיווקי בדוא"ל, SMS, WhatsApp או באמצעים דיגיטליים אחרים. ניתן להסיר את ההסכמה בכל עת.</span>
+          </label>
+        </div>
+
         <div class="actions">
           <button type="button" class="btn btn--secondary" data-action="back">חזרה</button>
           <button type="button" class="btn btn--primary" data-action="finish">
@@ -697,6 +709,8 @@
   <footer class="site-footer">
     <div class="footer-inner">
       <span>© 2026 FHINK AI · כל הזכויות שמורות</span>
+      <span class="footer-dot" aria-hidden="true">·</span>
+      <a href="/privacy/" target="_blank" rel="noopener" style="color:inherit;">מדיניות פרטיות</a>
       <span class="footer-dot" aria-hidden="true">·</span>
       <span class="footer-tag">Financial Thinking <em>Powered by AI</em></span>
     </div>

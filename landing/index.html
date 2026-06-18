@@ -1437,6 +1437,18 @@ input[type="radio"]:focus-visible + .answer-card {
             </div>
           </div>
 
+          <div class="consent-group" style="margin:8px 0 18px;display:flex;flex-direction:column;gap:12px;text-align:right;">
+            <label style="display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.6;cursor:pointer;color:#2c3e3c;">
+              <input type="checkbox" id="consentPrivacy" style="margin-top:4px;width:18px;height:18px;flex-shrink:0;accent-color:#26A59A;" />
+              <span>קראתי את <a href="/privacy/" target="_blank" rel="noopener" style="color:#1d837b;font-weight:600;">מדיניות הפרטיות</a> ואני מסכים/ה לאיסוף, שמירה ועיבוד המידע האישי שמסרתי לצורך מתן השירות, התאמת התכנים, יצירת קשר ותפעול המערכת, כמפורט במדיניות הפרטיות.</span>
+            </label>
+            <div class="field-error" id="errConsent" hidden style="color:#c0392b;font-size:13px;">כדי להמשיך יש לאשר את מדיניות הפרטיות</div>
+            <label style="display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.6;cursor:pointer;color:#2c3e3c;">
+              <input type="checkbox" id="consentMarketing" style="margin-top:4px;width:18px;height:18px;flex-shrink:0;accent-color:#26A59A;" />
+              <span>אני מאשר/ת ל-FhinkAI לשלוח לי עדכונים, תכנים מקצועיים, הצעות, הטבות ומידע שיווקי בדוא"ל, SMS, WhatsApp או באמצעים דיגיטליים אחרים. ניתן להסיר את ההסכמה בכל עת.</span>
+            </label>
+          </div>
+
           <button type="submit" class="btn btn--primary btn--cta btn--lead">
             <span>אני רוצה להתנסות במערכת</span>
             <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1446,8 +1458,8 @@ input[type="radio"]:focus-visible + .answer-card {
           </button>
 
           <div class="form-fineprint">
-            לחיצה על הכפתור מהווה הסכמה לקבלת פרטי ההתנסות במייל ובוואטסאפ.
-            לא נשלח לך ספאם. אפשר להסיר בכל עת.
+            הפרטים שלך מעובדים בהתאם ל<a href="/privacy/" target="_blank" rel="noopener">מדיניות הפרטיות</a>.
+            דיוור שיווקי יישלח רק אם אישרת זאת, וניתן להסיר את ההסכמה בכל עת.
           </div>
 
         </form>

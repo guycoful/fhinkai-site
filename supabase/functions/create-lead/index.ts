@@ -46,6 +46,7 @@ Deno.serve(async (req: Request) => {
     const cohortInput = String(body.cohort || 'pilot').toLowerCase();
     const cohort = VALID_COHORTS.includes(cohortInput) ? cohortInput : 'pilot';
 
+    const privacyConsent = body.privacy_consent === true;
     const row = {
       name: String(body.name).trim(),
       phone,
@@ -53,6 +54,10 @@ Deno.serve(async (req: Request) => {
       gender: body.gender ? String(body.gender).trim() : null,
       source: body.source ? String(body.source).trim() : null,
       cohort,
+      privacy_consent: privacyConsent,
+      marketing_consent: body.marketing_consent === true,
+      consent_text_version: body.consent_text_version ? String(body.consent_text_version).trim() : null,
+      consent_at: privacyConsent ? new Date().toISOString() : null,
     };
 
     const supabase = createClient(

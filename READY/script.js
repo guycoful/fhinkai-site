@@ -241,6 +241,15 @@
   }
 
   function finish() {
+    const consentPrivacy = document.getElementById('consentPrivacy');
+    const errConsent = document.getElementById('errConsent');
+    if (consentPrivacy && !consentPrivacy.checked) {
+      if (errConsent) errConsent.hidden = false;
+      consentPrivacy.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (errConsent) errConsent.hidden = true;
+
     const formStep = document.querySelector('.form[data-step="4"]');
     if (formStep) {
       const valid = validateStep(formStep, 4);
@@ -250,10 +259,17 @@
     persistAnswers();
     const email = getLeadEmail();
     if (email && window.location.protocol !== 'file:') {
+      const consentMarketing = document.getElementById('consentMarketing');
       fetch('https://vuvavjmbvdqnwtleudqh.supabase.co/functions/v1/save-pretest-answers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, answers }),
+        body: JSON.stringify({
+          email,
+          answers,
+          privacy_consent: true,
+          marketing_consent: !!(consentMarketing && consentMarketing.checked),
+          consent_text_version: '2026-06-18',
+        }),
       }).catch((e) => console.warn('[FHINK] pretest save failed:', e));
     }
     showScreen(SCREENS.indexOf("done"));

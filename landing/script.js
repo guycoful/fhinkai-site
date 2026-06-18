@@ -45,6 +45,16 @@
   const errPhone = document.getElementById('errPhone');
   const errEmail = document.getElementById('errEmail');
 
+  const consentPrivacy   = document.getElementById('consentPrivacy');
+  const consentMarketing = document.getElementById('consentMarketing');
+  const errConsent       = document.getElementById('errConsent');
+
+  if (consentPrivacy && errConsent) {
+    consentPrivacy.addEventListener('change', () => {
+      if (consentPrivacy.checked) errConsent.hidden = true;
+    });
+  }
+
   // -----------------------------
   // Prefill (if user came back)
   // -----------------------------
@@ -115,6 +125,7 @@
     if (!v.name(fullName))   { setError(nameInput,  errName,  true); ok = false; }
     if (!v.phone(phone))     { setError(phoneInput, errPhone, true); ok = false; }
     if (!v.email(email))     { setError(emailInput, errEmail, true); ok = false; }
+    if (consentPrivacy && !consentPrivacy.checked) { if (errConsent) errConsent.hidden = false; ok = false; }
 
     if (!ok) {
       const firstError = form.querySelector('.is-error');
@@ -131,6 +142,9 @@
       phone,
       email,
       gender,
+      privacy_consent: !!(consentPrivacy && consentPrivacy.checked),
+      marketing_consent: !!(consentMarketing && consentMarketing.checked),
+      consent_text_version: '2026-06-18',
       source: new URLSearchParams(window.location.search).get('src') || 'landing-pilot',
       cohort: new URLSearchParams(window.location.search).get('cohort') || CONFIG.cohort,
     };

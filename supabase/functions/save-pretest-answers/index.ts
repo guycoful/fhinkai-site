@@ -43,25 +43,29 @@ Deno.serve(async (req: Request) => {
 
     const emailNorm = String(body.email).trim().toLowerCase();
 
+    const leadUpdate: Record<string, unknown> = {
+      pre_test_data: body.answers,
+      questionnaire_sent: true,
+      questionnaire_sent_at: new Date().toISOString(),
+    };
+    if (body.privacy_consent === true) {
+      leadUpdate.privacy_consent = true;
+      leadUpdate.consent_at = new Date().toISOString();
+    }
+    if (typeof body.marketing_consent === 'boolean') leadUpdate.marketing_consent = body.marketing_consent;
+    if (body.consent_text_version) leadUpdate.consent_text_version = String(body.consent_text_version).trim();
+
     // Try exact match first, then case-insensitive fallback.
     let { data: matched, error } = await supabase
       .from('challenge_leads')
-      .update({
-        pre_test_data: body.answers,
-        questionnaire_sent: true,
-        questionnaire_sent_at: new Date().toISOString(),
-      })
+      .update(leadUpdate)
       .eq('email', emailNorm)
       .select('id');
 
     if (!error && (!matched || matched.length === 0)) {
       const ci = await supabase
         .from('challenge_leads')
-        .update({
-          pre_test_data: body.answers,
-          questionnaire_sent: true,
-          questionnaire_sent_at: new Date().toISOString(),
-        })
+        .update(leadUpdate)
         .ilike('email', emailNorm)
         .select('id');
       matched = ci.data ?? [];
