@@ -187,12 +187,8 @@
           </button>
         </div>
 
-        <p class="consent">
-          <span data-male="בלחיצה על ״התחל את יום 3״ אתה מאשר את"
-                data-female="בלחיצה על ״התחל את יום 3״ את מאשרת את">בלחיצה על ״התחל את יום 3״ אתה מאשר את</span>
-          <button type="button" class="link-btn" data-action="legal-open" data-target="privacyModal">הסכם הגנת הפרטיות</button>
-          <span>ואת</span>
-          <button type="button" class="link-btn" data-action="legal-open" data-target="disclaimerModal">הגילוי הנאות — לא ייעוץ</button>
+        <p class="consent" style="margin-top:14px;font-size:13px;color:#5b6f6c;line-height:1.6;">
+          המידע שלך מעובד בהתאם ל<a href="/privacy/" target="_blank" rel="noopener">מדיניות הפרטיות</a>. השירות הוא תוכן חינוכי בלבד ואינו ייעוץ. ראה <button type="button" class="link-btn" data-action="legal-open" data-target="disclaimerModal">גילוי נאות, לא ייעוץ</button>.
         </p>
 
       </div>
@@ -273,13 +269,13 @@
           <div class="cal-card">
             <div class="cal-card__header">
               <span class="cal-card__day-name">יום רביעי</span>
-              <span class="cal-card__day-num">17</span>
-              <span class="cal-card__month">דצמבר 2026</span>
+              <span class="cal-card__day-num">24</span>
+              <span class="cal-card__month">יוני 2026</span>
             </div>
             <div class="cal-card__body">
               <div class="cal-card__event">
                 <span class="cal-card__time">20:00</span>
-                <span class="cal-card__title">וובינר חיתום האתגר</span>
+                <span class="cal-card__title">וובינר סיכום האתגר</span>
               </div>
               <div class="cal-card__location">FHINK AI · אונליין · 90 דק׳ · עם עמרי חן</div>
             </div>
@@ -743,31 +739,7 @@
       </div>
     </section>
 
-    <!-- Privacy agreement popup (placeholder copy — final text from the lawyer) -->
-    <div class="modal" id="privacyModal" hidden role="dialog" aria-modal="true" aria-labelledby="privacyModalTitle">
-      <div class="modal__backdrop" data-action="legal-close"></div>
-      <div class="modal__card modal__card--legal" role="document">
-        <button type="button" class="modal__x" data-action="legal-close" aria-label="סגירה">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-            <line x1="6" y1="18" x2="18" y2="6"></line>
-          </svg>
-        </button>
-        <h3 id="privacyModalTitle" class="modal__title">הסכם הגנת הפרטיות</h3>
-        <div class="legal-pending">נוסח זמני להמחשה · יוחלף בנוסח המחייב שתספק עוה״ד</div>
-        <div class="legal-body">
-          <p><strong>איזה מידע נאסף?</strong> שם, פרטי התקשרות (טלפון ודוא״ל), מגדר, והנתונים הפיננסיים שתבחרו להזין במהלך האתגר (הכנסות, הוצאות ויעדים).</p>
-          <p><strong>למה הוא משמש?</strong> להתאמה אישית של חוויית האתגר, לחישוב התובנות שלכם ולשליחת תזכורות שביקשתם. המידע אינו נמכר ואינו מועבר לצד שלישי ללא הסכמה מפורשת.</p>
-          <p><strong>אחסון ואבטחה.</strong> המידע נשמר במערכות מאובטחות. ניתן לבקש עיון, תיקון או מחיקה של המידע בכל עת בפנייה אלינו.</p>
-          <p><strong>הסכמה.</strong> המשך השימוש באתגר מהווה הסכמה לאמור במסמך זה.</p>
-        </div>
-        <div class="modal__actions">
-          <button type="button" class="btn btn--primary" data-action="legal-close">
-            <span>הבנתי, אפשר להמשיך</span>
-          </button>
-        </div>
-      </div>
-    </div>
+    <!-- privacyModal הוסר: מדיניות הפרטיות המלאה המחייבת עברה לדף /privacy/ -->
 
     <!-- Non-advice disclaimer popup (placeholder copy — final text from the lawyer) -->
     <div class="modal" id="disclaimerModal" hidden role="dialog" aria-modal="true" aria-labelledby="disclaimerModalTitle">
@@ -838,7 +810,7 @@
         <span class="footer-brand__tag">Financial Thinking <em>Powered by AI</em></span>
       </div>
       <div class="footer-legal">
-        <button type="button" class="link-btn" data-action="legal-open" data-target="privacyModal">הגנת הפרטיות</button>
+<a class="link-btn" href="/privacy/" target="_blank" rel="noopener">הגנת הפרטיות</a>
         <span aria-hidden="true">·</span>
         <button type="button" class="link-btn" data-action="legal-open" data-target="disclaimerModal">גילוי נאות</button>
       </div>
@@ -851,6 +823,6 @@
   </footer>
 
   <script src="data.js"></script>
-  <script src="script.js"></script>
+  <script src="../day3.js"></script>
 </body>
 </html>

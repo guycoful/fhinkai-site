@@ -3,6 +3,12 @@ RewriteEngine On
 RewriteCond %{HTTPS} !=on
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE]
 
+# Redirect subfolder challenge days to their root HTML files
+RewriteRule ^day1/?(index\.html)?$ /day1.html [L,R=301,NC,NE]
+RewriteRule ^day2/?(index\.html)?$ /day2.html [L,R=301,NC,NE]
+RewriteRule ^day3/?(index\.html)?$ /day3.html [L,R=301,NC,NE]
+RewriteRule ^day4/?(index\.html)?$ /day4.html [L,R=301,NC,NE]
+
 # Redirect fallback-link to Google Drive folder
 RewriteRule ^fallback-link/?$ "https://drive.google.com/drive/folders/1Rp7NRyctesBU9gLMqw8F4VEeQvmsfh8p?usp=drive_link" [L,R=302,NE]
 RewriteRule ^(landing|READY)/?$ - [E=FHINK_FLOW_HTML:1]
