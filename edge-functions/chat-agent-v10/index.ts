@@ -203,13 +203,17 @@ interface ChatMessage {
   text: string;
 }
 
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function callGemini(
   apiKey: string,
   systemInstruction: string,
   history: ChatMessage[],
   newUserMessage: string
 ): Promise<string> {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
   // Build contents array - Gemini format
   const contents = history.map(m => ({
@@ -239,25 +243,33 @@ async function callGemini(
     ],
   };
 
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
+  let lastStatus = 0;
+  let lastBody = '';
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
+      body: JSON.stringify(body),
+    });
 
-  if (!res.ok) {
-    const errBody = await res.text();
-    console.error('Gemini API error:', res.status, errBody);
-    throw new Error(`Gemini API failed: ${res.status}`);
+    if (res.ok) {
+      const data = await res.json();
+      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!text) {
+        console.error('Unexpected Gemini response:', JSON.stringify(data));
+        throw new Error('Empty Gemini response');
+      }
+      return text;
+    }
+
+    lastStatus = res.status;
+    lastBody = await res.text();
+    console.error('Gemini API error:', res.status, lastBody, `attempt=${attempt}`);
+    if (![429, 500, 503].includes(res.status) || attempt === 3) break;
+    await sleep(attempt * 600);
   }
 
-  const data = await res.json();
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) {
-    console.error('Unexpected Gemini response:', JSON.stringify(data));
-    throw new Error('Empty Gemini response');
-  }
-  return text;
+  throw new Error(`Gemini API failed: ${lastStatus}${lastBody ? ` | ${lastBody}` : ''}`);
 }
 
 // ============================================================
@@ -346,14 +358,26 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    const sanitizedHistory: ChatMessage[] = Array.isArray(history)
+      ? history
+          .slice(-14)
+          .map((m) => {
+            const role = m?.role === 'mentor' || m?.role === 'assistant' ? 'model'
+              : m?.role === 'model' ? 'model'
+              : m?.role === 'user' ? 'user'
+              : null;
+            const text = typeof m?.text === 'string' ? m.text.trim() : '';
+            return role && text ? { role, text } : null;
+          })
+          .filter((m): m is ChatMessage => !!m)
+      : [];
+
     // Build context-enhanced system prompt
     const userContext = buildUserContext(participant);
-    const fullSystemPrompt = `${agentConfig.systemPrompt}\n\n---\n\n${userContext}`;
-
-    // Use history from client (last 14 messages max - keep budget tight)
-    const sanitizedHistory: ChatMessage[] = Array.isArray(history)
-      ? history.slice(-14).filter(m => m && (m.role === 'user' || m.role === 'model') && typeof m.text === 'string')
-      : [];
+    const continuationGuard = sanitizedHistory.length
+      ? `\n\nחוק המשך קריטי:\n- זו לא תחילת שיחה.\n- אל תציג את עצמך מחדש.\n- אל תפתח שוב ב\"שלום\" או בניסוח פתיחה דומה.\n- אל תחזור על פרטים שהמשתמש כבר מסר.\n- אל תשאל שוב שאלה שכבר נענתה.\n- המשך ישירות מהתשובה האחרונה של המשתמש בשאלה אחת קצרה הבאה.`
+      : `\n\nחוק פתיחה:\n- רק בתשובה הראשונה מותר לברך ולהציג את עצמך בקצרה.`;
+    const fullSystemPrompt = `${agentConfig.systemPrompt}\n\n---\n\n${userContext}${continuationGuard}`;
 
     // Call Gemini
     const responseText = await callGemini(apiKey, fullSystemPrompt, sanitizedHistory, message);

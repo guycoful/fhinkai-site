@@ -29,7 +29,7 @@
   const PILOT_UNLOCK_ISO = '2026-06-21T06:00:00+03:00';
   const VIDEO_MAP = {
     omri: 'f72d26fa-43b3-43d5-8867-cd756b203d5e',
-    guy: null,
+    guy: '36d23c37-4272-423c-9854-afc5415e806f',
   };
   let originalVideoPhHTML = '';
 
@@ -762,7 +762,7 @@
       showInputBar();
       setChatSending(false);
       chatBusy = false;
-      $('chatInput').focus();
+      document.getElementById('chatInput')?.focus();
     } catch (err) {
       hideTyping(thinking);
       showInputBar();
@@ -773,19 +773,25 @@
       turnsCount = state.chat.round;
       updateRound();
       saveState();
-      // No auto-retry callback: the catch above already popped the message and
-      // decremented the round, so the input bar is ready. Re-sending via
-      // handleAnswer would double-count the turn and double-POST. User retypes.
-      appendErrorBubble(err.message || 'אירעה תקלה, נסו לשלוח את ההודעה שוב');
+      appendErrorBubble(formatChatError(err), () => handleAnswer(message, message));
     }
   }
 
   async function callChat(message, sendHistory) {
     const pid = state.user.pid || localStorage.getItem('challenge_pid') || new URLSearchParams(window.location.search).get('pid');
+    const normalizedHistory = Array.isArray(sendHistory)
+      ? sendHistory
+          .slice(-14)
+          .map(m => ({
+            role: m && m.role === 'mentor' ? 'model' : 'user',
+            text: m && typeof m.text === 'string' ? m.text : '',
+          }))
+          .filter(m => m.text)
+      : [];
     const body = {
       pid,
       message,
-      history: Array.isArray(sendHistory) ? sendHistory.slice(-14) : [],
+      history: normalizedHistory,
     };
     const res = await fetch(CHAT_ENDPOINT, {
       method: 'POST',
@@ -810,13 +816,24 @@
     if (!messagesEl) return;
     const b = document.createElement('div');
     b.className = 'bubble bubble--agent';
-    b.textContent = (text || 'בעיית רשת') + ' (לחצו כאן לניסיון חוזר)';
+    b.textContent = (text || 'בעיית רשת') + (typeof onRetry === 'function' ? ' (לחצו כאן לניסיון חוזר)' : '');
     if (typeof onRetry === 'function') {
       b.style.cursor = 'pointer';
       b.addEventListener('click', () => { b.remove(); onRetry(); }, { once: true });
     }
     messagesEl.appendChild(b);
     if (typeof scrollChat === 'function') scrollChat();
+  }
+
+  function formatChatError(err) {
+    const raw = String(err && err.message ? err.message : err || '').trim();
+    if (!raw) return 'אירעה תקלה בשליחת ההודעה';
+    if (raw.includes('Gemini API failed: 503')) return 'שירות ה-AI עמוס כרגע';
+    if (raw.includes('Gemini API failed: 429')) return 'שירות ה-AI הגיע למגבלת קצב זמנית';
+    if (raw.includes('participant not found')) return 'לא מצאתי את פרטי המשתתף. פתחו את היום מאותו קישור ואותו דפדפן';
+    if (raw.includes('pid required')) return 'חסר מזהה משתתף. פתחו את היום מהקישור המקורי';
+    if (raw.includes('403')) return 'הגישה לשלב הזה חסומה כרגע';
+    return raw;
   }
 
   function addBubble(role, text, instant) {
