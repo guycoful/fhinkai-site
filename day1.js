@@ -880,10 +880,12 @@
     saveState();
 
     let synced = false;
+    let syncError = null;
     try {
       await postDay1();
       synced = true;
     } catch (err) {
+      syncError = err;
       console.warn('[FHINK] Day1 sync failed:', err);
     }
 
@@ -891,8 +893,16 @@
     // Only block when the sync actually FAILED and we have no pid. A 200 with no
     // pid (data saved) must not trap the user — advance instead of deadlocking.
     if (!synced && !pid && window.location.protocol !== 'file:') {
+      if (syncError && syncError.code === 'too_early') {
+        alert(syncError.serverMessage || 'האתגר עדיין לא פתוח לקוהורט הזה.');
+        return;
+      }
+      if (syncError && syncError.status === 400) {
+        alert('השמירה נכשלה כי חסרים פרטי זיהוי. חזרו לקישור המקורי או לאותו מכשיר ודפדפן שבהם התחלתם.');
+        return;
+      }
       // Sync failed and no pid — do NOT advance, the next days need it. Let the user retry.
-      alert('הייתה תקלה בשמירת הנתונים. בדקו את החיבור לאינטרנט ולחצו שוב על "סיום".');
+      alert('הייתה תקלה בשמירת הנתונים. נסו שוב בעוד כמה שניות. אם זה חוזר, פתחו את אותו קישור מאותו מכשיר ודפדפן.');
       return;
     }
 
@@ -908,11 +918,11 @@
       const pid = localStorage.getItem('challenge_pid');
       const params = new URLSearchParams(window.location.search);
       const bypass = params.get('bypass');
-      const cohort = (params.get('cohort') || localStorage.getItem('challenge_cohort') || '').toLowerCase();
+      const cohort = resolveCohort(params);
       const qs = [];
       if (pid) qs.push('pid=' + encodeURIComponent(pid));
       if (bypass === '1') qs.push('bypass=1');
-      if (cohort === 'lms') qs.push('cohort=lms');
+      if (cohort) qs.push('cohort=' + encodeURIComponent(cohort));
       const url = 'day2.html' + (qs.length ? '?' + qs.join('&') : '');
       window.location.href = url;
     });
@@ -968,7 +978,14 @@
     if (!res.ok) {
       const errBody = await res.text();
       console.error('Edge function error:', errBody);
-      throw new Error(`HTTP ${res.status}`);
+      let errJson = null;
+      try { errJson = JSON.parse(errBody); } catch (_) {}
+      const err = new Error((errJson && (errJson.message || errJson.error)) || `HTTP ${res.status}`);
+      err.status = res.status;
+      err.code = errJson && errJson.error;
+      err.serverMessage = errJson && errJson.message;
+      err.serverBody = errJson || errBody;
+      throw err;
     }
     const data = await res.json();
     const pid = data?.id || data?.pid;
@@ -982,6 +999,9 @@
   function buildSupabasePayload() {
     const lead = JSON.parse(localStorage.getItem(CONFIG.leadStorageKey) || '{}') || {};
     const ready = JSON.parse(localStorage.getItem('fhink:opening-questionnaire') || '{}') || {};
+    const params = new URLSearchParams(window.location.search);
+    const cohort = resolveCohort(params);
+    const source = params.get('src') || lead.source || (params.get('bypass') === '1' ? 'bypass_test' : '');
 
     return {
       name: lead.fullName || lead.name || ready.fullName || state.user.fullName || '',
@@ -1013,12 +1033,19 @@
       child_savings: getExpenseAmount('investments', 'kids_savings'),
       general_savings: getExpenseAmount('investments', 'general_savings'),
       expenses_detail: JSON.stringify(buildExpensesDetailJSON()),
-      cohort: (new URLSearchParams(window.location.search).get('cohort') || lead.cohort || 'pilot').toLowerCase(),
-      source: new URLSearchParams(window.location.search).get('src') || lead.source || '',
+      cohort,
+      source,
       privacy_consent: !!state.meta.consentGiven,
       marketing_consent: !!state.meta.consentMarketing,
       consent_text_version: '2026-06-18',
     };
+  }
+
+  function resolveCohort(params) {
+    const explicit = (params.get('cohort') || localStorage.getItem('challenge_cohort') || '').toLowerCase();
+    if (explicit) return explicit;
+    if (params.get('bypass') === '1') return 'rehearsal';
+    return 'pilot';
   }
 
   function buildExpensesDetailJSON() {
