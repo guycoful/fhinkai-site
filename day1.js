@@ -1044,7 +1044,7 @@
   function resolveCohort(params) {
     const explicit = (params.get('cohort') || localStorage.getItem('challenge_cohort') || '').toLowerCase();
     if (explicit) return explicit;
-    if (params.get('bypass') === '1') return 'rehearsal';
+    if (params.get('bypass') === '1') return 'lms';
     return 'pilot';
   }
 
