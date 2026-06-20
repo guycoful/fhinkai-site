@@ -28,7 +28,7 @@
   const PILOT_UNLOCK_ISO = '2026-06-21T06:00:00+03:00';
   const VIDEO_MAP = {
     omri: 'f717823a-0be0-4afc-a2d5-a7f3cffa949f',
-    guy: null,
+    guy: '1c21d299-9606-4f63-b7cc-740803853084',
   };
   let originalVideoPhHTML = '';
 
