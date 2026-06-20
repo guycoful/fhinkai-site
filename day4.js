@@ -29,7 +29,7 @@
   const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI';
   const PILOT_UNLOCK_ISO = '2026-06-21T06:00:00+03:00';
   const VIDEO_MAP = {
-    omri: '55db3e9a-1aa5-4b8d-b1cf-876845cd3fe3',
+    omri: 'f72d26fa-43b3-43d5-8867-cd756b203d5e',
     guy: null,
   };
   let originalVideoPhHTML = '';
