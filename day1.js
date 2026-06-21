@@ -879,20 +879,21 @@
     state.meta.completedAt = new Date().toISOString();
     saveState();
 
-    // Guard against duplicate participant: create-participant-v10 does an INSERT,
-    // so a return-from-completed + re-submit must NOT create a second row.
-    // If we already have a pid, the row exists — skip the create.
+    // First completion → create (INSERT). Re-completion after an edit → PATCH the
+    // existing row, so edits reach the DB/dashboard and no duplicate row is created.
     const existingPid = state.user.pid || localStorage.getItem('challenge_pid');
-    let synced = !!existingPid;
+    let synced = false;
     let syncError = null;
-    if (!existingPid) {
-      try {
+    try {
+      if (existingPid) {
+        await patchDay1(existingPid);
+      } else {
         await postDay1();
-        synced = true;
-      } catch (err) {
-        syncError = err;
-        console.warn('[FHINK] Day1 sync failed:', err);
       }
+      synced = true;
+    } catch (err) {
+      syncError = err;
+      console.warn('[FHINK] Day1 sync failed:', err);
     }
 
     const pid = state.user.pid || localStorage.getItem('challenge_pid');
@@ -1000,6 +1001,42 @@
       state.user.pid = pid;
     }
     return data;
+  }
+
+  // Update an already-created participant (edit on re-entry). PATCHes only the
+  // financial fields so day-1 edits reach the DB/dashboard, without overwriting
+  // identity, cohort, source or consent, and without creating a duplicate row.
+  function buildDay1FinancialPatch() {
+    const p = buildSupabasePayload();
+    const KEEP = ['income','income_extra','rent','arnona','utilities','telecom','car_insurance','loans','education','leasing','groceries','dining','coffee','transport','health','shopping','leisure','kids','pension_extra','keren_hishtalmut','gemel_invest','child_savings','general_savings','expenses_detail'];
+    const patch = {};
+    for (const k of KEEP) if (p[k] !== undefined) patch[k] = p[k];
+    return patch;
+  }
+
+  async function patchDay1(pid) {
+    if (window.location.protocol === 'file:') {
+      console.log('[FHINK] dev mode — would PATCH', pid);
+      return { ok: true, mocked: true };
+    }
+    const res = await fetch(SUPA_URL + '/rest/v1/challenge_participants?id=eq.' + encodeURIComponent(pid), {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'apikey': SUPA_KEY,
+        'Authorization': 'Bearer ' + SUPA_KEY,
+        'Prefer': 'return=representation',
+      },
+      body: JSON.stringify(buildDay1FinancialPatch()),
+    });
+    if (!res.ok) {
+      const errBody = await res.text();
+      console.error('Day1 PATCH error:', errBody);
+      const err = new Error('HTTP ' + res.status);
+      err.status = res.status;
+      throw err;
+    }
+    return res.json();
   }
 
   function buildSupabasePayload() {
