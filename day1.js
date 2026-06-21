@@ -879,14 +879,20 @@
     state.meta.completedAt = new Date().toISOString();
     saveState();
 
-    let synced = false;
+    // Guard against duplicate participant: create-participant-v10 does an INSERT,
+    // so a return-from-completed + re-submit must NOT create a second row.
+    // If we already have a pid, the row exists — skip the create.
+    const existingPid = state.user.pid || localStorage.getItem('challenge_pid');
+    let synced = !!existingPid;
     let syncError = null;
-    try {
-      await postDay1();
-      synced = true;
-    } catch (err) {
-      syncError = err;
-      console.warn('[FHINK] Day1 sync failed:', err);
+    if (!existingPid) {
+      try {
+        await postDay1();
+        synced = true;
+      } catch (err) {
+        syncError = err;
+        console.warn('[FHINK] Day1 sync failed:', err);
+      }
     }
 
     const pid = state.user.pid || localStorage.getItem('challenge_pid');
