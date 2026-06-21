@@ -394,6 +394,14 @@ Deno.serve(async (req: Request) => {
       })
       .eq('id', pid);
 
+    // Persist the exchange for the admin dashboard (best-effort, never blocks the reply)
+    try {
+      await supabase.from('challenge_chat_messages').insert([
+        { participant_id: pid, role: 'user', content: message },
+        { participant_id: pid, role: 'model', content: responseText },
+      ]);
+    } catch (_e) { /* non-fatal: chat history is supplementary */ }
+
     const turnsRemaining = MAX_TURNS - newTurnsCount;
 
     return new Response(JSON.stringify({
