@@ -347,7 +347,7 @@ Deno.serve(async (req: Request) => {
     // Check turn limit (count already used turns)
     if (turnsCount >= MAX_TURNS) {
       return new Response(JSON.stringify({
-        response: 'הגענו לסוף הסשן! אספנו תובנות חשובות. נמשיך בצורה מעמיקה יותר בוובינר ביום רביעי 20.5 בשעה 20:00. בינתיים - תתחיל ליישם את המשימה שדיברנו עליה. נתראה בוובינר!',
+        response: 'הגענו לסוף הסשן! אספנו תובנות חשובות. נמשיך בצורה מעמיקה יותר בוובינר ביום רביעי 24.6 בשעה 20:00. קישור לזום: https://us06web.zoom.us/j/89631087594?pwd=K3JfaI9Ebg2RsYRqdgliP1XPoQQDLm.1 בינתיים תתחיל ליישם את המשימה שדיברנו עליה. נתראה בוובינר!',
         agent_name: agentConfig.name,
         turns_count: turnsCount,
         turns_remaining: 0,

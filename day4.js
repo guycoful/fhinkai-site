@@ -778,8 +778,8 @@
       title: 'וובינר סיכום אתגר FHINK AI',
       start: '20260624T170000Z',  // ISO UTC — placeholder
       end:   '20260624T183000Z',
-      details: 'וובינר סיכום של אתגר 4 הימים, בו נחבר את כל מה שלמדת ונפתח את הצעד הבא.',
-      location: 'אונליין',
+      details: 'וובינר סיכום של אתגר 4 הימים, בו נחבר את כל מה שלמדת ונפתח את הצעד הבא. קישור לזום: https://us06web.zoom.us/j/89631087594?pwd=K3JfaI9Ebg2RsYRqdgliP1XPoQQDLm.1',
+      location: 'זום אונליין: https://us06web.zoom.us/j/89631087594?pwd=K3JfaI9Ebg2RsYRqdgliP1XPoQQDLm.1',
     };
 
     const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE`
