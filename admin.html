@@ -38,7 +38,7 @@
 
   /* Table */
   .table-wrap { background: var(--white); border: 1px solid var(--cream-dark); border-radius: 12px; overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 920px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1120px; }
   thead { background: var(--cream); }
   th { padding: 12px 10px; font-weight: 700; font-size: 11px; color: var(--dark-mid); text-transform: uppercase; letter-spacing: .5px; text-align: right; white-space: nowrap; }
   td { padding: 10px; border-top: 1px solid var(--cream); vertical-align: middle; }
@@ -84,6 +84,36 @@
   .tab-btn { padding: 10px 20px; border: 1px solid var(--cream-dark); border-radius: 50px; font-family: 'Heebo'; font-size: 14px; font-weight: 700; cursor: pointer; background: var(--white); color: var(--dark-mid); }
   .tab-btn.active { background: var(--navy); color: var(--gold); border-color: var(--navy); }
   .badge-test { background: var(--cream); color: var(--dark-mid); }
+  /* Progress tracking */
+  .progress-dots { display: flex; gap: 4px; }
+  .pdot { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+  .pdot-done { background: var(--green); color: #fff; }
+  .pdot-current { background: var(--blue); color: #fff; box-shadow: 0 0 0 2px rgba(46,107,158,.3); }
+  .pdot-todo { background: var(--cream); color: var(--dark-mid); }
+  .st-active { color: var(--blue); font-weight: 700; }
+  .st-stuck { color: var(--red); font-weight: 700; }
+  .st-done { color: var(--green); font-weight: 700; }
+  .st-pending { color: var(--dark-mid); }
+  .cohort-tag { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 50px; background: var(--gold-bg); color: var(--gold-dark); white-space: nowrap; }
+  tbody tr { cursor: pointer; }
+  /* Drill-down modal */
+  .modal-overlay { position: fixed; inset: 0; z-index: 1500; background: rgba(26,39,68,.55); display: none; align-items: flex-start; justify-content: center; padding: 24px 12px; overflow-y: auto; }
+  .modal-overlay.open { display: flex; }
+  .modal-card { background: var(--white); border-radius: 16px; width: 100%; max-width: 640px; box-shadow: 0 12px 50px rgba(0,0,0,.3); overflow: hidden; }
+  .modal-head { background: var(--navy); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+  .modal-head h3 { color: var(--gold); font-size: 16px; font-weight: 800; }
+  .modal-close { background: transparent; border: none; color: #fff; font-size: 22px; cursor: pointer; line-height: 1; }
+  .modal-body { padding: 18px 20px; max-height: 70vh; overflow-y: auto; }
+  .modal-section-title { font-size: 12px; font-weight: 800; color: var(--gold-dark); text-transform: uppercase; letter-spacing: .5px; margin: 16px 0 8px; }
+  .kv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; font-size: 13px; }
+  .kv-row { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--cream); padding: 3px 0; }
+  .kv-row .k { color: var(--dark-mid); }
+  .kv-row .v { font-weight: 600; }
+  .chat-log { display: flex; flex-direction: column; gap: 8px; }
+  .chat-msg { padding: 8px 12px; border-radius: 12px; font-size: 13px; line-height: 1.5; max-width: 85%; }
+  .chat-user { background: var(--cream); align-self: flex-start; }
+  .chat-model { background: var(--gold-bg); align-self: flex-end; }
+  .chat-empty { color: var(--dark-mid); font-size: 13px; text-align: center; padding: 16px; }
 </style>
 </head>
 <body>
@@ -147,6 +177,9 @@
       <thead>
         <tr>
           <th>שם</th>
+          <th>קוהורט</th>
+          <th>התקדמות</th>
+          <th>סטטוס</th>
           <th>גיל</th>
           <th>הכנסה</th>
           <th>הוצאות</th>
@@ -192,6 +225,17 @@
       </table>
     </div>
   </section>
+</div>
+
+<!-- Participant drill-down modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3 id="modalTitle">משתתף</h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
 </div>
 
 <script>
@@ -290,6 +334,40 @@ function isTestParticipant(r) {
   return false;
 }
 
+// ── Progress tracking helpers ──
+function currentDayNum(r) {
+  if (!r.challenge_start_at) return null;
+  const toILMidnight = (d) => { const x = new Date(d); x.setUTCHours(x.getUTCHours() + 3); return Date.UTC(x.getUTCFullYear(), x.getUTCMonth(), x.getUTCDate()); };
+  return Math.floor((toILMidnight(new Date()) - toILMidnight(r.challenge_start_at)) / 86400000) + 1;
+}
+function dayCompleted(r, day) {
+  if (day === 1) return ((r.income || 0) > 0) || (((r.total_fixed || 0) + (r.total_variable || 0)) > 0);
+  if (day === 2) return (r.savings_commitment || 0) > 0;
+  if (day === 3) return (r.turns_count || 0) > 0;
+  if (day === 4) return ((r.pension_extra || 0) + (r.keren_hishtalmut || 0) + (r.gemel_invest || 0)) > 0;
+  return false;
+}
+function progressDotsHtml(r) {
+  const cur = currentDayNum(r);
+  let html = '<div class="progress-dots">';
+  for (let d = 1; d <= 4; d++) {
+    let cls = 'pdot';
+    if (dayCompleted(r, d)) cls += ' pdot-done';
+    else if (cur === d) cls += ' pdot-current';
+    else cls += ' pdot-todo';
+    html += '<span class="' + cls + '" title="יום ' + d + '">' + d + '</span>';
+  }
+  return html + '</div>';
+}
+function participantStatus(r) {
+  const cur = currentDayNum(r);
+  if (cur === null) return { label: '-', cls: 'st-pending' };
+  if (cur < 1) return { label: 'טרם התחיל', cls: 'st-pending' };
+  if (cur > 4) return { label: 'הסתיים', cls: 'st-done' };
+  if (cur > 1 && !dayCompleted(r, cur - 1)) return { label: 'תקוע ביום ' + cur, cls: 'st-stuck' };
+  return { label: 'פעיל · יום ' + cur, cls: 'st-active' };
+}
+
 function renderParticipants() {
   if (ALL_PARTICIPANTS === null) return;
   const hide = document.getElementById('hidePartTests').checked;
@@ -312,6 +390,7 @@ function renderParticipants() {
   tbody.innerHTML = '';
   rows.forEach(r => {
     const totalExp = (r.total_fixed || 0) + (r.total_variable || 0) + (r.total_annual || 0);
+    const st = participantStatus(r);
     const balClass = r.balance >= 0 ? 'balance-pos' : 'balance-neg';
     const sentBadge = r.analysis_sent
       ? '<span class="badge badge-sent">נשלח</span>'
@@ -327,6 +406,9 @@ function renderParticipants() {
       : '-';
     tr.innerHTML = `
       <td><strong>${r.name || '-'}</strong></td>
+      <td><span class="cohort-tag">${r.cohort || '-'}</span></td>
+      <td>${progressDotsHtml(r)}</td>
+      <td class="${st.cls}">${st.label}</td>
       <td>${r.age || '-'}</td>
       <td>${fmt(r.income)}</td>
       <td>${fmt(totalExp)}</td>
@@ -341,12 +423,88 @@ function renderParticipants() {
       <td>
         <button class="btn-sm" onclick="window.open('day2.html?pid=${r.id}')">צפה</button>
         <button class="btn-sm" onclick="copyLink('${r.id}')">העתק לינק</button>
-        <button class="btn-sm" onclick="copyPid('${r.id}')">העתק PID</button>
+        <button class="btn-sm" onclick="event.stopPropagation();copyPid('${r.id}')">העתק PID</button>
       </td>`;
+    tr.addEventListener('click', (e) => { if (e.target.closest('button')) return; openParticipantModal(r.id); });
     tbody.appendChild(tr);
   });
 
   document.getElementById('participantsTable').style.display = 'table';
+}
+
+// ── Drill-down modal ──
+function modalMoney(v) { return (v || v === 0) ? '₪' + Number(v).toLocaleString() : '-'; }
+function modalKv(k, v) { return '<div class="kv-row"><span class="k">' + k + '</span><span class="v">' + v + '</span></div>'; }
+
+function openParticipantModal(pid) {
+  const r = (ALL_PARTICIPANTS || []).find(x => x.id === pid);
+  if (!r) return;
+  const st = participantStatus(r);
+  const cur = currentDayNum(r);
+  const curLabel = cur === null ? '-' : (cur < 1 ? 'טרם התחיל' : cur > 4 ? 'הסתיים' : 'יום ' + cur);
+  const exp = [
+    ['שכר דירה/משכנתא', r.rent], ['ארנונה/אחר', r.arnona], ['חשבונות בית', r.utilities],
+    ['תקשורת', r.telecom], ['ביטוח רכב', r.car_insurance], ['הלוואות', r.loans],
+    ['חינוך', r.education], ['ליסינג', r.leasing], ['מזון/סופר', r.groceries],
+    ['מסעדות', r.dining], ['קפה/משלוחים', r.coffee], ['תחבורה', r.transport],
+    ['בריאות', r.health], ['קניות', r.shopping], ['פנאי', r.leisure], ['ילדים', r.kids],
+  ];
+  const inv = [
+    ['פנסיה משלימה', r.pension_extra], ['קרן השתלמות', r.keren_hishtalmut],
+    ['גמל להשקעה', r.gemel_invest], ['חיסכון ילדים', r.child_savings], ['חיסכון כללי', r.general_savings],
+  ];
+  document.getElementById('modalTitle').textContent = (r.name || 'משתתף') + ' · ' + (r.cohort || '');
+  document.getElementById('modalBody').innerHTML =
+    '<div class="modal-section-title">סטטוס והתקדמות</div>' +
+    '<div style="margin-bottom:8px">' + progressDotsHtml(r) + '</div>' +
+    '<div class="kv-grid">' +
+      modalKv('יום נוכחי', curLabel) +
+      modalKv('סטטוס', st.label) +
+      modalKv('צ׳אט (תורות)', r.turns_count || 0) +
+      modalKv('תזכורת אחרונה', r.last_reminder_day ? 'יום ' + r.last_reminder_day : '-') +
+      modalKv('טלפון', r.phone || '-') +
+      modalKv('נרשם', fmtDate(r.created_at)) +
+    '</div>' +
+    '<div class="modal-section-title">הכנסות ומאזן</div>' +
+    '<div class="kv-grid">' +
+      modalKv('הכנסה', modalMoney(r.income)) +
+      modalKv('הכנסה נוספת', modalMoney(r.income_extra)) +
+      modalKv('מאזן חודשי', modalMoney(r.balance)) +
+      modalKv('סך חיסכון', modalMoney(r.total_savings)) +
+    '</div>' +
+    '<div class="modal-section-title">הוצאות</div>' +
+    '<div class="kv-grid">' + exp.map(x => modalKv(x[0], modalMoney(x[1]))).join('') + '</div>' +
+    '<div class="modal-section-title">חיסכון והשקעות</div>' +
+    '<div class="kv-grid">' + inv.map(x => modalKv(x[0], modalMoney(x[1]))).join('') + '</div>' +
+    '<div class="modal-section-title">היסטוריית צ׳אט (יום 3)</div>' +
+    '<div id="modalChat" class="chat-empty">טוען...</div>';
+  document.getElementById('modalOverlay').classList.add('open');
+  loadParticipantChat(pid);
+}
+
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+async function loadParticipantChat(pid) {
+  const el = document.getElementById('modalChat');
+  if (!el) return;
+  const token = getAdminToken();
+  try {
+    const res = await fetch(SUPA_URL + '/functions/v1/admin-participant-chat?pid=' + encodeURIComponent(pid), {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (!res.ok) throw new Error('no_endpoint');
+    const data = await res.json();
+    const msgs = data.messages || [];
+    if (!msgs.length) { el.className = 'chat-empty'; el.textContent = 'אין שיחת צ׳אט שמורה למשתתף הזה.'; return; }
+    el.className = 'chat-log';
+    el.innerHTML = msgs.map(m =>
+      '<div class="chat-msg ' + (m.role === 'user' ? 'chat-user' : 'chat-model') + '">' +
+      String(m.content || '').replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</div>'
+    ).join('');
+  } catch (e) {
+    el.className = 'chat-empty';
+    el.textContent = 'שמירת היסטוריית הצ׳אט עדיין לא פעילה.';
+  }
 }
 
 function copyLink(pid) {
