@@ -57,9 +57,8 @@
     enableActiveConsent();
     bindModal();
     refreshAllTotals();
-    // אם משתמש חוזר נמצא באמצע הזרימה בלי שאישר הסכמה (state ישן), להחזיר למסך הפתיחה כדי לעבור דרך תיבת ההסכמה.
-    // חריג: מסך 'calendar' (שיריון הוובינר) הוא מסך-תצוגה בלבד ללא הזנת נתונים, ולכן מותר להגיע אליו ישירות (deep-link /webinar).
-    if (state.currentScreen && state.currentScreen !== 'opening' && state.currentScreen !== 'calendar' && !TERMINAL_SCREENS.has(state.currentScreen) && !state.meta.consentGiven) {
+    // אם משתמש חוזר נמצא באמצע הזרימה בלי שאישר הסכמה (state ישן), להחזיר למסך הפתיחה כדי לעבור דרך תיבת ההסכמה
+    if (state.currentScreen && state.currentScreen !== 'opening' && !TERMINAL_SCREENS.has(state.currentScreen) && !state.meta.consentGiven) {
       state.currentScreen = 'opening';
     }
     showScreen(state.currentScreen || 'opening');
