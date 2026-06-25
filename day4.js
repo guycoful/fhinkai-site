@@ -312,9 +312,25 @@
 
   function allowEarlyAccess() {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('bypass') === '1') return true;
+    const isAdmin = params.get('admin') === 'true';
+    const isBypass = params.get('bypass') === '1';
     const cohort = (params.get('cohort') || localStorage.getItem('challenge_cohort') || 'pilot').toLowerCase();
-    if (cohort === 'lms') { try { localStorage.setItem('challenge_cohort', 'lms'); } catch (e) {} return true; } // LMS course: all days open immediately
+    const isAllowedCohort = ['lms', 'rehearsal'].includes(cohort);
+
+    const ALLOWED_PIDS = [
+      '91d38a0b-0503-4ec9-8d6a-b9f59f04e510', // Barak
+      'ba4ebce3-65a3-4b2c-862c-b3436f274a61', // Noam
+      'e92b3619-5d8a-4223-ac8c-f33b9da709ac'  // Yahav
+    ];
+    const pid = params.get('pid') || localStorage.getItem('challenge_pid');
+
+    if (!isAdmin && !isBypass && !isAllowedCohort && !ALLOWED_PIDS.includes(pid)) {
+      showEndedOverlay();
+      return false;
+    }
+
+    if (isBypass) return true;
+    if (cohort === 'lms') { try { localStorage.setItem('challenge_cohort', 'lms'); } catch (e) {} return true; }
     if (Date.now() >= new Date(PILOT_UNLOCK_ISO).getTime()) return true;
     showLockedOverlay(PILOT_UNLOCK_ISO, 'יום 4');
     return false;
@@ -1001,4 +1017,16 @@
   function setAll(selector, text) {
     document.querySelectorAll(selector).forEach(el => { el.textContent = text; });
   }
-})();
+
+  function showEndedOverlay() {
+    document.body.innerHTML = `
+      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0f172a;padding:24px;direction:rtl;font-family:Heebo,sans-serif;color:#f8fafc;text-align:center;">
+        <div style="max-width:520px;width:100%;background:#1e293b;border-radius:28px;padding:40px 28px;box-shadow:0 16px 60px rgba(0,0,0,.3);text-align:center;border:1px solid #334155;">
+          <div style="font-size:56px;line-height:1;margin-bottom:20px;">🏁</div>
+          <h1 style="font-size:28px;line-height:1.2;margin:0 0 12px;color:#38bdf8;font-weight:800;">האתגר הפיננסי הסתיים</h1>
+          <p style="margin:0;color:#94a3b8;font-size:16px;line-height:1.8;">תודה רבה לכל המשתתפים ! האתגר הגיע לסיומו וגישת הקהל הרחב נסגרה.</p>
+        </div>
+      </div>`;
+  }
+
+  })();

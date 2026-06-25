@@ -665,6 +665,50 @@
   </footer>
 
   <script>
+    // ─── ACCESS CONTROL (CHALLENGE ENDED) ───
+    const ALLOWED_PIDS = [
+      '91d38a0b-0503-4ec9-8d6a-b9f59f04e510', // Barak
+      'ba4ebce3-65a3-4b2c-862c-b3436f274a61', // Noam
+      'e92b3619-5d8a-4223-ac8c-f33b9da709ac'  // Yahav
+    ];
+
+    (function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const currentPid = urlParams.get('pid') || localStorage.getItem('challenge_pid');
+      const isAdmin = urlParams.get('admin') === 'true';
+      const isBypass = urlParams.get('bypass') === '1';
+      const cohort = (urlParams.get('cohort') || localStorage.getItem('challenge_cohort') || 'pilot').toLowerCase();
+      const isAllowedCohort = ['lms', 'rehearsal'].includes(cohort);
+
+      if (!isAdmin && !isBypass && !isAllowedCohort && !ALLOWED_PIDS.includes(currentPid)) {
+        window.addEventListener('DOMContentLoaded', () => {
+          document.body.innerHTML = `
+            <div style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              height: 100vh;
+              background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+              color: #f8fafc;
+              font-family: system-ui, -apple-system, sans-serif;
+              text-align: center;
+              padding: 2rem;
+              direction: rtl;
+            ">
+              <div style="font-size: 4rem; margin-bottom: 1rem;">🏁</div>
+              <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 1rem; color: #38bdf8;">האתגר הפיננסי הסתיים</h1>
+              <p style="font-size: 1.2rem; color: #94a3b8; max-width: 500px; line-height: 1.6; margin-bottom: 2rem;">
+                תודה רבה לכל המשתתפים ! האתגר הגיע לסיומו וגישת הקהל הרחב נסגרה.
+              </p>
+              <div style="font-size: 0.9rem; color: #64748b;">המקפצה הפיננסית © 2026</div>
+            </div>
+          `;
+        });
+        throw new Error('Challenge ended');
+      }
+    })();
+
     // ─── SUPABASE CONFIG ───
     const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
     const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI';
