@@ -972,13 +972,20 @@
     };
 
     if (window.location.protocol === 'file:') {
-      console.log('[FHINK] dev mode — would POST', payload);
+      console.log('[FHINK] dev mode — would PATCH', payload);
       return { ok: true, mocked: true };
     }
-    const res = await fetch(CONFIG.apiEndpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+    const pid = state.user.pid || localStorage.getItem('challenge_pid') || new URLSearchParams(window.location.search).get('pid');
+    if (!pid) throw new Error('Missing pid');
+    const res = await fetch(`${SUPA_URL}/rest/v1/challenge_participants?id=eq.${encodeURIComponent(pid)}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: SUPA_KEY,
+        Authorization: `Bearer ${SUPA_KEY}`,
+        Prefer: 'return=representation',
+      },
+      body: JSON.stringify({ unlock_level: 4 }),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return res.json();

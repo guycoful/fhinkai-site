@@ -665,6 +665,10 @@
   </footer>
 
   <script>
+    // ─── SUPABASE CONFIG ───
+    const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
+    const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI';
+
     // ─── UTILITIES ───
     function getParam(name) {
       const url = new URLSearchParams(window.location.search);
@@ -691,11 +695,26 @@
       unlockLevel = 4;
     }
 
+    // Save to localStorage if urlUnlock is greater than stored
+    if (urlUnlock > 0 && urlUnlock > storedUnlock) {
+      localStorage.setItem('challenge_unlock', String(urlUnlock));
+      unlockLevel = Math.max(unlockLevel, urlUnlock);
+    }
+
     // Admin saves to localStorage so all users see it
     if (isAdmin && urlUnlock > 0) {
       localStorage.setItem('challenge_unlock', String(urlUnlock));
       unlockLevel = urlUnlock;
     }
+
+    // State map per unlock level
+    const stateMap = {
+      0: ['locked',    'locked',    'locked',    'locked'],
+      1: ['active',    'locked',    'locked',    'locked'],
+      2: ['completed', 'active',    'locked',    'locked'],
+      3: ['completed', 'completed', 'active',    'locked'],
+      4: ['completed', 'completed', 'completed', 'active'],
+    };
 
     // ─── APPLY CARD STATES ───
     function applyCardState(dayNum, state) {
@@ -734,62 +753,95 @@
       }
     }
 
-    // State map per unlock level
-    const stateMap = {
-      0: ['locked',    'locked',    'locked',    'locked'],
-      1: ['active',    'locked',    'locked',    'locked'],
-      2: ['completed', 'active',    'locked',    'locked'],
-      3: ['completed', 'completed', 'active',    'locked'],
-      4: ['completed', 'completed', 'completed', 'active'],
-    };
+    function updateUIForUnlockLevel(level) {
+      const activeLevel = Math.min(Math.max(level, 0), 4);
+      const states = stateMap[activeLevel];
 
-    const level = Math.min(Math.max(unlockLevel, 0), 4);
-    const states = stateMap[level];
+      states.forEach((state, i) => applyCardState(i + 1, state));
 
-    states.forEach((state, i) => applyCardState(i + 1, state));
-
-    // ─── ATTACH PID AND BYPASS TO LINKS ───
-    const pid = getParam('pid');
-    for (let d = 1; d <= 4; d++) {
-      const card = document.getElementById('card-' + d);
-      if (card) {
-        let base = card.getAttribute('href') || `day${d}.html`;
-        const urlObj = new URL(base, window.location.origin);
-        if (pid) urlObj.searchParams.set('pid', pid);
-        if (isBypass) urlObj.searchParams.set('bypass', '1');
-        if (isLms) urlObj.searchParams.set('cohort', 'lms');
-        card.setAttribute('href', urlObj.pathname + urlObj.search);
+      // ─── ATTACH PID AND BYPASS TO LINKS ───
+      const pid = getParam('pid') || localStorage.getItem('challenge_pid');
+      for (let d = 1; d <= 4; d++) {
+        const card = document.getElementById('card-' + d);
+        if (card) {
+          let base = card.getAttribute('href') || `day${d}.html`;
+          const urlObj = new URL(base, window.location.origin);
+          if (pid) urlObj.searchParams.set('pid', pid);
+          if (isBypass) urlObj.searchParams.set('bypass', '1');
+          if (isLms) urlObj.searchParams.set('cohort', 'lms');
+          card.setAttribute('href', urlObj.pathname + urlObj.search);
+        }
       }
-    }
 
-    // ─── FLOW TIMELINE ───
-    for (let d = 1; d <= 4; d++) {
-      const dot = document.getElementById('fd-' + d);
-      const line = document.getElementById('fl-' + d);
-      if (states[d-1] === 'completed') {
-        dot.classList.add('done');
-        dot.textContent = '✓';
-        if (line) line.classList.add('done');
-      } else if (states[d-1] === 'active') {
-        dot.classList.add('current');
+      // ─── FLOW TIMELINE ───
+      for (let d = 1; d <= 4; d++) {
+        const dot = document.getElementById('fd-' + d);
+        const line = document.getElementById('fl-' + d);
+        if (states[d-1] === 'completed') {
+          dot.classList.remove('current');
+          dot.classList.add('done');
+          dot.textContent = '✓';
+          if (line) line.classList.add('done');
+        } else if (states[d-1] === 'active') {
+          dot.classList.remove('done');
+          dot.classList.add('current');
+          dot.textContent = String(d);
+          if (line) line.classList.remove('done');
+        } else {
+          dot.classList.remove('done', 'current');
+          dot.textContent = String(d);
+          if (line) line.classList.remove('done');
+        }
       }
-    }
 
-    // ─── PROGRESS BAR ───
-    const activeDays = level; // number of days unlocked (completed + active)
-    const progressPercent = (level / 4) * 100;
-    const labelText = level === 0
-      ? 'יום 0 מתוך 4'
-      : level === 4
-        ? 'הושלם ! 🎉'
-        : 'יום ' + level + ' מתוך 4';
+      // ─── PROGRESS BAR ───
+      const progressPercent = (activeLevel / 4) * 100;
+      const labelText = activeLevel === 0
+        ? 'יום 0 מתוך 4'
+        : activeLevel === 4
+          ? 'הושלם ! 🎉'
+          : 'יום ' + activeLevel + ' מתוך 4';
 
-    document.getElementById('progress-label-text').textContent = labelText;
-
-    // Animate bar on load
-    setTimeout(() => {
+      document.getElementById('progress-label-text').textContent = labelText;
       document.getElementById('progress-bar').style.width = progressPercent + '%';
-    }, 400);
+    }
+
+    // Initial sync UI
+    updateUIForUnlockLevel(unlockLevel);
+
+    // ─── DATABASE SYNC ───
+    const pid = getParam('pid') || localStorage.getItem('challenge_pid');
+    if (pid) {
+      localStorage.setItem('challenge_pid', pid);
+      fetch(`${SUPA_URL}/rest/v1/challenge_participants?id=eq.${encodeURIComponent(pid)}&select=unlock_level,name`, {
+        headers: {
+          apikey: SUPA_KEY,
+          Authorization: `Bearer ${SUPA_KEY}`,
+        }
+      })
+      .then(res => {
+        if (res.ok) return res.json();
+        throw new Error('Supabase request failed');
+      })
+      .then(rows => {
+        if (Array.isArray(rows) && rows.length > 0) {
+          const participant = rows[0];
+          if (participant.name) {
+            document.getElementById('participant-name').textContent = participant.name;
+          }
+          if (participant.unlock_level !== undefined && participant.unlock_level !== null) {
+            const dbUnlock = parseInt(participant.unlock_level, 10);
+            if (!isNaN(dbUnlock) && dbUnlock > 0) {
+              const currentStored = parseInt(localStorage.getItem('challenge_unlock') || '0', 10);
+              const nextUnlock = Math.max(dbUnlock, currentStored, urlUnlock);
+              localStorage.setItem('challenge_unlock', String(nextUnlock));
+              updateUIForUnlockLevel(nextUnlock);
+            }
+          }
+        }
+      })
+      .catch(err => console.warn('[FHINK] index.html participant sync failed:', err));
+    }
 
     // ─── STAGGER CARD ANIMATIONS ───
     const cards = document.querySelectorAll('.day-card');

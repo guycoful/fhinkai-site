@@ -24,6 +24,7 @@
   };
 
   const SUPA_URL = 'https://vuvavjmbvdqnwtleudqh.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1dmF2am1idmRxbnd0bGV1ZHFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NDY1MTMsImV4cCI6MjA2NzAyMjUxM30.QgtlrWs_qL7dMzxHkdUQaCBkGWsNNnExDv0phGz7NbI';
   const CHAT_ENDPOINT = `${SUPA_URL}/functions/v1/chat-agent-v10`;
   const MAX_TURNS = 15;
   const PILOT_UNLOCK_ISO = '2026-06-23T06:00:00+03:00';
@@ -1100,13 +1101,20 @@
     };
 
     if (window.location.protocol === 'file:') {
-      console.log('[FHINK] dev mode — would POST', payload);
+      console.log('[FHINK] dev mode — would PATCH', payload);
       return { ok: true, mocked: true };
     }
-    const res = await fetch(CONFIG.apiEndpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+    const pid = state.user.pid || localStorage.getItem('challenge_pid') || new URLSearchParams(window.location.search).get('pid');
+    if (!pid) throw new Error('Missing pid');
+    const res = await fetch(`${SUPA_URL}/rest/v1/challenge_participants?id=eq.${encodeURIComponent(pid)}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: SUPA_KEY,
+        Authorization: `Bearer ${SUPA_KEY}`,
+        Prefer: 'return=representation',
+      },
+      body: JSON.stringify({ unlock_level: 4 }),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return res.json();

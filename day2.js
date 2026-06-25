@@ -227,6 +227,7 @@
       if (remote) {
         day1 = remote;
         state.meta.demo = false;
+        try { localStorage.setItem(CONFIG.day1StorageKey, JSON.stringify(remote)); } catch (_) {}
         return;
       }
     }
@@ -1069,7 +1070,7 @@
         Authorization: `Bearer ${SUPA_KEY}`,
         Prefer: 'return=representation',
       },
-      body: JSON.stringify({ savings_commitment: targetVal }),
+      body: JSON.stringify({ savings_commitment: targetVal, unlock_level: 3 }),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return res.json();

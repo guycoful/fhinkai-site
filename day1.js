@@ -43,10 +43,17 @@
   // ============================================================
   document.addEventListener('DOMContentLoaded', init);
 
-  function init() {
+  async function init() {
     if (!allowEarlyAccess()) return;
     captureVideoPlaceholder();
     applyUrlParams();
+
+    // Database sync
+    const pid = state.user.pid || localStorage.getItem('challenge_pid');
+    if (pid) {
+      await syncFromDatabase(pid);
+    }
+
     state.meta.watched = state.meta.watched || {};
     applyUserContext();
     restoreWatchedVideos();
@@ -1110,6 +1117,93 @@
 
   function getExpenseAmount(catId, itemId) {
     return parseFloat(state.expenses?.[catId]?.[itemId]?.amount) || 0;
+  }
+
+  // ============================================================
+  // Supabase sync on load
+  // ============================================================
+  async function syncFromDatabase(pid) {
+    try {
+      const res = await fetch(`${SUPA_URL}/rest/v1/challenge_participants?id=eq.${encodeURIComponent(pid)}&select=*`, {
+        headers: {
+          apikey: SUPA_KEY,
+          Authorization: `Bearer ${SUPA_KEY}`,
+        },
+      });
+      if (!res.ok) return;
+      const rows = await res.json();
+      if (!Array.isArray(rows) || !rows.length) return;
+
+      const row = rows[0];
+      const remoteState = normalizeParticipantDay1(row);
+
+      // Merge/overwrite local state
+      // If local state is empty or has 0 salary and no expenses, overwrite it completely
+      const localIsEmpty = !state.basics.salary && (!state.expenses || Object.keys(state.expenses).length === 0);
+      if (localIsEmpty) {
+        Object.assign(state, remoteState);
+        saveState();
+      } else {
+        // Just sync the user name, pid, and completed status if DB shows completed
+        state.user.fullName = remoteState.user.fullName || state.user.fullName;
+        state.user.pid = pid;
+        if (row.unlock_level >= 2) {
+          state.meta.completedAt = state.meta.completedAt || row.consent_at || new Date().toISOString();
+          state.meta.consentGiven = true;
+          saveState();
+        }
+      }
+    } catch (err) {
+      console.warn('[FHINK] Day1 DB sync failed:', err);
+    }
+  }
+
+  function normalizeParticipantDay1(row) {
+    const detail = parseMaybeJson(row.expenses_detail);
+    const expenses = {};
+
+    window.FHINK_DATA.categories.forEach(cat => {
+      const catValues = {};
+      cat.items.forEach(item => {
+        const amount = readParticipantAmount(row, detail, item.id);
+        if (!amount || amount <= 0) return;
+        catValues[item.id] = {
+          amount: String(amount),
+          otherDetail: detail[item.id + '_desc'] || '',
+        };
+      });
+      if (Object.keys(catValues).length) expenses[cat.id] = catValues;
+    });
+
+    const salary = parseFloat(row.income || row.salary || 0) || 0;
+    const extra = parseFloat(row.income_extra || 0) || 0;
+    return {
+      currentScreen: row.unlock_level >= 2 ? 'completed' : 'opening',
+      basics: {
+        salary: String(salary),
+        additionalIncomes: extra > 0 ? [{ type: 'other', amount: String(extra), otherDetail: '' }] : [],
+      },
+      expenses,
+      user: { fullName: row.name || row.full_name || '', pid: row.id },
+      meta: {
+        commitmentChosen: row.unlock_level >= 2 ? 'now' : null,
+        completedAt: row.consent_at || null,
+        consentGiven: true,
+      },
+    };
+  }
+
+  function parseMaybeJson(raw) {
+    if (!raw || typeof raw !== 'string') return {};
+    try { return JSON.parse(raw); } catch (_) { return {}; }
+  }
+
+  function readParticipantAmount(row, detail, itemId) {
+    const detailAmount = parseFloat(detail?.[itemId]);
+    if (!isNaN(detailAmount) && detailAmount > 0) return detailAmount;
+    const rowAmount = parseFloat(row?.[itemId]);
+    if (!isNaN(rowAmount) && rowAmount > 0) return rowAmount;
+    return 0;
   }
 
   // ============================================================
