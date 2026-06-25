@@ -52,6 +52,7 @@
   .badge-read { background: #E8F5E9; color: #2E7D52; }
   .badge-delivered { background: #E0F2F1; color: #00796B; }
   .badge-blocked { background: #FFEBEE; color: #C0392B; }
+  .badge-expired { background: #FCE4EC; color: #AD1457; }
   .badge-sending { background: #FFFDE7; color: #F57F17; }
   .btn-sm { padding: 4px 12px; font-size: 11px; border-radius: 50px; border: 1px solid var(--cream-dark); background: var(--white); cursor: pointer; font-family: 'Heebo'; font-weight: 600; }
   .btn-sm:hover { background: var(--cream); }
@@ -114,6 +115,22 @@
   .chat-user { background: var(--cream); align-self: flex-start; }
   .chat-model { background: var(--gold-bg); align-self: flex-end; }
   .chat-empty { color: var(--dark-mid); font-size: 13px; text-align: center; padding: 16px; }
+  .status-access-badges { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .access-admin { margin-top: 10px; padding: 14px; border: 1px solid var(--cream-dark); border-radius: 12px; background: #FCFAF6; }
+  .access-admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+  .access-admin-field { display: flex; flex-direction: column; gap: 6px; }
+  .access-admin-field label { font-size: 12px; color: var(--dark-mid); font-weight: 700; }
+  .access-admin-field input,
+  .access-admin-field select { width: 100%; padding: 10px 12px; border: 1px solid var(--cream-dark); border-radius: 10px; font-family: 'Heebo'; font-size: 13px; background: var(--white); }
+  .access-admin-field input[type="checkbox"] { width: auto; transform: scale(1.15); }
+  .access-admin-checkbox { display: flex; align-items: center; gap: 8px; min-height: 42px; font-size: 13px; font-weight: 600; }
+  .access-admin-actions { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
+  .access-admin-msg { font-size: 12px; font-weight: 700; color: var(--green); }
+  .access-admin-msg.error { color: var(--red); }
+  @media (max-width: 640px) {
+    .access-admin-grid, .kv-grid { grid-template-columns: 1fr; }
+    .access-admin-actions { flex-direction: column; align-items: stretch; }
+  }
 </style>
 </head>
 <body>
@@ -270,6 +287,25 @@ function doLogin() {
 
 function fmt(n) { return '₪' + Math.round(n || 0).toLocaleString('he-IL'); }
 function fmtDate(d) { if (!d) return '-'; const dt = new Date(d); return dt.toLocaleDateString('he-IL'); }
+function fmtDateTime(d) { if (!d) return '-'; const dt = new Date(d); return isNaN(dt.getTime()) ? '-' : dt.toLocaleString('he-IL'); }
+function pad2(n) { return String(n).padStart(2, '0'); }
+function toDateTimeLocalValue(d) {
+  if (!d) return '';
+  const dt = new Date(d);
+  if (isNaN(dt.getTime())) return '';
+  return `${dt.getFullYear()}-${pad2(dt.getMonth() + 1)}-${pad2(dt.getDate())}T${pad2(dt.getHours())}:${pad2(dt.getMinutes())}`;
+}
+function isAccessExpired(r) {
+  if (!r || !r.expires_at) return false;
+  const dt = new Date(r.expires_at);
+  return !isNaN(dt.getTime()) && Date.now() > dt.getTime();
+}
+function accessBadgesHtml(r) {
+  const badges = [];
+  if (r && r.is_blocked === true) badges.push('<span class="badge badge-blocked">חסום</span>');
+  if (isAccessExpired(r)) badges.push('<span class="badge badge-expired">פג תוקף</span>');
+  return badges.length ? `<div class="status-access-badges">${badges.join('')}</div>` : '';
+}
 
 function getWhatsappBadge(status, body, date) {
   let cls = 'badge-pending';
@@ -360,6 +396,8 @@ function progressDotsHtml(r) {
   return html + '</div>';
 }
 function participantStatus(r) {
+  if (r && r.is_blocked === true) return { label: 'חסום', cls: 'st-stuck' };
+  if (isAccessExpired(r)) return { label: 'פג תוקף', cls: 'st-stuck' };
   const cur = currentDayNum(r);
   if (cur === null) return { label: '-', cls: 'st-pending' };
   if (cur < 1) return { label: 'טרם התחיל', cls: 'st-pending' };
@@ -408,7 +446,7 @@ function renderParticipants() {
       <td><strong>${r.name || '-'}</strong></td>
       <td><span class="cohort-tag">${r.cohort || '-'}</span></td>
       <td>${progressDotsHtml(r)}</td>
-      <td class="${st.cls}">${st.label}</td>
+      <td class="${st.cls}">${st.label}${accessBadgesHtml(r)}</td>
       <td>${r.age || '-'}</td>
       <td>${fmt(r.income)}</td>
       <td>${fmt(totalExp)}</td>
@@ -464,6 +502,32 @@ function openParticipantModal(pid) {
       modalKv('תזכורת אחרונה', r.last_reminder_day ? 'יום ' + r.last_reminder_day : '-') +
       modalKv('טלפון', r.phone || '-') +
       modalKv('נרשם', fmtDate(r.created_at)) +
+      modalKv('חסימה', r.is_blocked ? 'כן' : 'לא') +
+      modalKv('פג תוקף גישה', r.expires_at ? fmtDateTime(r.expires_at) : '-') +
+    '</div>' +
+    '<div class="modal-section-title">ניהול הרשאות וגישה</div>' +
+    '<div class="access-admin">' +
+      '<div class="access-admin-grid">' +
+        '<div class="access-admin-field">' +
+          '<label for="accessUnlockLevel">רמת פתיחה</label>' +
+          '<select id="accessUnlockLevel">' +
+            [0,1,2,3,4].map(level => `<option value="${level}" ${Number(r.unlock_level || 0) === level ? 'selected' : ''}>${level}</option>`).join('') +
+          '</select>' +
+        '</div>' +
+        '<div class="access-admin-field">' +
+          '<label>חסימת משתתף</label>' +
+          '<label class="access-admin-checkbox"><input type="checkbox" id="accessBlocked"' + (r.is_blocked ? ' checked' : '') + '> חסום</label>' +
+        '</div>' +
+        '<div class="access-admin-field" style="grid-column:1 / -1">' +
+          '<label for="accessExpiresAt">תוקף גישה עד</label>' +
+          '<input type="datetime-local" id="accessExpiresAt" value="' + toDateTimeLocalValue(r.expires_at) + '">' +
+        '</div>' +
+      '</div>' +
+      '<div class="access-admin-actions">' +
+        '<button type="button" class="btn btn-gold" id="accessSaveBtn" onclick="saveParticipantAccess(\'' + String(pid).replace(/'/g, '\\\'') + '\')">שמור שינויים</button>' +
+        '<button type="button" class="btn-sm" onclick="document.getElementById(\'accessExpiresAt\').value=\'\'">נקה תוקף</button>' +
+        '<span id="accessSaveMsg" class="access-admin-msg" style="display:none"></span>' +
+      '</div>' +
     '</div>' +
     '<div class="modal-section-title">הכנסות ומאזן</div>' +
     '<div class="kv-grid">' +
@@ -483,6 +547,82 @@ function openParticipantModal(pid) {
 }
 
 function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+async function saveParticipantAccess(pid) {
+  const r = (ALL_PARTICIPANTS || []).find(x => x.id === pid);
+  if (!r) return;
+  const levelEl = document.getElementById('accessUnlockLevel');
+  const blockedEl = document.getElementById('accessBlocked');
+  const expiresEl = document.getElementById('accessExpiresAt');
+  const btn = document.getElementById('accessSaveBtn');
+  const msgEl = document.getElementById('accessSaveMsg');
+  if (!levelEl || !blockedEl || !expiresEl || !btn || !msgEl) return;
+
+  const payload = {
+    unlock_level: parseInt(levelEl.value, 10),
+    is_blocked: blockedEl.checked,
+    expires_at: expiresEl.value || null,
+  };
+
+  btn.disabled = true;
+  const originalText = btn.textContent;
+  btn.textContent = 'שומר...';
+  msgEl.className = 'access-admin-msg';
+  msgEl.textContent = 'שומר...';
+  msgEl.style.display = 'inline';
+
+  const token = getAdminToken();
+  if (!token) {
+    alert('לא נמצא מפתח אדמין, אנא התחבר מחדש.');
+    return;
+  }
+
+  try {
+    const res = await fetch(`${SUPA_URL}/rest/v1/challenge_participants?id=eq.${encodeURIComponent(pid)}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': token,
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      let errMsg = 'שגיאה בשמירת הגישה';
+      try {
+        const errBody = await res.json();
+        errMsg = errBody.message || errBody.error_description || errBody.error || JSON.stringify(errBody);
+      } catch (_) {
+        try { errMsg = await res.text(); } catch (_) {}
+      }
+      throw new Error(errMsg);
+    }
+
+    msgEl.className = 'access-admin-msg';
+    msgEl.textContent = 'הגישה עודכנה בהצלחה';
+
+    await loadParticipants();
+    const fresh = (ALL_PARTICIPANTS || []).find(x => x.id === pid);
+    if (fresh) openParticipantModal(pid);
+    const freshMsgEl = document.getElementById('accessSaveMsg');
+    if (freshMsgEl) {
+      freshMsgEl.className = 'access-admin-msg';
+      freshMsgEl.textContent = 'הגישה עודכנה בהצלחה';
+      freshMsgEl.style.display = 'inline';
+    }
+  } catch (err) {
+    msgEl.className = 'access-admin-msg error';
+    msgEl.textContent = String(err && err.message ? err.message : err || 'שגיאה');
+    alert(String(err && err.message ? err.message : err || 'שגיאה'));
+  } finally {
+    const currentBtn = document.getElementById('accessSaveBtn');
+    if (currentBtn) {
+      currentBtn.disabled = false;
+      currentBtn.textContent = originalText;
+    }
+  }
+}
 
 async function loadParticipantChat(pid) {
   const el = document.getElementById('modalChat');
